@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<title>Vivienda Semisótano 150</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..750&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: hoja de proyecto — panel de parámetros a la izquierda, láminas (plantas, sección, agrupación) a la derecha, cajetín de cifras arriba. */
+:root{
+  --paper:#eef0ec; --sheet:#fbfbf9; --ink:#1d2327; --muted:#5b6569; --rule:#c8cdc6;
+  --accent:#1e6c68; --accent-soft:#d6e7e4; --below:#9a6b12; --below-soft:#f1e5cc;
+  --wall:#262c30; --room:#fbfbf9; --terrain:#dcd5c3; --glass:#4f8fb8;
+  --ok:#2e7d4f; --warn:#a86a00; --fail:#b3261e;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --paper:#13171a; --sheet:#1a1f22; --ink:#e4e7e2; --muted:#98a2a5; --rule:#343c40;
+  --accent:#62b5ad; --accent-soft:#1f3634; --below:#d9a64a; --below-soft:#33291a;
+  --wall:#cfd5d1; --room:#1a1f22; --terrain:#3b3529; --glass:#7fb6dc;
+  --ok:#62c08a; --warn:#e0a640; --fail:#f07a70; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#13171a; --sheet:#1a1f22; --ink:#e4e7e2; --muted:#98a2a5; --rule:#343c40;
+  --accent:#62b5ad; --accent-soft:#1f3634; --below:#d9a64a; --below-soft:#33291a;
+  --wall:#cfd5d1; --room:#1a1f22; --terrain:#3b3529; --glass:#7fb6dc;
+  --ok:#62c08a; --warn:#e0a640; --fail:#f07a70; color-scheme:dark }
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.45}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.top{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 14px;border-bottom:1px solid var(--rule);background:var(--sheet)}
+.top-in{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:flex-end;justify-content:space-between;max-width:1600px;margin:0 auto}
+.brand h1{font-family:var(--f-display);font-stretch:72%;font-weight:700;font-size:30px;line-height:1;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.brand h1 span{color:var(--accent)}
+.brand p{margin:6px 0 0;color:var(--muted);max-width:62ch}
+.kpis{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--ink)}
+.kpi{padding:6px 12px;border-right:1px solid var(--rule);min-width:0}
+.kpi:last-child{border-right:0}
+.kpi b{display:block;font-family:var(--f-mono);font-weight:500;font-size:17px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi small{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.kpi.below b{color:var(--below)}
+.kpi .st-ok{color:var(--ok)} .kpi .st-warn{color:var(--warn)} .kpi .st-fail{color:var(--fail)}
+
+.wrap{display:grid;grid-template-columns:330px minmax(0,1fr);gap:0;max-width:1600px;margin:0 auto;padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px))}
+aside{border-right:1px solid var(--rule);padding:14px 16px 40px;background:var(--sheet);min-width:0}
+main{padding:14px 18px 48px;min-width:0}
+@media (max-width:900px){
+  .wrap{grid-template-columns:minmax(0,1fr);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  aside{border-right:0;border-top:1px solid var(--rule);padding-inline:0;order:2}
+  main{padding-inline:0}
+}
+
+details.grp{border-top:1px solid var(--rule);padding:8px 0}
+details.grp:first-of-type{border-top:0}
+details.grp>summary{cursor:pointer;list-style:none;font-family:var(--f-display);font-stretch:85%;font-weight:650;font-size:13px;text-transform:uppercase;letter-spacing:.07em;display:flex;justify-content:space-between;align-items:center;padding:4px 0}
+details.grp>summary::-webkit-details-marker{display:none}
+details.grp>summary::after{content:"+";font-family:var(--f-mono);color:var(--muted)}
+details.grp[open]>summary::after{content:"–"}
+.fields{display:grid;gap:8px;padding:6px 0 4px}
+.f{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:8px;align-items:center}
+.f label{font-size:13px;color:var(--ink)}
+.f label small{display:block;color:var(--muted);font-size:11px;line-height:1.3}
+.num{display:flex;align-items:center;border:1px solid var(--rule);background:var(--paper);border-radius:3px}
+.num input{width:100%;min-width:0;border:0;background:transparent;padding:5px 6px;font-family:var(--f-mono);font-size:13px;text-align:right;font-variant-numeric:tabular-nums}
+.num span{padding-right:6px;color:var(--muted);font-size:11px;font-family:var(--f-mono)}
+.f input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--accent);margin:0}
+.seg{display:flex;border:1px solid var(--ink);border-radius:3px;overflow:hidden;grid-column:1/-1}
+.seg button{flex:1;border:0;background:transparent;padding:7px 4px;cursor:pointer;font-size:13px;border-right:1px solid var(--rule)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--sheet)}
+.chk{display:flex;gap:8px;align-items:center;font-size:13px;grid-column:1/-1;cursor:pointer}
+.chk input{accent-color:var(--accent);width:16px;height:16px}
+.note{font-size:12px;color:var(--muted);margin:2px 0 0}
+
+.tabs{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--ink);margin-bottom:14px}
+.tabs button{border:1px solid transparent;border-bottom:0;background:transparent;padding:8px 12px;cursor:pointer;font-family:var(--f-display);font-stretch:85%;font-weight:600;font-size:14px;border-radius:3px 3px 0 0;color:var(--muted)}
+.tabs button[aria-selected=true]{border-color:var(--ink);background:var(--sheet);color:var(--ink);margin-bottom:-1px}
+.tabs button .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:6px;vertical-align:middle}
+
+.tools{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.btn{border:1px solid var(--ink);background:var(--sheet);padding:6px 10px;border-radius:3px;cursor:pointer;font-size:13px}
+.btn:hover{background:var(--accent-soft)}
+.btn.pri{background:var(--ink);color:var(--sheet)}
+.toast{font-size:12px;color:var(--ok);align-self:center}
+
+.sheets{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}
+.sheet{background:var(--sheet);border:1px solid var(--rule);min-width:0}
+.sheet header{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:8px 12px;border-bottom:1px solid var(--rule)}
+.sheet h3{margin:0;font-family:var(--f-display);font-stretch:80%;font-weight:650;font-size:15px;text-transform:uppercase;letter-spacing:.06em}
+.sheet header span{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.sheet.ss h3{color:var(--below)}
+.svgbox{overflow-x:auto;padding:6px}
+.svgbox svg{display:block;width:100%;height:auto;min-width:260px}
+.svgbox.wide svg{min-width:640px}
+
+svg .wall{fill:var(--wall)} svg .room{fill:var(--room)} svg .open{fill:var(--room)}
+svg .med{fill:url(#hatch)}
+svg .terr{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1;stroke-dasharray:4 3}
+svg .patio{fill:var(--below-soft);stroke:var(--below);stroke-width:1;stroke-dasharray:4 3}
+svg .ramp{fill:var(--below-soft);stroke:var(--below);stroke-width:1}
+svg .parcel{fill:none;stroke:var(--muted);stroke-width:1;stroke-dasharray:6 4}
+svg .street{fill:var(--rule);opacity:.55}
+svg .garden{fill:var(--accent-soft);opacity:.5}
+svg .car{fill:none;stroke:var(--muted);stroke-width:1;stroke-dasharray:3 2}
+svg .glass{stroke:var(--glass);stroke-width:1.2;fill:none}
+svg .door{stroke:var(--ink);stroke-width:1;fill:none}
+svg .swing{stroke:var(--muted);stroke-width:.8;fill:none;stroke-dasharray:2 2}
+svg .stair{stroke:var(--ink);stroke-width:.8;fill:none}
+svg .arrow{stroke:var(--accent);stroke-width:1.3;fill:none}
+svg .dim{stroke:var(--muted);stroke-width:.8;fill:none}
+svg .rampa{stroke:var(--below);stroke-width:1.3;fill:none}
+svg text{font-family:var(--f-body);fill:var(--ink)}
+svg .lbl{font-family:var(--f-display);font-stretch:85%;font-weight:600}
+svg .area{font-family:var(--f-mono);fill:var(--muted)}
+svg .dimt{font-family:var(--f-mono);fill:var(--muted)}
+svg .acc{fill:var(--accent)} svg .bel{fill:var(--below)}
+svg .lim{stroke:var(--below);stroke-width:1.4;stroke-dasharray:7 4;fill:none}
+svg .limmax{stroke:var(--fail);stroke-width:1;stroke-dasharray:7 4;fill:none}
+svg .ground{stroke:var(--ink);stroke-width:1.6;fill:none}
+svg .soil{fill:var(--terrain)}
+svg .air{fill:var(--sheet)}
+svg .slab{fill:var(--wall)}
+svg .lvl{stroke:var(--muted);stroke-width:.7;stroke-dasharray:2 3;fill:none}
+svg .hatchline{stroke:var(--accent);stroke-width:1}
+
+table{border-collapse:collapse;width:100%;font-size:13px}
+.tbl{overflow-x:auto;background:var(--sheet);border:1px solid var(--rule)}
+th,td{padding:6px 10px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+th{font-family:var(--f-display);font-stretch:85%;font-weight:650;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.floor td{background:var(--paper);font-family:var(--f-display);font-stretch:85%;font-weight:650;text-transform:uppercase;letter-spacing:.05em;font-size:12px}
+tr.floor.ss td{color:var(--below)}
+tr.tot td{font-weight:600;border-top:1px solid var(--ink)}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;font-size:11.5px;font-weight:600;border:1px solid currentColor;white-space:nowrap}
+.pill.ok{color:var(--ok)} .pill.warn{color:var(--warn)} .pill.fail{color:var(--fail)} .pill.info{color:var(--muted)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px;margin-top:14px}
+.prose{background:var(--sheet);border:1px solid var(--rule);padding:12px 16px;min-width:0}
+.prose h4{margin:0 0 6px;font-family:var(--f-display);font-stretch:85%;font-weight:650;font-size:14px;text-transform:uppercase;letter-spacing:.06em}
+.prose ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.prose p{margin:0 0 6px;max-width:68ch}
+.err{background:var(--sheet);border:1px solid var(--fail);color:var(--fail);padding:10px 14px;margin-bottom:12px}
+textarea.out{width:100%;height:140px;font-family:var(--f-mono);font-size:11px;background:var(--paper);color:var(--ink);border:1px solid var(--rule);margin-top:8px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <h1>Vivienda <span>Semisótano</span> 150</h1>
+      <p>Diseño paramétrico de vivienda unifamiliar PB+1 sobre semisótano no computable, en módulo de crujía apto para aislar, parear o adosar.</p>
+    </div>
+    <div class="kpis" id="kpis"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <aside id="panel" aria-label="Parámetros del proyecto"></aside>
+  <main>
+    <div id="errors"></div>
+    <nav class="tabs" role="tablist" id="tabs"></nav>
+    <section id="view"></section>
+  </main>
+</div>
+
+<script>
+(() => {
+"use strict";
+
+/* ------------------------------------------------------------------ parámetros */
+const DEF = {
+  tipo:"pareada", espejo:false, nUnid:4,
+  edif:150, pctPB:50, W:7.00, dorms:3, posNucleo:45, Wd:1.90, suite:1.80,
+  ssSobre:1.00, ssLimite:1.00, ssLibre:2.40, garaje:true, pendRampa:20, meseta:3.00, patio:true, patioF:1.50,
+  hPB:2.70, hP1:2.60, forj:0.30, huella:0.27, cmax:0.185, ancho:0.90, ojo:0.10,
+  frente:10.00, fondo:28.00, coef:0.60, ocupMax:50, alturaMax:7.50, fondoMax:15.00, retFrente:5.00, retFondo:3.00, retLat:3.00,
+  tE:0.30, tM:0.25, tP:0.10
+};
+const KEY = "vivienda-semisotano-150";
+let P = Object.assign({}, DEF);
+try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s) P = Object.assign({}, DEF, s); } catch(e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(P)); } catch(e) {} };
+
+const GROUPS = [
+  { t:"Tipología", open:true, f:[
+    { k:"tipo", type:"seg", opts:[["aislada","Aislada"],["pareada","Pareada"],["adosada","Adosada"]] },
+    { k:"espejo", type:"check", label:"Planta en espejo (medianera al otro lado)" },
+    { k:"nUnid", label:"Viviendas en la hilera", u:"ud", min:3, max:10, step:1, show:p=>p.tipo==="adosada" },
+    { note:"La vivienda tipo es la misma en los tres casos: solo cambia el tipo de muro lateral (fachada o medianera)." }
+  ]},
+  { t:"Edificabilidad y volumen", open:true, f:[
+    { k:"edif", label:"Superficie computable", sub:"PB + P1, construida", u:"m²", min:80, max:300, step:1, range:true },
+    { k:"pctPB", label:"Reparto en planta baja", sub:"El resto va a planta primera", u:"%", min:50, max:70, step:1, range:true },
+    { k:"W", label:"Ancho de fachada", sub:"Módulo de la vivienda", u:"m", min:6.2, max:12, step:0.05, range:true },
+    { k:"dorms", type:"seg", label:"Dormitorios", opts:[[3,"3 dormitorios"],[4,"4 dormitorios"]] },
+    { k:"posNucleo", label:"Posición del núcleo", sub:"% del fondo libre hacia la calle", u:"%", min:30, max:65, step:1, range:true },
+    { k:"Wd", label:"Ancho del distribuidor", u:"m", min:1.6, max:2.6, step:0.05 },
+    { k:"suite", label:"Ancho baño principal", sub:"Solo con 3 dormitorios", u:"m", min:1.5, max:2.6, step:0.05 }
+  ]},
+  { t:"Semisótano", open:true, f:[
+    { k:"ssSobre", label:"Cara sup. forjado sobre rasante", sub:"Cota de la planta baja", u:"m", min:0, max:2, step:0.05 },
+    { k:"ssLimite", label:"Límite para no computar", sub:"Según ordenanza municipal", u:"m", min:0, max:2, step:0.05 },
+    { k:"ssLibre", label:"Altura libre semisótano", u:"m", min:2.2, max:3, step:0.05 },
+    { k:"garaje", type:"check", label:"Garaje en semisótano con rampa" },
+    { k:"pendRampa", label:"Pendiente de rampa", u:"%", min:10, max:25, step:1, show:p=>p.garaje },
+    { k:"meseta", label:"Meseta de acceso", sub:"Tramo horizontal junto al vial", u:"m", min:0, max:5, step:0.1, show:p=>p.garaje },
+    { k:"patio", type:"check", label:"Patio inglés trasero (luz y ventilación)" },
+    { k:"patioF", label:"Fondo del patio inglés", u:"m", min:1, max:3, step:0.1, show:p=>p.patio }
+  ]},
+  { t:"Alturas y escalera", f:[
+    { k:"hPB", label:"Altura libre planta baja", u:"m", min:2.5, max:3.2, step:0.05 },
+    { k:"hP1", label:"Altura libre planta primera", u:"m", min:2.5, max:3.2, step:0.05 },
+    { k:"forj", label:"Canto forjado + solado", u:"m", min:0.25, max:0.45, step:0.01 },
+    { k:"huella", label:"Huella", u:"m", min:0.22, max:0.32, step:0.005 },
+    { k:"cmax", label:"Contrahuella máxima", u:"m", min:0.15, max:0.20, step:0.005 },
+    { k:"ancho", label:"Ancho de tramo", u:"m", min:0.8, max:1.2, step:0.05 },
+    { k:"ojo", label:"Ojo de escalera", u:"m", min:0, max:0.4, step:0.05 }
+  ]},
+  { t:"Parcela y ordenanza", f:[
+    { k:"frente", label:"Frente de parcela", u:"m", min:5, max:40, step:0.05 },
+    { k:"fondo", label:"Fondo de parcela", u:"m", min:10, max:80, step:0.05 },
+    { k:"coef", label:"Coef. edificabilidad", u:"m²/m²", min:0.1, max:3, step:0.01 },
+    { k:"ocupMax", label:"Ocupación máxima", u:"%", min:10, max:100, step:1 },
+    { k:"alturaMax", label:"Altura máx. a cornisa", u:"m", min:3, max:12, step:0.1 },
+    { k:"fondoMax", label:"Fondo edificable máx.", u:"m", min:6, max:30, step:0.1 },
+    { k:"retFrente", label:"Retranqueo a fachada", u:"m", min:0, max:20, step:0.1 },
+    { k:"retFondo", label:"Retranqueo a fondo", u:"m", min:0, max:20, step:0.1 },
+    { k:"retLat", label:"Retranqueo a linderos", sub:"Lados sin medianera", u:"m", min:0, max:10, step:0.1 }
+  ]},
+  { t:"Muros", f:[
+    { k:"tE", label:"Muro de fachada", u:"m", min:0.2, max:0.5, step:0.01 },
+    { k:"tM", label:"Muro de medianera", sub:"Hoja propia; junta con el vecino", u:"m", min:0.15, max:0.4, step:0.01 },
+    { k:"tP", label:"Tabiquería", u:"m", min:0.07, max:0.15, step:0.01 }
+  ]}
+];
+
+/* ------------------------------------------------------------------ utilidades */
+const fmt = (n, d=2) => (Math.round(n * 10**d) / 10**d).toFixed(d).replace(".", ",").replace(/^-0,0+$/, "0,00");
+const sgn = n => (n > 0.0001 ? "+" : n < -0.0001 ? "−" : "±") + fmt(Math.abs(n));
+const ceil05 = v => Math.ceil(v / 0.05 - 1e-9) * 0.05;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+
+/* ------------------------------------------------------------------ modelo */
+function compute(p){
+  const f = p.forj;
+  const Apb = p.edif * p.pctPB / 100, Ap1 = p.edif - Apb;
+  const W = p.W, Dpb = Apb / W, Dp1 = Ap1 / W;
+  const rise1 = p.ssLibre + f, rise2 = p.hPB + f;
+  const n1 = Math.ceil(rise1 / p.cmax - 1e-9), n2 = Math.ceil(rise2 / p.cmax - 1e-9);
+  const r1 = Math.ceil(Math.max(n1, n2) / 2);
+  const treads = r1 - 1;
+  const Ls = ceil05(treads * p.huella + 2 * p.ancho);
+  const Ws = 2 * p.ancho + p.ojo;
+  const avail = Dpb - 2 * p.tE - 2 * p.tP - Ls;
+  const front = avail * p.posNucleo / 100, rear = avail - front;
+  const rearP1 = rear - (Dpb - Dp1);
+  const ssTop = p.ssSobre, ssFloor = p.ssSobre - f - p.ssLibre;
+  const dh = Math.max(0, -ssFloor);
+  const rampLen = p.garaje ? dh / (p.pendRampa / 100) + p.meseta : 0;
+  const setback = Math.max(p.retFrente, rampLen);
+  const zPB = ssTop, zP1 = zPB + p.hPB + f, zRoof = zP1 + p.hP1 + f;
+  return { p, W, Apb, Ap1, Dpb, Dp1, Ws, Ls, treads, n1, n2, c1:rise1/n1, c2:rise2/n2, rise1, rise2,
+           front, rear, rearP1, ssTop, ssFloor, dh, rampLen, setback, zPB, zP1, zRoof };
+}
+
+/* geometría de planta: x a lo largo de fachada, y en profundidad (0 = fachada a calle) */
+function buildFloor(M, level, opt){
+  const p = M.p, W = M.W, tE = p.tE, tP = p.tP;
+  const medL = opt.medL, medR = opt.medR;
+  const tL = medL ? p.tM : tE, tR = medR ? p.tM : tE;
+  const D = level === "p1" ? M.Dp1 : M.Dpb;
+  const g = { W, D, level, rects:[], lines:[], polys:[], texts:[], rooms:[] };
+  const x0 = tL, x1 = W - tR;
+  const xA1 = x0 + M.Ws, xD1 = xA1 + p.Wd, xB0 = xD1 + tP, xm = xA1 + p.Wd / 2 - tP / 2;
+  const yF0 = tE, yF1 = tE + M.front, yC0 = yF1 + tP, yC1 = yC0 + M.Ls, yR0 = yC1 + tP, yR1 = D - tE;
+  const yE0 = yC1 - p.ancho;
+  const R = (x, y, w, h, c) => g.rects.push({ x, y, w, h, c });
+  const L = (x1_, y1_, x2_, y2_, c) => g.lines.push({ x1:x1_, y1:y1_, x2:x2_, y2:y2_, c });
+  const T = (x, y, t, c, s, rot) => g.texts.push({ x, y, t, c, s, rot:rot || 0 });
+  const room = (name, rs, o = {}) => {
+    let a = 0; rs.forEach(r => { R(r[0], r[1], r[2], r[3], "room"); a += r[2] * r[3]; });
+    const big = rs[0], cx = o.lx ?? big[0] + big[2] / 2, cy = o.ly ?? big[1] + big[3] / 2;
+    const s = Math.max(0.15, Math.min(0.34, (big[2] - 0.15) / (name.length * 0.5)));
+    const sa = Math.max(0.15, Math.min(0.24, (big[2] - 0.1) / 4.6));
+    T(cx, cy + s * 0.45, name, "lbl", s);
+    T(cx, cy - sa * 1.0, fmt(a) + " m²", "area", sa);
+    g.rooms.push({ name, area:a, w:big[2], h:big[3], key:o.key || name });
+  };
+  const win = (a, b, side) => {
+    const y0 = side === "f" ? 0 : D - tE, y1 = y0 + tE;
+    R(a, y0, b - a, tE, "open");
+    L(a, y0, b, y0, "glass"); L(a, y1, b, y1, "glass"); L(a, (y0 + y1) / 2, b, (y0 + y1) / 2, "glass");
+    L(a, y0, a, y1, "door"); L(b, y0, b, y1, "door");
+  };
+  const arcPts = (cx, cy, r, a0, a1) => { const pts = []; for (let i = 0; i <= 10; i++){ const a = a0 + (a1 - a0) * i / 10; pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); } return pts; };
+  /* puerta en tabique horizontal (orient h: muro en y∈[p0,p1]) o vertical (orient v: x∈[p0,p1]) */
+  const door = (orient, p0, p1, c, w, dir, leaf = true) => {
+    const a = c - w / 2, b = c + w / 2;
+    if (orient === "h"){
+      R(a, p0, w, p1 - p0, "open"); L(a, p0, a, p1, "door"); L(b, p0, b, p1, "door");
+      if (!leaf) return;
+      const e = dir > 0 ? p1 : p0;
+      L(a, e, a, e + dir * w, "door");
+      g.polys.push({ pts:arcPts(a, e, w, dir > 0 ? Math.PI / 2 : -Math.PI / 2, 0), c:"swing" });
+    } else {
+      R(p0, a, p1 - p0, w, "open"); L(p0, a, p1, a, "door"); L(p0, b, p1, b, "door");
+      if (!leaf) return;
+      const e = dir > 0 ? p1 : p0;
+      L(e, a, e + dir * w, a, "door");
+      g.polys.push({ pts:arcPts(e, a, w, 0, Math.PI / 2).map(([x, y]) => [e + dir * (x - e), y]), c:"swing" });
+    }
+  };
+  const stair = (label) => {
+    R(x0, yC0, M.Ws, yE0 - yC0, "room");
+    const ya = yC0 + p.ancho;
+    L(x0, ya, xA1, ya, "stair");
+    for (let i = 1; i <= M.treads; i++){
+      const y = ya + i * p.huella; if (y > yE0 + 1e-6) break;
+      L(x0, y, x0 + p.ancho, y, "stair"); L(xA1 - p.ancho, y, xA1, y, "stair");
+    }
+    L(x0 + p.ancho, ya, x0 + p.ancho, yE0, "stair"); L(xA1 - p.ancho, ya, xA1 - p.ancho, yE0, "stair");
+    L(xA1, yC0, xA1, yE0, "stair");
+    const xf1 = x0 + p.ancho / 2, xf2 = xA1 - p.ancho / 2, ym = yC0 + p.ancho / 2;
+    g.polys.push({ pts:[[xf2, yE0 - 0.15], [xf2, ym], [xf1, ym], [xf1, yE0 - 0.35]], c:"arrow" });
+    g.polys.push({ pts:[[xf1 - 0.12, yE0 - 0.15], [xf1, yE0 - 0.35], [xf1 + 0.12, yE0 - 0.15]], c:"arrow" });
+    T(x0 + M.Ws / 2, yE0 + 0.22 + p.ancho * 0, label, "area", 0.17);
+    g.rooms.push({ name:"Escalera", area:M.Ws * (yE0 - yC0), w:M.Ws, h:yE0 - yC0, key:"esc", noLabel:true });
+  };
+
+  /* contorno */
+  R(0, 0, W, D, "wall");
+  if (medL) R(0, 0, tL, D, "med");
+  if (medR) R(W - tR, 0, tR, D, "med");
+
+  const fd = yF1 - yF0, rd = yR1 - yR0;
+  if (level === "ss"){
+    room("Trastero", [[x0, yF0, xA1 - x0, fd]]);
+    stair("Sube");
+    room("Vestíbulo previo", [[x0, yE0, M.Ws, yC1 - yE0]], { key:"vest" });
+    const gx = xA1 + tP, gw = x1 - gx, gd = yC1 - yF0;
+    if (p.garaje){
+      room("Garaje", [[gx, yF0, gw, gd]], { ly: yF0 + gd * 0.62 });
+      const n = gd >= 5 ? Math.floor((gw + 0.001) / 2.5) : 0;
+      for (let i = 0; i < n; i++){
+        const cx = gx + gw * (i + 0.5) / n;
+        g.rects.push({ x:cx - 0.9, y:yF0 + 0.35, w:1.8, h:4.4, c:"car" });
+      }
+      g.plazas = n; g.garW = gw; g.garD = gd;
+      const dw = Math.min(gw - 0.3, n >= 2 ? 4.6 : 2.8);
+      const dc = gx + gw / 2;
+      R(dc - dw / 2, 0, dw, tE, "open"); L(dc - dw / 2, tE / 2, dc + dw / 2, tE / 2, "door");
+      L(dc - dw / 2, 0, dc - dw / 2, tE, "door"); L(dc + dw / 2, 0, dc + dw / 2, tE, "door");
+      g.garageDoor = { a:dc - dw / 2, b:dc + dw / 2 };
+    } else {
+      room("Bodega · sala", [[gx, yF0, gw, gd]]);
+      win(gx + 0.4, x1 - 0.4, "f");
+      g.garageDoor = null;
+    }
+    room("Sala polivalente", [[x0, yR0, xm - x0, rd]]);
+    room("Instalaciones · lavandería", [[xm + tP, yR0, x1 - xm - tP, rd]], { key:"inst" });
+    door("v", xA1, xA1 + tP, (yF0 + yF1) / 2, 0.8, -1);
+    door("v", xA1, xA1 + tP, (yE0 + yC1) / 2, Math.min(0.8, yC1 - yE0 - 0.05), -1);
+    door("h", yC1, yR0, (x0 + xA1) / 2, 0.8, 1);
+    door("h", yC1, yR0, Math.max(xm + tP + 0.5, (xA1 + tP + x1) / 2), 0.8, 1);
+    if (p.patio){
+      win(x0 + 0.4, xm - 0.4, "r"); win(xm + tP + 0.4, x1 - 0.4, "r");
+      g.rects.push({ x:x0, y:D, w:x1 - x0, h:p.patioF, c:"patio" });
+      T((x0 + x1) / 2, D + p.patioF / 2 - 0.08, "Patio inglés", "area", 0.2);
+    }
+  }
+  if (level === "pb"){
+    room("Vestíbulo", [[x0, yF0, xm - x0, fd]]);
+    room("Cocina", [[xm + tP, yF0, x1 - xm - tP, fd]]);
+    stair("Sube");
+    room("Distribuidor", [[xA1, yC0, p.Wd, yC1 - yC0], [x0, yE0, M.Ws, yC1 - yE0]], { key:"dist" });
+    const h1 = (M.Ls - tP) / 2;
+    room("Aseo", [[xB0, yC0, x1 - xB0, h1]]);
+    room("Lavadero · despensa", [[xB0, yC0 + h1 + tP, x1 - xB0, M.Ls - h1 - tP]], { key:"lav" });
+    room("Salón-comedor", [[x0, yR0, x1 - x0, rd]]);
+    door("h", 0, tE, (x0 + xm) / 2 + 0.15, 0.95, 1);
+    door("h", yF1, yC0, (xA1 + xm) / 2, 0.82, -1);
+    door("h", yF1, yC0, (xm + tP + xD1) / 2, 0.82, -1);
+    door("v", xD1, xB0, yC0 + h1 / 2, Math.min(0.75, h1 - 0.1), 1);
+    door("v", xD1, xB0, yC0 + h1 + tP + (M.Ls - h1 - tP) / 2, Math.min(0.75, h1 - 0.1), 1);
+    door("h", yC1, yR0, (x0 + xD1) / 2, xD1 - x0 - 0.3, 1, false);
+    win(xm + tP + 0.4, x1 - 0.4, "f");
+    const sw = (x1 - x0) * 0.72; win((x0 + x1) / 2 - sw / 2, (x0 + x1) / 2 + sw / 2, "r");
+  }
+  if (level === "p1"){
+    room("Dormitorio 2", [[x0, yF0, xm - x0, fd]]);
+    room("Dormitorio 3", [[xm + tP, yF0, x1 - xm - tP, fd]]);
+    stair("Baja");
+    room("Distribuidor", [[xA1, yC0, p.Wd, yC1 - yC0], [x0, yE0, M.Ws, yC1 - yE0]], { key:"dist" });
+    room("Baño", [[xB0, yC0, x1 - xB0, M.Ls]]);
+    door("h", yF1, yC0, (xA1 + xm) / 2, 0.8, -1);
+    door("h", yF1, yC0, (xm + tP + xD1) / 2, 0.8, -1);
+    door("v", xD1, xB0, yC0 + M.Ls / 2, 0.75, 1);
+    win(x0 + 0.4, xm - 0.4, "f"); win(xm + tP + 0.4, x1 - 0.4, "f");
+    if (p.dorms === 3){
+      const xS = x1 - p.suite - tP;
+      room("Dormitorio principal", [[x0, yR0, xS - x0, rd]], { key:"dp" });
+      room("Baño principal", [[xS + tP, yR0, x1 - xS - tP, rd]], { key:"bp" });
+      door("h", yC1, yR0, (xA1 + xD1) / 2, 0.8, 1);
+      door("v", xS, xS + tP, yR0 + Math.min(0.6, rd / 2), 0.7, 1);
+      win(x0 + 0.5, xS - 0.5, "r"); win(xS + tP + 0.35, x1 - 0.35, "r");
+    } else {
+      room("Dormitorio 4", [[x0, yR0, xm - x0, rd]], { key:"d4" });
+      room("Dormitorio principal", [[xm + tP, yR0, x1 - xm - tP, rd]], { key:"dp" });
+      door("h", yC1, yR0, (xA1 + xm) / 2, 0.8, 1);
+      door("h", yC1, yR0, (xm + tP + xD1) / 2, 0.8, 1);
+      win(x0 + 0.4, xm - 0.4, "r"); win(xm + tP + 0.4, x1 - 0.4, "r");
+    }
+    if (M.Dpb - M.Dp1 > 0.05){
+      g.rects.push({ x:0, y:D, w:W, h:M.Dpb - D, c:"terr" });
+      T(W / 2, D + (M.Dpb - D) / 2 - 0.08, "Terraza sobre PB · " + fmt(W * (M.Dpb - D)) + " m²", "area", 0.2);
+    }
+  }
+
+  /* cotas */
+  const dimH = (a, b, y, txt) => { L(a, y, b, y, "dim"); L(a, y - 0.12, a, y + 0.12, "dim"); L(b, y - 0.12, b, y + 0.12, "dim"); T((a + b) / 2, y + 0.12, txt, "dimt", 0.18); };
+  const dimV = (a, b, x, txt) => { L(x, a, x, b, "dim"); L(x - 0.12, a, x + 0.12, a, "dim"); L(x - 0.12, b, x + 0.12, b, "dim"); T(x - 0.12, (a + b) / 2, txt, "dimt", 0.18, -90); };
+  dimH(0, W, -1.45, fmt(W));
+  dimH(x0, xA1, -0.75, fmt(xA1 - x0)); dimH(xA1, xD1, -0.75, fmt(p.Wd)); dimH(xB0, x1, -0.75, fmt(x1 - xB0));
+  dimV(0, D, -1.45, fmt(D));
+  dimV(yF0, yF1, -0.75, fmt(fd)); dimV(yC0, yC1, -0.75, fmt(M.Ls)); dimV(yR0, yR1, -0.75, fmt(rd));
+  T(W / 2, -2.05, "CALLE · fachada principal", "dimt", 0.2);
+
+  g.k = { x0, x1, xA1, xD1, xB0, xm, yF0, yF1, yC0, yC1, yR0, yR1, fd, rd };
+  if (opt.mirror) mirrorGeom(g);
+  return g;
+}
+function mirrorGeom(g){
+  const W = g.W, m = x => W - x;
+  g.rects.forEach(r => { r.x = W - r.x - r.w; });
+  g.lines.forEach(l => { l.x1 = m(l.x1); l.x2 = m(l.x2); });
+  g.polys.forEach(q => { q.pts = q.pts.map(([x, y]) => [m(x), y]); });
+  g.texts.forEach(t => { t.x = m(t.x); if (t.rot) t.x = t.x + 0.24; });
+  if (g.garageDoor) g.garageDoor = { a:m(g.garageDoor.b), b:m(g.garageDoor.a) };
+}
+
+/* ------------------------------------------------------------------ SVG */
+let uid = 0;
+function geomSVG(list, frame, S, extra = ""){
+  const id = "h" + (++uid);
+  const [fx0, fy0, fx1, fy1] = frame;
+  const Wpx = (fx1 - fx0) * S, Hpx = (fy1 - fy0) * S;
+  const X = (x, ox) => ((x + ox) - fx0) * S, Y = (y, oy) => (fy1 - (y + oy)) * S;
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${Wpx.toFixed(1)} ${Hpx.toFixed(1)}" role="img">`;
+  s += `<defs><pattern id="${id}" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" class="wall"/><line x1="0" y1="0" x2="0" y2="6" class="hatchline" stroke-width="2.4"/></pattern></defs>`;
+  s += extra;
+  for (const it of list){
+    const g = it.g, ox = it.ox || 0, oy = it.oy || 0, skip = it.skip || {};
+    for (const r of g.rects){
+      const cls = r.c === "med" ? "" : r.c;
+      const fill = r.c === "med" ? ` fill="url(#${id})"` : "";
+      s += `<rect x="${X(r.x, ox).toFixed(1)}" y="${Y(r.y + r.h, oy).toFixed(1)}" width="${(r.w * S).toFixed(1)}" height="${(r.h * S).toFixed(1)}" class="${cls}"${fill}/>`;
+    }
+    for (const l of g.lines){ if (skip.dim && l.c === "dim") continue;
+      s += `<line x1="${X(l.x1, ox).toFixed(1)}" y1="${Y(l.y1, oy).toFixed(1)}" x2="${X(l.x2, ox).toFixed(1)}" y2="${Y(l.y2, oy).toFixed(1)}" class="${l.c}"/>`; }
+    for (const q of g.polys) s += `<polyline points="${q.pts.map(([x, y]) => X(x, ox).toFixed(1) + "," + Y(y, oy).toFixed(1)).join(" ")}" class="${q.c}"/>`;
+    for (const t of g.texts){
+      if (skip.text && (t.c === "lbl" || t.c === "area")) continue;
+      if (skip.dim && t.c === "dimt") continue;
+      const x = X(t.x, ox), y = Y(t.y, oy);
+      const tr = t.rot ? ` transform="rotate(${t.rot} ${x.toFixed(1)} ${y.toFixed(1)})"` : "";
+      s += `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle" font-size="${(t.s * S).toFixed(1)}" class="${t.c}"${tr}>${esc(t.t)}</text>`;
+    }
+  }
+  return s + "</svg>";
+}
+
+function sectionSVG(M){
+  const p = M.p, S = 30, sb = M.setback, f = p.forj;
+  const u0 = -2, u1 = sb + M.Dpb + Math.max(p.retFondo, p.patio ? p.patioF : 0) + 2;
+  const z0 = Math.min(M.ssFloor, 0) - 1.1, z1 = Math.max(M.zRoof + 1.2, p.alturaMax + 0.6);
+  const padR = 150, padL = 14;
+  const W = (u1 - u0) * S + padL + padR, H = (z1 - z0) * S + 30;
+  const X = u => padL + (u - u0) * S, Y = z => 10 + (z1 - z) * S;
+  const rect = (ua, ub, za, zb, c) => `<rect x="${X(Math.min(ua, ub)).toFixed(1)}" y="${Y(Math.max(za, zb)).toFixed(1)}" width="${(Math.abs(ub - ua) * S).toFixed(1)}" height="${(Math.abs(zb - za) * S).toFixed(1)}" class="${c}"/>`;
+  const line = (ua, za, ub, zb, c) => `<line x1="${X(ua).toFixed(1)}" y1="${Y(za).toFixed(1)}" x2="${X(ub).toFixed(1)}" y2="${Y(zb).toFixed(1)}" class="${c}"/>`;
+  const text = (u, z, t, c, sz = 11, anchor = "start") => `<text x="${X(u).toFixed(1)}" y="${Y(z).toFixed(1)}" font-size="${sz}" class="${c}" text-anchor="${anchor}">${esc(t)}</text>`;
+  const a = sb, b = sb + M.Dpb, b1 = sb + M.Dp1, tE = p.tE;
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W.toFixed(0)} ${H.toFixed(0)}" role="img" aria-label="Sección longitudinal">`;
+  /* terreno */
+  s += rect(u0, u1, M.ssFloor - 0.9, 0, "soil");
+  s += rect(a, b, M.ssFloor - 0.15, 0, "air");
+  if (p.garaje && M.dh > 0){
+    const r0 = sb - M.rampLen, r1 = r0 + p.meseta;
+    s += `<polygon points="${X(r1)},${Y(0)} ${X(a)},${Y(M.ssFloor)} ${X(a)},${Y(0)}" class="air"/>`;
+    s += `<polyline points="${X(u0)},${Y(0)} ${X(r1)},${Y(0)} ${X(a)},${Y(M.ssFloor)}" class="rampa"/>`;
+    s += text((r1 + a) / 2, M.ssFloor / 2 - 0.45, `Rampa ${p.pendRampa}% · ${fmt(M.rampLen - p.meseta)} m`, "bel", 11, "middle");
+    if (p.meseta > 0) s += text((r0 + r1) / 2, 0.15, `Meseta ${fmt(p.meseta)}`, "bel", 10, "middle");
+  } else s += line(u0, 0, a, 0, "ground");
+  if (p.patio){ s += rect(b, b + p.patioF, M.ssFloor, 0, "air"); s += rect(b + p.patioF, b + p.patioF + 0.25, M.ssFloor - 0.3, 0.1, "slab"); }
+  s += line(p.patio ? b + p.patioF + 0.25 : b, 0, u1, 0, "ground");
+  /* semisótano */
+  s += rect(a, b, M.ssFloor - 0.3, M.ssFloor, "slab");
+  const wallSeg = (u, w, za, zb, gaps) => { let out = "", z = za; (gaps || []).forEach(([g0, g1]) => { if (g0 > z) out += rect(u, u + w, z, g0, "slab"); out += rect(u + w * 0.4, u + w * 0.6, g0, g1, "glass-fill"); z = g1; }); if (zb > z) out += rect(u, u + w, z, zb, "slab"); return out; };
+  const zs = M.ssFloor, zsT = M.ssTop - f;
+  s += wallSeg(a, tE, zs, zsT, p.garaje ? [[zs, zs + 2.2]] : [[zsT - 0.7, zsT - 0.1]]);
+  s += wallSeg(b - tE, tE, zs, zsT, p.patio ? [[zs + 0.9, zsT - 0.1]] : []);
+  s += rect(a, b, zsT, M.ssTop, "slab");
+  s += text((a + b) / 2, zs + p.ssLibre / 2 + 0.25, "SEMISÓTANO", "lbl bel", 13, "middle");
+  s += text((a + b) / 2, zs + p.ssLibre / 2 - 0.25, "no computa · h libre " + fmt(p.ssLibre), "area", 11, "middle");
+  /* planta baja */
+  const zp = M.zPB, zpT = zp + p.hPB;
+  s += wallSeg(a, tE, zp, zpT, [[zp + 0.0, zp + 2.2]]);
+  s += wallSeg(b - tE, tE, zp, zpT, [[zp, zp + 2.3]]);
+  s += rect(a, b, zpT, zpT + f, "slab");
+  s += text((a + b) / 2, zp + p.hPB / 2 + 0.2, "PLANTA BAJA", "lbl", 13, "middle");
+  s += text((a + b) / 2, zp + p.hPB / 2 - 0.3, fmt(M.Apb) + " m² computables", "area", 11, "middle");
+  /* planta primera */
+  const zq = M.zP1, zqT = zq + p.hP1;
+  s += wallSeg(a, tE, zq, zqT, [[zq + 0.9, zq + 2.2]]);
+  s += wallSeg(b1 - tE, tE, zq, zqT, [[zq + 0.9, zq + 2.2]]);
+  s += rect(a, b1, zqT, zqT + f, "slab");
+  s += rect(a, a + 0.2, zqT + f, zqT + f + 0.6, "slab"); s += rect(b1 - 0.2, b1, zqT + f, zqT + f + 0.6, "slab");
+  if (b - b1 > 0.05) s += line(b - 0.05, zpT + f, b - 0.05, zpT + f + 1.0, "door") + line(b1, zpT + f + 1.0, b - 0.05, zpT + f + 1.0, "door");
+  s += text((a + b1) / 2, zq + p.hP1 / 2 + 0.2, "PLANTA PRIMERA", "lbl", 13, "middle");
+  s += text((a + b1) / 2, zq + p.hP1 / 2 - 0.3, fmt(M.Ap1) + " m² computables", "area", 11, "middle");
+  /* líneas de referencia */
+  s += line(u0, p.ssLimite, u1, p.ssLimite, "lim");
+  s += text(u0 + 0.1, p.ssLimite + 0.12, `Límite semisótano ${sgn(p.ssLimite)}`, "bel", 10.5);
+  s += line(u0, p.alturaMax, u1, p.alturaMax, "limmax");
+  s += text(u0 + 0.1, p.alturaMax + 0.12, `Altura máxima ${fmt(p.alturaMax)}`, "area", 10.5);
+  s += line(0, z0 + 0.3, 0, M.zRoof + 0.6, "lvl") + text(0.1, z0 + 0.45, "Alineación", "area", 10);
+  /* cotas a la derecha */
+  const lv = [[0, "±0,00 rasante"], [M.ssFloor, sgn(M.ssFloor) + " suelo semisótano"], [M.ssTop, sgn(M.ssTop) + " planta baja"], [M.zP1, sgn(M.zP1) + " planta primera"], [M.zRoof, sgn(M.zRoof) + " cornisa"]];
+  const ux = u1;
+  lv.forEach(([z, t]) => { s += line(b1 > b ? b1 : b, z, ux + 0.2, z, "lvl"); s += `<polygon points="${X(ux)},${Y(z)} ${X(ux) - 5},${Y(z) - 7} ${X(ux) + 5},${Y(z) - 7}" class="acc"/>`; s += text(ux + 0.35, z - 0.08, t, "dimt", 11); });
+  /* cota altura total */
+  const ud = a - 0.9;
+  s += line(ud, 0, ud, M.zRoof, "dim") + line(ud - 0.15, 0, ud + 0.15, 0, "dim") + line(ud - 0.15, M.zRoof, ud + 0.15, M.zRoof, "dim");
+  s += `<text x="${X(ud) - 5}" y="${Y(M.zRoof / 2)}" font-size="11" class="dimt" text-anchor="middle" transform="rotate(-90 ${X(ud) - 5} ${Y(M.zRoof / 2)})">${fmt(M.zRoof)} a cornisa</text>`;
+  return s.replace(/class="glass-fill"/g, 'class="air"') + "</svg>";
+}
+
+/* agrupación: unidades con espejo alterno, núcleos de escalera y húmedos espalda con espalda */
+function unitsFor(M){
+  const p = M.p, W = M.W, rl = p.retLat;
+  const out = [];
+  if (p.tipo === "aislada"){
+    const pw = Math.max(p.frente, W + 2 * rl);
+    out.push({ mirror:p.espejo, L:false, R:false, pw, hx:(pw - W) / 2 });
+  } else if (p.tipo === "pareada"){
+    out.push({ mirror:true, L:false, R:true, pw:W + rl, hx:rl });
+    out.push({ mirror:false, L:true, R:false, pw:W + rl, hx:0 });
+  } else {
+    const n = p.nUnid;
+    for (let k = 0; k < n; k++){
+      const L = k > 0, R = k < n - 1;
+      out.push({ mirror:k % 2 === 0, L, R, pw:W + (L ? 0 : rl) + (R ? 0 : rl), hx:L ? 0 : rl });
+    }
+  }
+  return out;
+}
+function agrupSVG(M){
+  const p = M.p, units = unitsFor(M);
+  const list = []; let ox = 0;
+  const extraRects = { rects:[], lines:[], polys:[], texts:[], W:0, D:0 };
+  units.forEach((u, i) => {
+    const g = buildFloor(M, "pb", { medL:u.mirror ? u.R : u.L, medR:u.mirror ? u.L : u.R, mirror:u.mirror });
+    const hx = ox + u.hx, hy = M.setback;
+    extraRects.rects.push({ x:ox, y:0, w:u.pw, h:p.fondo, c:"garden" });
+    extraRects.rects.push({ x:ox, y:0, w:u.pw, h:p.fondo, c:"parcel" });
+    if (p.patio) extraRects.rects.push({ x:hx + p.tE, y:hy + M.Dpb, w:M.W - 2 * p.tE, h:p.patioF, c:"patio" });
+    if (p.garaje && M.rampLen > 0){
+      const gd = buildFloor(M, "ss", { medL:u.mirror ? u.R : u.L, medR:u.mirror ? u.L : u.R, mirror:u.mirror }).garageDoor;
+      if (gd){
+        const ra = hx + (gd.a + gd.b) / 2 - 1.5, y0 = hy - M.rampLen;
+        extraRects.rects.push({ x:ra, y:y0, w:3.0, h:M.rampLen, c:"ramp" });
+        extraRects.lines.push({ x1:ra, y1:y0 + p.meseta, x2:ra + 3, y2:y0 + p.meseta, c:"rampa" });
+        extraRects.polys.push({ pts:[[ra + 1.5, y0 + p.meseta + 0.4], [ra + 1.5, hy - 0.4]], c:"rampa" });
+        extraRects.polys.push({ pts:[[ra + 1.2, hy - 0.9], [ra + 1.5, hy - 0.4], [ra + 1.8, hy - 0.9]], c:"rampa" });
+      }
+    }
+    extraRects.texts.push({ x:ox + u.pw / 2, y:p.fondo - 1.0, t:"V" + (i + 1), c:"lbl", s:0.7 });
+    extraRects.texts.push({ x:ox + u.pw / 2, y:p.fondo - 1.9, t:fmt(u.pw) + " × " + fmt(p.fondo) + " m", c:"area", s:0.42 });
+    list.push({ g, ox:hx, oy:hy, skip:{ dim:true } });
+    ox += u.pw;
+  });
+  extraRects.rects.push({ x:-1, y:-6, w:ox + 2, h:6, c:"street" });
+  extraRects.texts.push({ x:ox / 2, y:-3.3, t:"VIAL PÚBLICO", c:"lbl", s:0.6 });
+  const frame = [-1.2, -6.2, ox + 1.2, p.fondo + 0.8];
+  const S = Math.max(5, Math.min(22, 900 / (frame[2] - frame[0])));
+  return { svg:geomSVG([{ g:extraRects }, ...list], frame, S), units, total:ox };
+}
+
+/* ------------------------------------------------------------------ DXF (R12, metros) */
+const LAYERS = { wall:["A-MUROS",7], med:["A-MEDIANERA",1], room:["A-ESTANCIAS",8], glass:["A-CARPINTERIA",5], door:["A-CARPINTERIA",5], swing:["A-PUERTAS",9], stair:["A-ESCALERA",3], arrow:["A-ESCALERA",3], dim:["A-COTAS",2], dimt:["A-COTAS",2], lbl:["A-TEXTOS",7], area:["A-TEXTOS",7], car:["A-MOBILIARIO",9], terr:["A-TERRAZA",4], patio:["A-EXTERIOR",30], open:null };
+function dxf(geoms){
+  const o = [];
+  const add = (...a) => o.push(...a.map(String));
+  const layerNames = [...new Set(Object.values(LAYERS).filter(Boolean).map(v => v[0]))];
+  add(0,"SECTION",2,"HEADER",9,"$ACADVER",1,"AC1009",9,"$INSUNITS",70,6,0,"ENDSEC");
+  add(0,"SECTION",2,"TABLES",0,"TABLE",2,"LAYER",70,layerNames.length);
+  layerNames.forEach(n => { const col = Object.values(LAYERS).find(v => v && v[0] === n)[1]; add(0,"LAYER",2,n,70,0,62,col,6,"CONTINUOUS"); });
+  add(0,"ENDTAB",0,"ENDSEC",0,"SECTION",2,"ENTITIES");
+  const line = (x1, y1, x2, y2, ly) => add(0,"LINE",8,ly,10,x1.toFixed(4),20,y1.toFixed(4),30,0,11,x2.toFixed(4),21,y2.toFixed(4),31,0);
+  geoms.forEach(({ g, ox, title }) => {
+    g.rects.forEach(r => { const L = LAYERS[r.c]; if (!L) return; const a = r.x + ox, b = r.y;
+      line(a, b, a + r.w, b, L[0]); line(a + r.w, b, a + r.w, b + r.h, L[0]); line(a + r.w, b + r.h, a, b + r.h, L[0]); line(a, b + r.h, a, b, L[0]); });
+    g.lines.forEach(l => { const L = LAYERS[l.c]; if (L) line(l.x1 + ox, l.y1, l.x2 + ox, l.y2, L[0]); });
+    g.polys.forEach(q => { const L = LAYERS[q.c]; if (!L) return; for (let i = 1; i < q.pts.length; i++) line(q.pts[i-1][0] + ox, q.pts[i-1][1], q.pts[i][0] + ox, q.pts[i][1], L[0]); });
+    g.texts.forEach(t => { const L = LAYERS[t.c] || ["A-TEXTOS",7]; const x = (t.x + ox).toFixed(4), y = t.y.toFixed(4);
+      add(0,"TEXT",8,L[0],10,x,20,y,30,0,40,(t.s * 0.8).toFixed(3),1,t.t.normalize("NFD").replace(/[̀-ͯ]/g, "").replace("²","2"),50,t.rot || 0,72,1,73,2,11,x,21,y,31,0); });
+    if (title) add(0,"TEXT",8,"A-TEXTOS",10,(ox + g.W / 2).toFixed(4),20,(-3).toFixed(4),30,0,40,0.4,1,title,72,1,73,2,11,(ox + g.W / 2).toFixed(4),21,(-3).toFixed(4),31,0);
+  });
+  add(0,"ENDSEC",0,"EOF");
+  return o.join("\r\n");
+}
+
+/* ------------------------------------------------------------------ comprobaciones */
+function checks(M, F){
+  const p = M.p, c = [];
+  const st = (ok, warn) => ok ? "ok" : warn ? "warn" : "fail";
+  const parcela = p.frente * p.fondo;
+  const add = (grp, label, val, lim, s, note) => c.push({ grp, label, val, lim, s, note });
+  add("Edificabilidad", "Superficie computable (PB + P1)", fmt(M.Apb + M.Ap1) + " m²", "objetivo " + fmt(p.edif) + " m²", "ok", "Construida sobre rasante: " + fmt(M.Apb) + " + " + fmt(M.Ap1) + " m².");
+  const emax = p.coef * parcela;
+  add("Edificabilidad", "Edificabilidad de parcela", fmt(M.Apb + M.Ap1) + " m²", "≤ " + fmt(emax) + " m² (" + fmt(p.coef) + " × " + fmt(parcela) + ")", st(M.Apb + M.Ap1 <= emax + 0.01), "");
+  add("Edificabilidad", "Semisótano no computable", "cara sup. forjado " + sgn(p.ssSobre), "≤ " + sgn(p.ssLimite) + " sobre rasante", st(p.ssSobre <= p.ssLimite + 1e-6), "Criterio habitual en ordenanzas: la planta no computa si su techo no supera la cota indicada sobre la rasante del terreno o acera. Verifica la definición exacta (cara superior o inferior, punto de medición) en tu PGOU.");
+  if (M.ssFloor > -0.0001) add("Edificabilidad", "Semisótano enterrado", "suelo " + sgn(M.ssFloor), "bajo rasante", "fail", "Con estos valores el semisótano no queda por debajo de la rasante.");
+  const ocup = M.W * M.Dpb / parcela * 100;
+  add("Ordenanza", "Ocupación en planta", fmt(ocup, 1) + " %", "≤ " + fmt(p.ocupMax, 0) + " %", st(ocup <= p.ocupMax + 0.01), "Semisótano bajo la huella de la planta baja.");
+  add("Ordenanza", "Altura a cornisa", fmt(M.zRoof) + " m", "≤ " + fmt(p.alturaMax) + " m · 2 plantas", st(M.zRoof <= p.alturaMax + 0.001), "Medida desde rasante a cara superior del último forjado. Pretiles de cubierta aparte.");
+  add("Ordenanza", "Fondo edificable", fmt(M.Dpb) + " m", "≤ " + fmt(p.fondoMax) + " m", st(M.Dpb <= p.fondoMax + 0.001), "");
+  const free = p.tipo === "aislada" ? 2 : p.tipo === "pareada" ? 1 : 0;
+  const reqF = M.W + free * p.retLat;
+  add("Ordenanza", "Frente de parcela", fmt(p.frente) + " m", "≥ " + fmt(reqF) + " m (" + p.tipo + ")", st(p.frente >= reqF - 0.001, p.tipo === "adosada"), p.tipo === "adosada" ? "Vivienda intermedia. Las cabeceras de hilera necesitan " + fmt(M.W + p.retLat) + " m." : "");
+  const rearNeed = Math.max(p.retFondo, p.patio ? p.patioF : 0);
+  const reqD = M.setback + M.Dpb + rearNeed;
+  add("Ordenanza", "Fondo de parcela", fmt(p.fondo) + " m", "≥ " + fmt(reqD) + " m", st(p.fondo >= reqD - 0.001), "Retranqueo a fachada aplicado " + fmt(M.setback) + " m" + (M.setback > p.retFrente + 0.001 ? " (ampliado para alojar la rampa)" : "") + " + fondo de vivienda + retranqueo trasero.");
+  if (p.garaje){
+    const g = F.ss;
+    add("Garaje", "Rampa de acceso", fmt(M.rampLen) + " m", "desnivel " + fmt(M.dh) + " m al " + p.pendRampa + " %", st(p.pendRampa <= 20, p.pendRampa <= 25), "Incluye meseta de " + fmt(p.meseta) + " m. Pendientes > 20 % suelen requerir justificación en la ordenanza de garajes.");
+    add("Garaje", "Plazas de aparcamiento", (g.plazas || 0) + " plaza(s)", "2,50 × 5,00 m por plaza", st((g.plazas || 0) >= 1), "Garaje libre " + fmt(g.garW || 0) + " × " + fmt(g.garD || 0) + " m. Para 2 plazas hace falta un ancho libre ≥ 5,00 m (fachada ≥ " + fmt(5 + M.Ws + p.tP + p.tE + p.tM + 0.05) + " m aprox.).");
+    add("Garaje", "Altura libre garaje", fmt(p.ssLibre) + " m", "≥ 2,20 m", st(p.ssLibre >= 2.2), "Puerta entre garaje y vivienda EI2 45-C5 con vestíbulo previo (CTE DB SI).");
+  }
+  add("Escalera", "Contrahuella", fmt(Math.max(M.c1, M.c2), 3) + " m", "≤ 0,200 m", st(Math.max(M.c1, M.c2) <= 0.2), M.n1 + " peldaños SS→PB, " + M.n2 + " peldaños PB→P1 (CTE DB SUA 1, uso restringido).");
+  add("Escalera", "Huella", fmt(p.huella, 3) + " m", "≥ 0,220 m", st(p.huella >= 0.22), "");
+  add("Escalera", "Ancho de tramo", fmt(p.ancho) + " m", "≥ 0,80 m", st(p.ancho >= 0.8), "Escalera en U de dos tramos, núcleo de " + fmt(M.Ws) + " × " + fmt(M.Ls) + " m.");
+  const mins = [["Salón-comedor", p.dorms === 4 ? 20 : 18], ["Cocina", 7], ["Dormitorio principal", 10], ["Dormitorio 2", 6], ["Dormitorio 3", 6], ["Dormitorio 4", 6], ["Baño", 3], ["Aseo", 1.5]];
+  const all = [...F.pb.rooms, ...F.p1.rooms];
+  mins.forEach(([n, a]) => { const r = all.find(x => x.name === n); if (!r) return;
+    const minSide = Math.min(r.w, r.h);
+    const sideOk = !/Dormitorio|Salón/.test(n) || minSide >= (n === "Salón-comedor" ? 3 : 2);
+    add("Habitabilidad", n, fmt(r.area) + " m² · lado " + fmt(minSide), "≥ " + fmt(a, 1) + " m²", st(r.area >= a && sideOk, r.area >= a * 0.85), /Dormitorio [234]/.test(n) ? "Individual ≥ 6 m²; como doble, ≥ 8 m² (" + (r.area >= 8 ? "cumple" : "no llega") + ")." : ""); });
+  add("Habitabilidad", "Crujías vivideras", "delantera " + fmt(M.front) + " · trasera " + fmt(M.rearP1) + " m", "≥ 2,50 m", st(M.front >= 2.5 && M.rearP1 >= 2.5, M.front >= 2.2 && M.rearP1 >= 2.2), "Fondo libre en P1 junto a fachada trasera.");
+  add("Agrupación", "Lindes laterales ciegos", "sin huecos", "apto para adosar", "ok", "Todas las estancias ventilan a fachada delantera o trasera. Baños interiores con extracción mecánica (CTE DB HS 3).");
+  add("Agrupación", "Medianera", "doble hoja independiente", "DB HR", "info", "Cada vivienda tiene su propia hoja de " + fmt(p.tM) + " m con junta y banda elástica. Permite construir por fases y cumplir el aislamiento acústico entre unidades.");
+  return c;
+}
+
+/* ------------------------------------------------------------------ interfaz */
+const $ = s => document.querySelector(s);
+let TAB = "plantas";
+try { TAB = localStorage.getItem(KEY + ":tab") || "plantas"; } catch(e) {}
+
+function buildPanel(){
+  const el = $("#panel"); let h = "";
+  GROUPS.forEach((G, gi) => {
+    h += `<details class="grp"${G.open ? " open" : ""}><summary>${G.t}</summary><div class="fields">`;
+    G.f.forEach(F => {
+      if (F.note){ h += `<p class="note">${F.note}</p>`; return; }
+      const vis = F.show ? ` data-show="${GROUPS.indexOf(G)}:${G.f.indexOf(F)}"` : "";
+      if (F.type === "seg"){
+        h += `<div class="f"${vis}>${F.label ? `<label>${F.label}</label>` : ""}<div class="seg" role="group">${F.opts.map(([v, t]) => `<button type="button" id="seg-${F.k}-${v}" data-k="${F.k}" data-v="${v}" aria-pressed="${String(P[F.k]) === String(v)}">${t}</button>`).join("")}</div></div>`;
+      } else if (F.type === "check"){
+        h += `<div class="f"${vis}><label class="chk"><input type="checkbox" id="in-${F.k}" data-k="${F.k}"${P[F.k] ? " checked" : ""}>${F.label}</label></div>`;
+      } else {
+        h += `<div class="f"${vis}><label for="in-${F.k}">${F.label}${F.sub ? `<small>${F.sub}</small>` : ""}</label><div class="num"><input type="number" id="in-${F.k}" data-k="${F.k}" min="${F.min}" max="${F.max}" step="${F.step}" value="${P[F.k]}"><span>${F.u}</span></div>${F.range ? `<input type="range" id="rg-${F.k}" data-k="${F.k}" aria-label="${F.label}" min="${F.min}" max="${F.max}" step="${F.step}" value="${P[F.k]}">` : ""}</div>`;
+      }
+    });
+    h += `</div></details>`;
+  });
+  h += `<div class="tools" style="margin-top:14px"><button class="btn" id="reset" type="button">Restablecer valores de ejemplo</button></div>`;
+  el.innerHTML = h;
+  el.addEventListener("input", e => {
+    const k = e.target.dataset.k; if (!k) return;
+    if (e.target.type === "checkbox") P[k] = e.target.checked;
+    else { const v = parseFloat(e.target.value); if (isNaN(v)) return; P[k] = v;
+      const other = e.target.type === "range" ? $("#in-" + k) : $("#rg-" + k); if (other) other.value = v; }
+    schedule();
+  });
+  el.addEventListener("click", e => {
+    const b = e.target.closest("button[data-k]");
+    if (b){ const k = b.dataset.k, v = b.dataset.v; P[k] = isNaN(+v) ? v : +v;
+      el.querySelectorAll(`button[data-k="${k}"]`).forEach(x => x.setAttribute("aria-pressed", String(x.dataset.v === v))); schedule(); }
+    if (e.target.id === "reset"){ P = Object.assign({}, DEF); buildPanel(); schedule(); }
+  });
+  updateVis();
+}
+function updateVis(){
+  document.querySelectorAll("[data-show]").forEach(n => { const [g, f] = n.dataset.show.split(":").map(Number); n.hidden = !GROUPS[g].f[f].show(P); });
+}
+let raf = 0;
+function schedule(){ cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { save(); updateVis(); render(); }); }
+
+const TABS = [["plantas","Plantas"],["seccion","Sección"],["agrupacion","Agrupación"],["superficies","Superficies"],["comprobaciones","Comprobaciones"],["memoria","Criterios"]];
+function floorsFor(M){
+  const L = P.tipo !== "aislada", R = P.tipo === "adosada";
+  const o = { medL:L, medR:R, mirror:P.espejo };
+  return { ss:buildFloor(M, "ss", o), pb:buildFloor(M, "pb", o), p1:buildFloor(M, "p1", o) };
+}
+let LAST = null;
+function render(){
+  const M = compute(P);
+  const errs = [];
+  const bW = P.W - (P.tipo === "aislada" ? P.tE : P.tM) - (P.tipo === "adosada" ? P.tM : P.tE) - M.Ws - P.Wd - P.tP;
+  if (bW < 1.5) errs.push(`El ancho de fachada no deja sitio a la crujía de baños (${fmt(bW)} m libres, mínimo 1,50 m). Aumenta el ancho de fachada o reduce el distribuidor o la escalera.`);
+  if (M.front < 1.8 || M.rearP1 < 1.8) errs.push(`El fondo resultante (${fmt(M.Dpb)} m) es demasiado corto para el núcleo de escalera de ${fmt(M.Ls)} m. Reduce el ancho de fachada, ajusta el reparto PB/P1 o mueve el núcleo.`);
+  if (P.dorms === 3 && bW < P.suite - 0.01) errs.push(`El baño principal (${fmt(P.suite)} m) no cabe en la crujía lateral de ${fmt(bW)} m.`);
+  $("#errors").innerHTML = errs.map(e => `<div class="err">${e}</div>`).join("");
+  const F = floorsFor(M);
+  const C = checks(M, F);
+  LAST = { M, F, C };
+  const nf = C.filter(c => c.s === "fail").length, nw = C.filter(c => c.s === "warn").length;
+  const util = f => f.rooms.reduce((a, r) => a + r.area, 0);
+  const uT = util(F.pb) + util(F.p1);
+  const stCls = nf ? "st-fail" : nw ? "st-warn" : "st-ok";
+  $("#kpis").innerHTML = `
+    <div class="kpi"><b>${fmt(M.Apb + M.Ap1)} m²</b><small>Computable PB+P1</small></div>
+    <div class="kpi below"><b>${fmt(M.W * M.Dpb)} m²</b><small>Semisótano · no computa</small></div>
+    <div class="kpi"><b>${fmt(uT + util(F.ss))} m²</b><small>Útil total</small></div>
+    <div class="kpi"><b>${fmt(M.W)} × ${fmt(M.Dpb)}</b><small>Huella (m)</small></div>
+    <div class="kpi"><b class="${stCls}">${nf ? nf + " no cumple" : nw ? nw + " revisar" : "Cumple"}</b><small>Comprobaciones</small></div>`;
+  $("#tabs").innerHTML = TABS.map(([k, t]) => `<button role="tab" id="tab-${k}" type="button" data-tab="${k}" aria-selected="${TAB === k}">${t}${k === "comprobaciones" && (nf || nw) ? `<span class="dot" style="background:var(${nf ? "--fail" : "--warn"})"></span>` : ""}</button>`).join("");
+  const v = $("#view");
+  if (TAB === "plantas") v.innerHTML = viewPlantas(M, F);
+  if (TAB === "seccion") v.innerHTML = viewSeccion(M);
+  if (TAB === "agrupacion") v.innerHTML = viewAgrup(M);
+  if (TAB === "superficies") v.innerHTML = viewSup(M, F);
+  if (TAB === "comprobaciones") v.innerHTML = viewChecks(C);
+  if (TAB === "memoria") v.innerHTML = viewMemoria(M);
+}
+
+function frameFor(M){ const ex = P.patio ? P.patioF : 0; return [-2.3, -2.4, M.W + 2.3, M.Dpb + ex + 0.5]; }
+function viewPlantas(M, F){
+  const fr = frameFor(M), S = 40;
+  const util = f => f.rooms.reduce((a, r) => a + r.area, 0);
+  const sh = (cls, title, g, constr, tag) => `<article class="sheet ${cls}"><header><h3>${title}</h3><span>${fmt(constr)} m² const. · ${fmt(util(g))} m² útil<br>${tag}</span></header><div class="svgbox">${geomSVG([{ g }], fr, S)}</div></article>`;
+  return toolsBar() + `<div class="sheets">
+    ${sh("ss", "Semisótano", F.ss, M.W * M.Dpb, "cota " + sgn(M.ssFloor) + " · no computa")}
+    ${sh("", "Planta baja", F.pb, M.Apb, "cota " + sgn(M.zPB) + " · computa")}
+    ${sh("", "Planta primera", F.p1, M.Ap1, "cota " + sgn(M.zP1) + " · computa")}
+  </div><p class="note" style="margin-top:10px">Cotas en metros. Calle abajo. Rayado: muro de medianera. Las superficies útiles son interiores a muros y tabiques; la escalera se cuenta aparte.</p>`;
+}
+function toolsBar(){
+  return `<div class="tools">
+    <button class="btn pri" type="button" data-act="dxf">Descargar DXF (3 plantas)</button>
+    <button class="btn" type="button" data-act="svg">Descargar SVG</button>
+    <button class="btn" type="button" data-act="json">Exportar parámetros</button>
+    <label class="btn" for="imp">Importar parámetros<input type="file" id="imp" accept=".json,application/json" hidden></label>
+    <button class="btn" type="button" data-act="copydxf">Copiar DXF</button>
+    <span class="toast" id="toast" aria-live="polite"></span>
+  </div><div id="outbox"></div>`;
+}
+function viewSeccion(M){
+  return `<article class="sheet"><header><h3>Sección longitudinal</h3><span>rasante horizontal ±0,00 · semisótano a ${sgn(M.ssFloor)}</span></header><div class="svgbox wide">${sectionSVG(M)}</div></article>
+  <div class="cols">
+    <div class="prose"><h4>Cotas</h4><ul>
+      <li>Suelo semisótano: <b>${sgn(M.ssFloor)}</b> (${fmt(M.dh)} m bajo rasante)</li>
+      <li>Cara superior forjado de semisótano / suelo PB: <b>${sgn(M.ssTop)}</b> · límite ${sgn(P.ssLimite)}</li>
+      <li>Planta primera: <b>${sgn(M.zP1)}</b> · cornisa <b>${sgn(M.zRoof)}</b></li>
+      <li>Acceso peatonal a PB: ${Math.ceil(M.ssTop / 0.175 - 1e-9)} peldaños exteriores o rampa en el retranqueo</li>
+    </ul></div>
+    <div class="prose"><h4>Escalera</h4><ul>
+      <li>SS → PB: ${M.n1} peldaños de ${fmt(M.c1, 3)} m</li>
+      <li>PB → P1: ${M.n2} peldaños de ${fmt(M.c2, 3)} m</li>
+      <li>Huella ${fmt(P.huella, 3)} m · ancho ${fmt(P.ancho)} m · núcleo ${fmt(M.Ws)} × ${fmt(M.Ls)} m</li>
+    </ul></div>
+  </div>`;
+}
+function viewAgrup(M){
+  const A = agrupSVG(M);
+  const label = { aislada:"Vivienda aislada", pareada:"Pareadas (2 viviendas en espejo)", adosada:`Hilera de ${P.nUnid} viviendas adosadas` }[P.tipo];
+  return `<article class="sheet"><header><h3>${label}</h3><span>frente total ${fmt(A.total)} m · retranqueo a fachada ${fmt(M.setback)} m</span></header><div class="svgbox wide">${A.svg}</div></article>
+  <div class="cols"><div class="prose"><h4>Cómo se agrupa</h4><ul>
+    <li>Las unidades alternan en espejo: las escaleras quedan espalda con espalda en una medianera y los baños en la siguiente, de modo que las bajantes y las zonas ruidosas coinciden.</li>
+    <li>Las parcelas intermedias miden ${fmt(M.W)} m; las de cabecera, ${fmt(M.W + P.retLat)} m (retranqueo lateral ${fmt(P.retLat)} m).</li>
+    <li>${P.garaje ? `Cada vivienda baja al semisótano por su propia rampa de ${fmt(M.rampLen)} m dentro del retranqueo delantero.` : "Sin garaje en semisótano: el retranqueo delantero queda como jardín o aparcamiento en superficie."}</li>
+  </ul></div>
+  <div class="prose"><h4>Parcelas</h4><ul>${A.units.map((u, i) => `<li>V${i + 1}: ${fmt(u.pw)} × ${fmt(P.fondo)} m = ${fmt(u.pw * P.fondo)} m² · ${u.L && u.R ? "dos medianeras" : u.L || u.R ? "una medianera" : "exenta"}${u.mirror ? " · espejo" : ""}</li>`).join("")}</ul></div></div>`;
+}
+function viewSup(M, F){
+  const util = f => f.rooms.reduce((a, r) => a + r.area, 0);
+  const rows = (title, f, constr, cls, comp) => `<tr class="floor ${cls}"><td>${title}</td><td class="n">${comp ? "computa" : "no computa"}</td><td class="n">${fmt(constr)}</td></tr>` +
+    f.rooms.map(r => `<tr><td>${r.name}</td><td class="n">${fmt(r.w)} × ${fmt(r.h)}</td><td class="n">${fmt(r.area)}</td></tr>`).join("") +
+    `<tr class="tot"><td>Útil ${title.toLowerCase()}</td><td></td><td class="n">${fmt(util(f))}</td></tr>`;
+  const uC = util(F.pb) + util(F.p1), uS = util(F.ss);
+  return `<div class="tbl"><table><thead><tr><th>Estancia</th><th class="n">Dimensiones (m)</th><th class="n">Superficie (m²)</th></tr></thead><tbody>
+    ${rows("Semisótano", F.ss, M.W * M.Dpb, "ss", false)}
+    ${rows("Planta baja", F.pb, M.Apb, "", true)}
+    ${rows("Planta primera", F.p1, M.Ap1, "", true)}
+  </tbody></table></div>
+  <div class="tbl" style="margin-top:14px"><table><thead><tr><th>Resumen</th><th class="n">Construida</th><th class="n">Útil</th></tr></thead><tbody>
+    <tr><td>Sobre rasante (computable)</td><td class="n">${fmt(M.Apb + M.Ap1)}</td><td class="n">${fmt(uC)}</td></tr>
+    <tr><td>Semisótano (no computable)</td><td class="n">${fmt(M.W * M.Dpb)}</td><td class="n">${fmt(uS)}</td></tr>
+    ${M.Dpb - M.Dp1 > 0.05 ? `<tr><td>Terraza descubierta en P1</td><td class="n">${fmt(M.W * (M.Dpb - M.Dp1))}</td><td class="n">—</td></tr>` : ""}
+    <tr class="tot"><td>Total vivienda</td><td class="n">${fmt(M.Apb + M.Ap1 + M.W * M.Dpb)}</td><td class="n">${fmt(uC + uS)}</td></tr>
+    <tr><td>Ratio útil / construida sobre rasante</td><td class="n" colspan="2">${fmt(uC / (M.Apb + M.Ap1) * 100, 1)} %</td></tr>
+  </tbody></table></div>`;
+}
+function viewChecks(C){
+  let h = `<div class="tbl"><table><thead><tr><th>Comprobación</th><th>Proyecto</th><th>Requisito</th><th>Estado</th></tr></thead><tbody>`;
+  let grp = "";
+  const lbl = { ok:"Cumple", warn:"Revisar", fail:"No cumple", info:"Info" };
+  C.forEach(c => {
+    if (c.grp !== grp){ grp = c.grp; h += `<tr class="floor"><td colspan="4">${grp}</td></tr>`; }
+    h += `<tr><td>${c.label}${c.note ? `<br><small class="note">${c.note}</small>` : ""}</td><td class="n" style="text-align:left">${c.val}</td><td>${c.lim}</td><td><span class="pill ${c.s}">${lbl[c.s]}</span></td></tr>`;
+  });
+  return h + `</tbody></table></div><p class="note" style="margin-top:10px">Valores orientativos de CTE y de ordenanzas tipo. Los mínimos de habitabilidad cambian según la comunidad autónoma y el municipio: ajusta los parámetros de la ordenanza a tu PGOU.</p>`;
+}
+function viewMemoria(M){
+  return `<div class="cols" style="margin-top:0">
+  <div class="prose"><h4>Esquema de la vivienda</h4>
+    <p>Planta en tres crujías longitudinales y tres bandas en profundidad:</p>
+    <ul>
+      <li><b>Crujía de escalera</b> (${fmt(M.Ws)} m) junto a la medianera, con escalera en U que conecta las tres plantas en la misma vertical.</li>
+      <li><b>Crujía de distribuidor</b> (${fmt(P.Wd)} m): todas las piezas abren a él, por lo que no hay pasillos.</li>
+      <li><b>Crujía húmeda</b> junto a la otra medianera: aseo, lavadero y baño apilados con una sola bajante.</li>
+      <li>Bandas: estancias a calle (${fmt(M.front)} m), núcleo (${fmt(M.Ls)} m) y estancias a jardín (${fmt(M.rear)} m).</li>
+    </ul></div>
+  <div class="prose"><h4>Por qué se puede adosar o parear</h4><ul>
+    <li>Ninguna estancia necesita hueco en fachada lateral: luz y ventilación entran solo por fachadas delantera y trasera.</li>
+    <li>El mismo módulo sirve como aislada, pareada o adosada; cambian solo los muros laterales (fachada de ${fmt(P.tE)} m o medianera de ${fmt(P.tM)} m).</li>
+    <li>La planta en espejo coloca escaleras y baños de viviendas vecinas espalda con espalda.</li>
+    <li>Cada vivienda tiene su propio muro de medianera, así que la segunda casa se puede construir más tarde sin tocar la primera.</li>
+  </ul></div>
+  <div class="prose"><h4>Semisótano sin edificabilidad</h4><ul>
+    <li>El forjado de techo queda a ${sgn(P.ssSobre)} sobre rasante, dentro del límite de ${sgn(P.ssLimite)}.</li>
+    <li>Usos no residenciales: garaje, trastero, instalaciones, lavandería y sala polivalente. Un uso de estancia habitable puede hacer que la planta compute en algunos municipios.</li>
+    <li>${P.patio ? `El patio inglés de ${fmt(P.patioF)} m da luz y ventilación natural a la banda trasera.` : "Sin patio inglés: la banda trasera ventila de forma mecánica."}</li>
+    <li>Muros de sótano y solera con impermeabilización y drenaje según CTE DB HS 1.</li>
+  </ul></div>
+  <div class="prose"><h4>Exportación</h4>
+    <p>El DXF (R12, unidades en metros) incluye las tres plantas en fila con capas separadas: muros, medianera, carpintería, puertas, escalera, cotas y textos. Sirve como base de trabajo en AutoCAD, BricsCAD, ArchiCAD o Revit.</p>
+    <p>Los parámetros se guardan en este navegador y se pueden exportar a JSON para retomar o compartir una variante.</p>
+  </div></div>`;
+}
+
+/* exportación */
+function dxfAll(){
+  const { M, F } = LAST, gap = 6;
+  return dxf([{ g:F.ss, ox:0, title:"SEMISOTANO" }, { g:F.pb, ox:M.W + gap, title:"PLANTA BAJA" }, { g:F.p1, ox:2 * (M.W + gap), title:"PLANTA PRIMERA" }]);
+}
+const SVG_STYLE = `<style>.wall,.slab{fill:#262c30}.room,.open,.air{fill:#fff}.hatchline{stroke:#1e6c68}.terr{fill:#d6e7e4;stroke:#1e6c68;stroke-dasharray:4 3}.patio,.ramp{fill:#f1e5cc;stroke:#9a6b12}.parcel{fill:none;stroke:#5b6569;stroke-dasharray:6 4}.street{fill:#ddd}.garden{fill:#eef5f3}.car{fill:none;stroke:#888;stroke-dasharray:3 2}.glass{stroke:#4f8fb8;fill:none}.door,.stair{stroke:#1d2327;fill:none}.swing{stroke:#888;fill:none;stroke-dasharray:2 2}.arrow{stroke:#1e6c68;fill:none}.dim,.lvl{stroke:#5b6569;fill:none}.rampa,.lim{stroke:#9a6b12;fill:none}.limmax{stroke:#b3261e;fill:none;stroke-dasharray:7 4}.ground{stroke:#1d2327;fill:none}.soil{fill:#dcd5c3}text{font-family:Arial,sans-serif;fill:#1d2327}.area,.dimt{fill:#5b6569}.bel{fill:#9a6b12}.acc{fill:#1e6c68}</style>`;
+function download(name, text, type){
+  try {
+    const blob = new Blob([text], { type });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    toast("Descarga iniciada: " + name + ". Si no aparece, usa «Copiar DXF».");
+  } catch(e){ toast("No se pudo descargar. Usa «Copiar DXF»."); }
+}
+function toast(t){ const el = $("#toast"); if (el){ el.textContent = t; clearTimeout(toast.t); toast.t = setTimeout(() => { el.textContent = ""; }, 5000); } }
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-tab]");
+  if (t){ TAB = t.dataset.tab; try { localStorage.setItem(KEY + ":tab", TAB); } catch(_) {} render(); return; }
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  const act = b.dataset.act;
+  if (act === "dxf") download("vivienda-semisotano.dxf", dxfAll(), "application/dxf");
+  if (act === "svg"){
+    const svgs = [...document.querySelectorAll("#view .svgbox svg")];
+    const s = svgs.map(x => x.outerHTML.replace(/fill="url\(#h\d+\)"/g, 'fill="#1e6c68" fill-opacity="0.35"').replace(/^<svg /, "<svg " + (/xmlns=/.test(x.outerHTML) ? "" : 'xmlns="http://www.w3.org/2000/svg" ')).replace(/>/, ">" + SVG_STYLE));
+    download("vivienda-semisotano-" + TAB + ".svg", s[0] || "", "image/svg+xml");
+  }
+  if (act === "json") download("vivienda-semisotano.json", JSON.stringify(P, null, 2), "application/json");
+  if (act === "copydxf"){
+    const txt = dxfAll();
+    const fallback = () => { $("#outbox").innerHTML = `<p class="note">Selecciona todo el texto, cópialo y guárdalo como <b>vivienda.dxf</b>.</p><textarea class="out" id="dxfout" readonly></textarea>`; const ta = $("#dxfout"); ta.value = txt; ta.focus(); ta.select(); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(() => toast("DXF copiado al portapapeles. Pégalo en un archivo .dxf."), fallback);
+    else fallback();
+  }
+});
+document.addEventListener("change", e => {
+  if (e.target.id !== "imp" || !e.target.files[0]) return;
+  const r = new FileReader();
+  r.onload = () => { try { const o = JSON.parse(r.result); P = Object.assign({}, DEF, o); save(); buildPanel(); render(); toast("Parámetros importados."); } catch(err){ toast("El archivo no es un JSON de parámetros válido."); } };
+  r.readAsText(e.target.files[0]);
+});
+
+buildPanel();
+render();
+})();
+</script>
+</body>
+</html>
