@@ -855,12 +855,32 @@ function dxfAll(){
   return dxf([{ g:F.ss, ox:0, title:"SEMISOTANO" }, { g:F.pb, ox:M.W + gap, title:"PLANTA BAJA" }, { g:F.p1, ox:2 * (M.W + gap), title:"PLANTA PRIMERA" }]);
 }
 const SVG_STYLE = `<style>.wall,.slab{fill:#262c30}.room,.open,.air{fill:#fff}.hatchline{stroke:#1e6c68}.terr{fill:#d6e7e4;stroke:#1e6c68;stroke-dasharray:4 3}.patio,.ramp{fill:#f1e5cc;stroke:#9a6b12}.parcel{fill:none;stroke:#5b6569;stroke-dasharray:6 4}.street{fill:#ddd}.garden{fill:#eef5f3}.car{fill:none;stroke:#888;stroke-dasharray:3 2}.glass{stroke:#4f8fb8;fill:none}.door,.stair{stroke:#1d2327;fill:none}.swing{stroke:#888;fill:none;stroke-dasharray:2 2}.arrow{stroke:#1e6c68;fill:none}.dim,.lvl{stroke:#5b6569;fill:none}.rampa,.lim{stroke:#9a6b12;fill:none}.limmax{stroke:#b3261e;fill:none;stroke-dasharray:7 4}.ground{stroke:#1d2327;fill:none}.soil{fill:#dcd5c3}text{font-family:Arial,sans-serif;fill:#1d2327}.area,.dimt{fill:#5b6569}.bel{fill:#9a6b12}.acc{fill:#1e6c68}</style>`;
-function download(name, text, type){
+/* ZIP sin compresión (para entregar el DXF donde solo se admiten ciertos formatos) */
+function zipStore(name, text){
+  const data = new TextEncoder().encode(text), fn = new TextEncoder().encode(name);
+  let c = ~0; for (let i = 0; i < data.length; i++){ c ^= data[i]; for (let k = 0; k < 8; k++) c = (c >>> 1) ^ (0xEDB88320 & -(c & 1)); } c = ~c >>> 0;
+  const lh = new DataView(new ArrayBuffer(30)), ch = new DataView(new ArrayBuffer(46)), ed = new DataView(new ArrayBuffer(22));
+  [[0,0x04034b50,4],[4,20,2],[8,0,2],[14,c,4],[18,data.length,4],[22,data.length,4],[26,fn.length,2]].forEach(([o,v,n]) => n === 4 ? lh.setUint32(o, v, true) : lh.setUint16(o, v, true));
+  [[0,0x02014b50,4],[4,20,2],[6,20,2],[16,c,4],[20,data.length,4],[24,data.length,4],[28,fn.length,2],[42,0,4]].forEach(([o,v,n]) => n === 4 ? ch.setUint32(o, v, true) : ch.setUint16(o, v, true));
+  const cdOff = 30 + fn.length + data.length;
+  [[0,0x06054b50,4],[8,1,2],[10,1,2],[12,46 + fn.length,4],[16,cdOff,4]].forEach(([o,v,n]) => n === 4 ? ed.setUint32(o, v, true) : ed.setUint16(o, v, true));
+  return new Blob([lh.buffer, fn, data, ch.buffer, fn, ed.buffer]);
+}
+let DL = null;
+if (window.claude && window.claude.use) window.claude.use("downloads").then(d => { DL = d; }).catch(() => {});
+async function download(name, text, type){
+  if (DL){
+    let filename = name, data = text;
+    if (/\.dxf$/.test(name)){ filename = name.replace(/\.dxf$/, ".zip"); data = zipStore(name, text); }
+    try { await DL.save({ filename, data }); toast("Archivo guardado: " + filename + (filename !== name ? " (contiene " + name + ")" : "")); }
+    catch(e){ toast(e && e.code === "declined" ? "Descarga cancelada." : "No se pudo guardar. Usa «Copiar DXF»."); }
+    return;
+  }
   try {
     const blob = new Blob([text], { type });
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
     document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-    toast("Descarga iniciada: " + name + ". Si no aparece, usa «Copiar DXF».");
+    toast("Descarga iniciada: " + name + ".");
   } catch(e){ toast("No se pudo descargar. Usa «Copiar DXF»."); }
 }
 function toast(t){ const el = $("#toast"); if (el){ el.textContent = t; clearTimeout(toast.t); toast.t = setTimeout(() => { el.textContent = ""; }, 5000); } }
