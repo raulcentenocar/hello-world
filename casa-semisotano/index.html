@@ -147,6 +147,11 @@ tr.tot td{font-weight:600;border-top:1px solid var(--ink)}
 .prose ul{margin:0;padding-left:18px;display:grid;gap:4px}
 .prose p{margin:0 0 6px;max-width:68ch}
 .err{background:var(--sheet);border:1px solid var(--fail);color:var(--fail);padding:10px 14px;margin-bottom:12px}
+.progwrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;align-items:start}
+.progplans{display:grid;gap:14px;min-width:0}
+@media (max-width:1100px){.progwrap{grid-template-columns:minmax(0,1fr)}}
+.sel{width:100%;min-width:150px;border:1px solid var(--rule);background:var(--paper);border-radius:3px;padding:5px 6px;font-size:13px}
+.num input:disabled{opacity:.45}
 textarea.out{width:100%;height:140px;font-family:var(--f-mono);font-size:11px;background:var(--paper);color:var(--ink);border:1px solid var(--rule);margin-top:8px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -177,17 +182,46 @@ textarea.out{width:100%;height:140px;font-family:var(--f-mono);font-size:11px;ba
 "use strict";
 
 /* ------------------------------------------------------------------ parámetros */
+const CAT = {
+  "Vestíbulo":{ min:2.5, nowin:1 }, "Cocina":{ min:7 }, "Cocina-comedor":{ min:12, liv:1 },
+  "Salón-comedor":{ min:18, liv:1 }, "Salón":{ min:14, liv:1 }, "Comedor":{ min:8, liv:1 }, "Estudio":{ min:6 },
+  "Dormitorio principal":{ min:10, dorm:1 }, "Dormitorio doble":{ min:8, dorm:1 }, "Dormitorio individual":{ min:6, dorm:1 },
+  "Baño":{ min:3, bath:1 }, "Aseo":{ min:1.5, bath:1 }, "Baño en suite":{ min:3, bath:1, anexo:"dorm" }, "Vestidor":{ min:2, anexo:"dorm", nowin:1 },
+  "Despensa":{ min:1, anexo:"cocina", nowin:1 }, "Lavadero":{ min:2 }, "Lavadero · despensa":{ min:2.5 }, "Armarios":{ nowin:1 },
+  "Trastero":{ nowin:1 }, "Bodega":{ nowin:1 }, "Sala polivalente":{}, "Gimnasio":{}, "Cuarto de juegos":{},
+  "Instalaciones":{ nowin:1 }, "Instalaciones · lavandería":{}
+};
+const OPTS = {
+  res:["Vestíbulo","Cocina","Cocina-comedor","Salón-comedor","Salón","Comedor","Estudio","Dormitorio principal","Dormitorio doble","Dormitorio individual","Baño","Aseo","Baño en suite","Vestidor","Despensa","Lavadero","Lavadero · despensa","Armarios"],
+  ss:["Trastero","Bodega","Sala polivalente","Gimnasio","Cuarto de juegos","Instalaciones","Instalaciones · lavandería","Lavadero","Aseo","Despensa","Armarios"]
+};
+const ZONES = [["calle","A calle"],["nucleo","Núcleo interior"],["jardin","A jardín"]];
+const PROG_DEF = {
+  ss:{ calle:[{ t:"Trastero", a:6 }, { t:"Bodega", a:10 }], nucleo:[{ t:"Instalaciones", a:4 }, { t:"", a:3 }], jardin:[{ t:"Sala polivalente", a:9 }, { t:"Instalaciones · lavandería", a:11 }] },
+  pb:{ calle:[{ t:"Vestíbulo", a:7.5 }, { t:"Cocina", a:10 }], nucleo:[{ t:"Aseo", a:3.5 }, { t:"Lavadero · despensa", a:3.5 }], jardin:[{ t:"Salón-comedor", a:22 }, { t:"", a:6 }] },
+  p1:{ calle:[{ t:"Dormitorio doble", a:8 }, { t:"Dormitorio doble", a:9.5 }], nucleo:[{ t:"Baño", a:6 }, { t:"", a:3 }], jardin:[{ t:"Dormitorio principal", a:13 }, { t:"Baño en suite", a:5 }] }
+};
+const clone = o => JSON.parse(JSON.stringify(o));
+function normProg(pr){
+  const out = clone(PROG_DEF);
+  if (pr && typeof pr === "object") for (const lv in out) for (const z in out[lv]) for (let i = 0; i < 2; i++){
+    const q = pr[lv] && pr[lv][z] && pr[lv][z][i];
+    if (q && typeof q.t === "string" && (q.t === "" || CAT[q.t]) && isFinite(+q.a)) out[lv][z][i] = { t:q.t, a:Math.max(0, +q.a) };
+  }
+  return out;
+}
 const DEF = {
   tipo:"pareada", espejo:false, nUnid:4,
-  edif:150, pctPB:50, W:7.00, dorms:3, posNucleo:45, Wd:1.90, suite:1.80,
+  edif:150, modo:"ajustar", p1Alineada:true, W:7.00, Wd:1.90,
   ssSobre:1.00, ssLimite:1.00, ssLibre:2.40, garaje:true, pendRampa:20, meseta:3.00, patio:true, patioF:1.50,
   hPB:2.70, hP1:2.60, forj:0.30, huella:0.27, cmax:0.185, ancho:0.90, ojo:0.10,
   frente:10.00, fondo:28.00, coef:0.60, ocupMax:50, alturaMax:7.50, fondoMax:15.00, retFrente:5.00, retFondo:3.00, retLat:3.00,
-  tE:0.30, tM:0.25, tP:0.10
+  tE:0.30, tM:0.25, tP:0.10, prog:clone(PROG_DEF)
 };
 const KEY = "vivienda-semisotano-150";
 let P = Object.assign({}, DEF);
-try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s) P = Object.assign({}, DEF, s); } catch(e) {}
+P.prog = clone(PROG_DEF);
+try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s) P = Object.assign({}, DEF, s, { prog:normProg(s.prog) }); } catch(e) {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(P)); } catch(e) {} };
 
 const GROUPS = [
@@ -198,13 +232,13 @@ const GROUPS = [
     { note:"La vivienda tipo es la misma en los tres casos: solo cambia el tipo de muro lateral (fachada o medianera)." }
   ]},
   { t:"Edificabilidad y volumen", open:true, f:[
-    { k:"edif", label:"Superficie computable", sub:"PB + P1, construida", u:"m²", min:80, max:300, step:1, range:true },
-    { k:"pctPB", label:"Reparto en planta baja", sub:"El resto va a planta primera", u:"%", min:50, max:70, step:1, range:true },
+    { k:"edif", label:"Superficie objetivo", sub:"Computable PB + P1, construida", u:"m²", min:80, max:300, step:1, range:true },
+    { k:"modo", type:"seg", label:"Dimensionado", opts:[["ajustar","Ajustar al objetivo"],["programa","Según programa"]] },
+    { note:"Ajustar al objetivo escala todas las estancias para llegar exactamente a la superficie objetivo. Según programa respeta tus superficies y calcula lo que ocupa la casa." },
+    { k:"p1Alineada", type:"check", label:"Planta primera alineada con la baja (sin terraza)" },
     { k:"W", label:"Ancho de fachada", sub:"Módulo de la vivienda", u:"m", min:6.2, max:12, step:0.05, range:true },
-    { k:"dorms", type:"seg", label:"Dormitorios", opts:[[3,"3 dormitorios"],[4,"4 dormitorios"]] },
-    { k:"posNucleo", label:"Posición del núcleo", sub:"% del fondo libre hacia la calle", u:"%", min:30, max:65, step:1, range:true },
     { k:"Wd", label:"Ancho del distribuidor", u:"m", min:1.6, max:2.6, step:0.05 },
-    { k:"suite", label:"Ancho baño principal", sub:"Solo con 3 dormitorios", u:"m", min:1.5, max:2.6, step:0.05 }
+    { note:"Las estancias y sus superficies se eligen en la pestaña Programa." }
   ]},
   { t:"Semisótano", open:true, f:[
     { k:"ssSobre", label:"Cara sup. forjado sobre rasante", sub:"Cota de la planta baja", u:"m", min:0, max:2, step:0.05 },
@@ -250,37 +284,81 @@ const ceil05 = v => Math.ceil(v / 0.05 - 1e-9) * 0.05;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
 
 /* ------------------------------------------------------------------ modelo */
+function colX(p, W, medL, medR){
+  const x0 = medL ? p.tM : p.tE, x1 = W - (medR ? p.tM : p.tE);
+  const Ws = 2 * p.ancho + p.ojo, xA1 = x0 + Ws, xD1 = xA1 + p.Wd;
+  return { x0, x1, xA1, xD1, xB0:xD1 + p.tP, Ws };
+}
+function isAnexo(s, host){
+  const c = CAT[s.t]; if (!c || !c.anexo || !host || !host.t) return false;
+  const h = CAT[host.t] || {};
+  return c.anexo === "dorm" ? !!h.dorm : /^Cocina/.test(host.t);
+}
+/* reparte una banda (a calle o a jardín) entre 1 o 2 estancias; todas deben abrir al distribuidor salvo los anexos */
+function splitBand(slots, X, zone, tP){
+  const { x0, x1, xA1, xD1 } = X;
+  const rs = slots.map((q, i) => Object.assign({}, q, { i })).filter(q => q.t);
+  if (!rs.length) return [];
+  if (rs.length === 1) return [Object.assign(rs[0], { xa:x0, xb:x1, anexo:false })];
+  const [Lr, Rr] = rs;
+  const dLo = zone === "jardin" ? x0 : xA1;
+  const anL = isAnexo(Lr, Rr), anR = isAnexo(Rr, Lr);
+  const aL = Math.max(Lr.a, 0.5), aR = Math.max(Rr.a, 0.5);
+  let xm = x0 + (x1 - x0 - tP) * aL / (aL + aR);
+  const lo = Math.max(x0 + 1.2, anL ? 0 : dLo + 0.8);
+  const hi = Math.min(x1 - tP - 1.2, anR ? Infinity : xD1 - tP - 0.8);
+  xm = Math.min(Math.max(xm, lo), Math.max(hi, lo));
+  return [Object.assign(Lr, { xa:x0, xb:xm, anexo:anL }), Object.assign(Rr, { xa:xm + tP, xb:x1, anexo:anR })];
+}
+function roomNames(prog){
+  let n = 2; const out = {};
+  for (const lv of ["ss","pb","p1"]){ out[lv] = {};
+    for (const z of ["calle","nucleo","jardin"]) out[lv][z] = prog[lv][z].map(q => !q.t ? "" : (CAT[q.t].dorm && q.t !== "Dormitorio principal") ? "Dormitorio " + (n++) : q.t); }
+  return out;
+}
 function compute(p){
-  const f = p.forj;
-  const Apb = p.edif * p.pctPB / 100, Ap1 = p.edif - Apb;
-  const W = p.W, Dpb = Apb / W, Dp1 = Ap1 / W;
+  const f = p.forj, W = p.W, tE = p.tE, tP = p.tP;
+  const X = colX(p, W, p.tipo !== "aislada", p.tipo === "adosada");
   const rise1 = p.ssLibre + f, rise2 = p.hPB + f;
   const n1 = Math.ceil(rise1 / p.cmax - 1e-9), n2 = Math.ceil(rise2 / p.cmax - 1e-9);
   const r1 = Math.ceil(Math.max(n1, n2) / 2);
   const treads = r1 - 1;
   const Ls = ceil05(treads * p.huella + 2 * p.ancho);
-  const Ws = 2 * p.ancho + p.ojo;
-  const avail = Dpb - 2 * p.tE - 2 * p.tP - Ls;
-  const front = avail * p.posNucleo / 100, rear = avail - front;
-  const rearP1 = rear - (Dpb - Dp1);
+  const Ws = X.Ws;
+  const prog = p.prog;
+  const dep = (lv, z) => { const parts = splitBand(prog[lv][z], X, z, tP); return parts.length ? Math.max(...parts.map(r => r.a / (r.xb - r.xa))) : 0; };
+  const fReq = Math.max(dep("pb","calle"), dep("p1","calle"), 1.2);
+  const rPB = dep("pb","jardin"), rP1 = dep("p1","jardin");
+  let Fd = fReq, RdPB = Math.max(rPB, rP1, 1.2), RdP1 = p.p1Alineada ? RdPB : Math.max(rP1, 1.2);
+  const K = 2 * tE + 2 * tP + Ls;
+  const reqTotal = W * (2 * K + 2 * Fd + RdPB + RdP1);
+  let s = 1;
+  if (p.modo === "ajustar") s = Math.max(0.3, (p.edif / W - 2 * K) / (2 * Fd + RdPB + RdP1));
+  Fd *= s; RdPB *= s; RdP1 *= s;
+  let garMin = false;
+  if (p.garaje && Fd + tP + Ls < 5.0){ Fd = 5.0 - Ls - tP; garMin = true; }
+  const Dpb = K + Fd + RdPB, Dp1 = K + Fd + RdP1;
+  const Apb = W * Dpb, Ap1 = W * Dp1;
   const ssTop = p.ssSobre, ssFloor = p.ssSobre - f - p.ssLibre;
   const dh = Math.max(0, -ssFloor);
   const rampLen = p.garaje ? dh / (p.pendRampa / 100) + p.meseta : 0;
   const setback = Math.max(p.retFrente, rampLen);
   const zPB = ssTop, zP1 = zPB + p.hPB + f, zRoof = zP1 + p.hP1 + f;
-  return { p, W, Apb, Ap1, Dpb, Dp1, Ws, Ls, treads, n1, n2, c1:rise1/n1, c2:rise2/n2, rise1, rise2,
-           front, rear, rearP1, ssTop, ssFloor, dh, rampLen, setback, zPB, zP1, zRoof };
+  return { p, W, X, Apb, Ap1, Dpb, Dp1, Ws, Ls, treads, n1, n2, c1:rise1/n1, c2:rise2/n2, rise1, rise2,
+           front:Fd, rear:RdPB, rearP1:RdP1, s, reqTotal, garMin, prog, names:roomNames(prog),
+           ssTop, ssFloor, dh, rampLen, setback, zPB, zP1, zRoof };
 }
 
 /* geometría de planta: x a lo largo de fachada, y en profundidad (0 = fachada a calle) */
 function buildFloor(M, level, opt){
   const p = M.p, W = M.W, tE = p.tE, tP = p.tP;
   const medL = opt.medL, medR = opt.medR;
-  const tL = medL ? p.tM : tE, tR = medR ? p.tM : tE;
+  const X = colX(p, W, medL, medR);
+  const tL = X.x0, tR = W - X.x1;
   const D = level === "p1" ? M.Dp1 : M.Dpb;
   const g = { W, D, level, rects:[], lines:[], polys:[], texts:[], rooms:[] };
   const x0 = tL, x1 = W - tR;
-  const xA1 = x0 + M.Ws, xD1 = xA1 + p.Wd, xB0 = xD1 + tP, xm = xA1 + p.Wd / 2 - tP / 2;
+  const xA1 = X.xA1, xD1 = X.xD1, xB0 = X.xB0;
   const yF0 = tE, yF1 = tE + M.front, yC0 = yF1 + tP, yC1 = yC0 + M.Ls, yR0 = yC1 + tP, yR1 = D - tE;
   const yE0 = yC1 - p.ancho;
   const R = (x, y, w, h, c) => g.rects.push({ x, y, w, h, c });
@@ -293,7 +371,7 @@ function buildFloor(M, level, opt){
     const sa = Math.max(0.15, Math.min(0.24, (big[2] - 0.1) / 4.6));
     T(cx, cy + s * 0.45, name, "lbl", s);
     T(cx, cy - sa * 1.0, fmt(a) + " m²", "area", sa);
-    g.rooms.push({ name, area:a, w:big[2], h:big[3], key:o.key || name });
+    g.rooms.push({ name, area:a, w:big[2], h:big[3], key:o.key || name, t:o.t || "", target:o.target, anexo:!!o.anexo, level, zone:o.zone });
   };
   const win = (a, b, side) => {
     const y0 = side === "f" ? 0 : D - tE, y1 = y0 + tE;
@@ -342,87 +420,97 @@ function buildFloor(M, level, opt){
   if (medR) R(W - tR, 0, tR, D, "med");
 
   const fd = yF1 - yF0, rd = yR1 - yR0;
-  if (level === "ss"){
-    room("Trastero", [[x0, yF0, xA1 - x0, fd]]);
+  const prog = M.prog[level], names = M.names[level];
+  const ssGar = level === "ss" && p.garaje;
+
+  const band = (zone, ya, yb) => {
+    const front = zone === "calle";
+    const parts = splitBand(prog[zone], X, zone, tP);
+    const wy0 = front ? yF1 : yC1, wy1 = front ? yC0 : yR0, dir = front ? -1 : 1;
+    if (!parts.length){
+      room("Libre", [[x0, ya, x1 - x0, yb - ya]], { key:level + "." + zone + ".x", zone });
+      door("h", wy0, wy1, (xA1 + xD1) / 2, 0.82, dir);
+      if (level === "pb" && front) door("h", 0, tE, (x0 + x1) / 2, 0.95, 1);
+      return;
+    }
+    let ent = -1;
+    if (level === "pb" && front){ ent = parts.findIndex(r => r.t === "Vestíbulo"); if (ent < 0) ent = parts.findIndex(r => !r.anexo); }
+    parts.forEach((r, j) => {
+      const c = CAT[r.t] || {};
+      room(names[zone][r.i], [[r.xa, ya, r.xb - r.xa, yb - ya]], { key:`${level}.${zone}.${r.i}`, t:r.t, target:r.a, anexo:r.anexo, zone });
+      if (r.anexo){
+        const px0 = j === 0 ? r.xb : parts[0].xb;
+        door("v", px0, px0 + tP, front ? yb - 0.55 : ya + 0.55, Math.min(0.72, yb - ya - 0.3), j === 0 ? -1 : 1);
+      } else {
+        let lo, hi;
+        if (ssGar && !front){
+          if (Math.min(r.xb, xA1) - Math.max(r.xa, x0) >= 0.8){ lo = Math.max(r.xa, x0); hi = Math.min(r.xb, xA1); }
+          else { lo = Math.max(r.xa, xA1 + tP); hi = r.xb; }
+        } else { lo = Math.max(r.xa, front ? xA1 : x0); hi = Math.min(r.xb, xD1); }
+        if (hi - lo >= 0.6){
+          if (c.liv && level === "pb") door("h", wy0, wy1, (lo + hi) / 2, Math.max(0.8, hi - lo - 0.3), dir, false);
+          else { const w = Math.min(0.82, hi - lo - 0.1); door("h", wy0, wy1, Math.min(Math.max((lo + hi) / 2, lo + w / 2 + 0.05), hi - w / 2 - 0.05), w, dir); }
+        }
+      }
+      if (j === ent){ door("h", 0, tE, (r.xa + r.xb) / 2, 0.95, 1); return; }
+      const canWin = !c.nowin && !(level === "ss" && (front || !p.patio));
+      if (canWin){
+        const w = r.xb - r.xa, ww = c.liv ? w * 0.72 : Math.min(w - 0.7, 2.0);
+        if (ww > 0.5){ const cx = (r.xa + r.xb) / 2; win(cx - ww / 2, cx + ww / 2, front ? "f" : "r"); }
+      }
+    });
+  };
+  const core = () => {
+    const rs = prog.nucleo.map((q, i) => Object.assign({}, q, { i })).filter(q => q.t);
+    if (!rs.length) return false;
+    const bw = x1 - xB0, tot = M.Ls - tP;
+    let hs = [M.Ls];
+    if (rs.length === 2){ const a0 = Math.max(rs[0].a, 0.5), a1 = Math.max(rs[1].a, 0.5); let h1 = tot * a0 / (a0 + a1); h1 = Math.min(Math.max(h1, 1.0), tot - 1.0); hs = [h1, tot - h1]; }
+    let y = yC0;
+    rs.forEach((r, j) => {
+      const h = hs[j];
+      room(names.nucleo[r.i], [[xB0, y, bw, h]], { key:`${level}.nucleo.${r.i}`, t:r.t, target:r.a, zone:"nucleo" });
+      door("v", xD1, xB0, y + h / 2, Math.min(0.75, h - 0.2), 1);
+      y += h + tP;
+    });
+    return true;
+  };
+
+  if (ssGar){
+    const q0 = prog.calle[0];
+    room(q0.t ? names.calle[0] : "Libre", [[x0, yF0, M.Ws, fd]], { key:"ss.calle.0", t:q0.t, target:q0.a, zone:"calle" });
     stair("Sube");
     room("Vestíbulo previo", [[x0, yE0, M.Ws, yC1 - yE0]], { key:"vest" });
     const gx = xA1 + tP, gw = x1 - gx, gd = yC1 - yF0;
-    if (p.garaje){
-      room("Garaje", [[gx, yF0, gw, gd]], { ly: yF0 + gd * 0.62 });
-      const n = gd >= 5 ? Math.floor((gw + 0.001) / 2.5) : 0;
-      for (let i = 0; i < n; i++){
-        const cx = gx + gw * (i + 0.5) / n;
-        g.rects.push({ x:cx - 0.9, y:yF0 + 0.35, w:1.8, h:4.4, c:"car" });
-      }
-      g.plazas = n; g.garW = gw; g.garD = gd;
-      const dw = Math.min(gw - 0.3, n >= 2 ? 4.6 : 2.8);
-      const dc = gx + gw / 2;
-      R(dc - dw / 2, 0, dw, tE, "open"); L(dc - dw / 2, tE / 2, dc + dw / 2, tE / 2, "door");
-      L(dc - dw / 2, 0, dc - dw / 2, tE, "door"); L(dc + dw / 2, 0, dc + dw / 2, tE, "door");
-      g.garageDoor = { a:dc - dw / 2, b:dc + dw / 2 };
-    } else {
-      room("Bodega · sala", [[gx, yF0, gw, gd]]);
-      win(gx + 0.4, x1 - 0.4, "f");
-      g.garageDoor = null;
+    room("Garaje", [[gx, yF0, gw, gd]], { ly: yF0 + gd * 0.62, key:"garaje" });
+    const n = gd >= 5 ? Math.floor((gw + 0.001) / 2.5) : 0;
+    for (let i = 0; i < n; i++){
+      const cx = gx + gw * (i + 0.5) / n;
+      g.rects.push({ x:cx - 0.9, y:yF0 + 0.35, w:1.8, h:4.4, c:"car" });
     }
-    room("Sala polivalente", [[x0, yR0, xm - x0, rd]]);
-    room("Instalaciones · lavandería", [[xm + tP, yR0, x1 - xm - tP, rd]], { key:"inst" });
-    door("v", xA1, xA1 + tP, (yF0 + yF1) / 2, 0.8, -1);
+    g.plazas = n; g.garW = gw; g.garD = gd;
+    const dw = Math.min(gw - 0.3, n >= 2 ? 4.6 : 2.8), dc = gx + gw / 2;
+    R(dc - dw / 2, 0, dw, tE, "open"); L(dc - dw / 2, tE / 2, dc + dw / 2, tE / 2, "door");
+    L(dc - dw / 2, 0, dc - dw / 2, tE, "door"); L(dc + dw / 2, 0, dc + dw / 2, tE, "door");
+    g.garageDoor = { a:dc - dw / 2, b:dc + dw / 2 };
+    door("v", xA1, xA1 + tP, (yF0 + yF1) / 2, Math.min(0.8, fd - 0.3), -1);
     door("v", xA1, xA1 + tP, (yE0 + yC1) / 2, Math.min(0.8, yC1 - yE0 - 0.05), -1);
-    door("h", yC1, yR0, (x0 + xA1) / 2, 0.8, 1);
-    door("h", yC1, yR0, Math.max(xm + tP + 0.5, (xA1 + tP + x1) / 2), 0.8, 1);
-    if (p.patio){
-      win(x0 + 0.4, xm - 0.4, "r"); win(xm + tP + 0.4, x1 - 0.4, "r");
-      g.rects.push({ x:x0, y:D, w:x1 - x0, h:p.patioF, c:"patio" });
-      T((x0 + x1) / 2, D + p.patioF / 2 - 0.08, "Patio inglés", "area", 0.2);
-    }
+    band("jardin", yR0, yR1);
+  } else {
+    g.garageDoor = null;
+    band("calle", yF0, yF1);
+    stair(level === "p1" ? "Baja" : "Sube");
+    const hasCore = core();
+    room("Distribuidor", [[xA1, yC0, hasCore ? p.Wd : x1 - xA1, M.Ls], [x0, yE0, M.Ws, yC1 - yE0]], { key:level + ".dist" });
+    band("jardin", yR0, yR1);
   }
-  if (level === "pb"){
-    room("Vestíbulo", [[x0, yF0, xm - x0, fd]]);
-    room("Cocina", [[xm + tP, yF0, x1 - xm - tP, fd]]);
-    stair("Sube");
-    room("Distribuidor", [[xA1, yC0, p.Wd, yC1 - yC0], [x0, yE0, M.Ws, yC1 - yE0]], { key:"dist" });
-    const h1 = (M.Ls - tP) / 2;
-    room("Aseo", [[xB0, yC0, x1 - xB0, h1]]);
-    room("Lavadero · despensa", [[xB0, yC0 + h1 + tP, x1 - xB0, M.Ls - h1 - tP]], { key:"lav" });
-    room("Salón-comedor", [[x0, yR0, x1 - x0, rd]]);
-    door("h", 0, tE, (x0 + xm) / 2 + 0.15, 0.95, 1);
-    door("h", yF1, yC0, (xA1 + xm) / 2, 0.82, -1);
-    door("h", yF1, yC0, (xm + tP + xD1) / 2, 0.82, -1);
-    door("v", xD1, xB0, yC0 + h1 / 2, Math.min(0.75, h1 - 0.1), 1);
-    door("v", xD1, xB0, yC0 + h1 + tP + (M.Ls - h1 - tP) / 2, Math.min(0.75, h1 - 0.1), 1);
-    door("h", yC1, yR0, (x0 + xD1) / 2, xD1 - x0 - 0.3, 1, false);
-    win(xm + tP + 0.4, x1 - 0.4, "f");
-    const sw = (x1 - x0) * 0.72; win((x0 + x1) / 2 - sw / 2, (x0 + x1) / 2 + sw / 2, "r");
+  if (level === "ss" && p.patio){
+    g.rects.push({ x:x0, y:D, w:x1 - x0, h:p.patioF, c:"patio" });
+    T((x0 + x1) / 2, D + p.patioF / 2 - 0.08, "Patio inglés", "area", 0.2);
   }
-  if (level === "p1"){
-    room("Dormitorio 2", [[x0, yF0, xm - x0, fd]]);
-    room("Dormitorio 3", [[xm + tP, yF0, x1 - xm - tP, fd]]);
-    stair("Baja");
-    room("Distribuidor", [[xA1, yC0, p.Wd, yC1 - yC0], [x0, yE0, M.Ws, yC1 - yE0]], { key:"dist" });
-    room("Baño", [[xB0, yC0, x1 - xB0, M.Ls]]);
-    door("h", yF1, yC0, (xA1 + xm) / 2, 0.8, -1);
-    door("h", yF1, yC0, (xm + tP + xD1) / 2, 0.8, -1);
-    door("v", xD1, xB0, yC0 + M.Ls / 2, 0.75, 1);
-    win(x0 + 0.4, xm - 0.4, "f"); win(xm + tP + 0.4, x1 - 0.4, "f");
-    if (p.dorms === 3){
-      const xS = x1 - p.suite - tP;
-      room("Dormitorio principal", [[x0, yR0, xS - x0, rd]], { key:"dp" });
-      room("Baño principal", [[xS + tP, yR0, x1 - xS - tP, rd]], { key:"bp" });
-      door("h", yC1, yR0, (xA1 + xD1) / 2, 0.8, 1);
-      door("v", xS, xS + tP, yR0 + Math.min(0.6, rd / 2), 0.7, 1);
-      win(x0 + 0.5, xS - 0.5, "r"); win(xS + tP + 0.35, x1 - 0.35, "r");
-    } else {
-      room("Dormitorio 4", [[x0, yR0, xm - x0, rd]], { key:"d4" });
-      room("Dormitorio principal", [[xm + tP, yR0, x1 - xm - tP, rd]], { key:"dp" });
-      door("h", yC1, yR0, (xA1 + xm) / 2, 0.8, 1);
-      door("h", yC1, yR0, (xm + tP + xD1) / 2, 0.8, 1);
-      win(x0 + 0.4, xm - 0.4, "r"); win(xm + tP + 0.4, x1 - 0.4, "r");
-    }
-    if (M.Dpb - M.Dp1 > 0.05){
-      g.rects.push({ x:0, y:D, w:W, h:M.Dpb - D, c:"terr" });
-      T(W / 2, D + (M.Dpb - D) / 2 - 0.08, "Terraza sobre PB · " + fmt(W * (M.Dpb - D)) + " m²", "area", 0.2);
-    }
+  if (level === "p1" && M.Dpb - M.Dp1 > 0.05){
+    g.rects.push({ x:0, y:D, w:W, h:M.Dpb - D, c:"terr" });
+    T(W / 2, D + (M.Dpb - D) / 2 - 0.08, "Terraza sobre PB · " + fmt(W * (M.Dpb - D)) + " m²", "area", 0.2);
   }
 
   /* cotas */
@@ -434,7 +522,6 @@ function buildFloor(M, level, opt){
   dimV(yF0, yF1, -0.75, fmt(fd)); dimV(yC0, yC1, -0.75, fmt(M.Ls)); dimV(yR0, yR1, -0.75, fmt(rd));
   T(W / 2, -2.05, "CALLE · fachada principal", "dimt", 0.2);
 
-  g.k = { x0, x1, xA1, xD1, xB0, xm, yF0, yF1, yC0, yC1, yR0, yR1, fd, rd };
   if (opt.mirror) mirrorGeom(g);
   return g;
 }
@@ -625,7 +712,9 @@ function checks(M, F){
   const st = (ok, warn) => ok ? "ok" : warn ? "warn" : "fail";
   const parcela = p.frente * p.fondo;
   const add = (grp, label, val, lim, s, note) => c.push({ grp, label, val, lim, s, note });
-  add("Edificabilidad", "Superficie computable (PB + P1)", fmt(M.Apb + M.Ap1) + " m²", "objetivo " + fmt(p.edif) + " m²", "ok", "Construida sobre rasante: " + fmt(M.Apb) + " + " + fmt(M.Ap1) + " m².");
+  const tot = M.Apb + M.Ap1, dif = tot - p.edif;
+  add("Edificabilidad", "Superficie computable (PB + P1)", fmt(tot) + " m²", "objetivo " + fmt(p.edif) + " m²", Math.abs(dif) < 0.05 ? "ok" : dif > 0 ? "fail" : "ok",
+    "Construida sobre rasante: " + fmt(M.Apb) + " + " + fmt(M.Ap1) + " m²." + (Math.abs(dif) < 0.05 ? "" : dif > 0 ? " El programa supera el objetivo en " + fmt(dif) + " m²: reduce estancias o usa el modo Ajustar." : " Quedan " + fmt(-dif) + " m² de edificabilidad sin usar."));
   const emax = p.coef * parcela;
   add("Edificabilidad", "Edificabilidad de parcela", fmt(M.Apb + M.Ap1) + " m²", "≤ " + fmt(emax) + " m² (" + fmt(p.coef) + " × " + fmt(parcela) + ")", st(M.Apb + M.Ap1 <= emax + 0.01), "");
   add("Edificabilidad", "Semisótano no computable", "cara sup. forjado " + sgn(p.ssSobre), "≤ " + sgn(p.ssLimite) + " sobre rasante", st(p.ssSobre <= p.ssLimite + 1e-6), "Criterio habitual en ordenanzas: la planta no computa si su techo no supera la cota indicada sobre la rasante del terreno o acera. Verifica la definición exacta (cara superior o inferior, punto de medición) en tu PGOU.");
@@ -649,12 +738,20 @@ function checks(M, F){
   add("Escalera", "Contrahuella", fmt(Math.max(M.c1, M.c2), 3) + " m", "≤ 0,200 m", st(Math.max(M.c1, M.c2) <= 0.2), M.n1 + " peldaños SS→PB, " + M.n2 + " peldaños PB→P1 (CTE DB SUA 1, uso restringido).");
   add("Escalera", "Huella", fmt(p.huella, 3) + " m", "≥ 0,220 m", st(p.huella >= 0.22), "");
   add("Escalera", "Ancho de tramo", fmt(p.ancho) + " m", "≥ 0,80 m", st(p.ancho >= 0.8), "Escalera en U de dos tramos, núcleo de " + fmt(M.Ws) + " × " + fmt(M.Ls) + " m.");
-  const mins = [["Salón-comedor", p.dorms === 4 ? 20 : 18], ["Cocina", 7], ["Dormitorio principal", 10], ["Dormitorio 2", 6], ["Dormitorio 3", 6], ["Dormitorio 4", 6], ["Baño", 3], ["Aseo", 1.5]];
-  const all = [...F.pb.rooms, ...F.p1.rooms];
-  mins.forEach(([n, a]) => { const r = all.find(x => x.name === n); if (!r) return;
-    const minSide = Math.min(r.w, r.h);
-    const sideOk = !/Dormitorio|Salón/.test(n) || minSide >= (n === "Salón-comedor" ? 3 : 2);
-    add("Habitabilidad", n, fmt(r.area) + " m² · lado " + fmt(minSide), "≥ " + fmt(a, 1) + " m²", st(r.area >= a && sideOk, r.area >= a * 0.85), /Dormitorio [234]/.test(n) ? "Individual ≥ 6 m²; como doble, ≥ 8 m² (" + (r.area >= 8 ? "cumple" : "no llega") + ")." : ""); });
+  const res = [...F.pb.rooms, ...F.p1.rooms];
+  [...res, ...F.ss.rooms].filter(r => r.t && CAT[r.t] && CAT[r.t].min).forEach(r => {
+    const cc = CAT[r.t], minSide = Math.min(r.w, r.h), sideMin = cc.liv ? 3.0 : cc.dorm ? 2.0 : 0;
+    add("Habitabilidad", r.name, fmt(r.area) + " m² · lado " + fmt(minSide), "≥ " + fmt(cc.min, 1) + " m²" + (sideMin ? " · lado ≥ " + fmt(sideMin) : ""),
+      st(r.area >= cc.min - 0.005 && minSide >= sideMin - 0.005, r.area >= cc.min * 0.85), r.t !== r.name ? r.t : ""); });
+  const has = fn => res.some(r => r.t && fn(r.t));
+  [["Cocina", t => /^Cocina/.test(t)], ["Salón o comedor", t => CAT[t].liv], ["Dormitorio", t => CAT[t].dorm], ["Baño completo", t => t === "Baño" || t === "Baño en suite"]].forEach(([n, fn]) =>
+    add("Programa", n, has(fn) ? "incluido" : "falta", "programa mínimo de vivienda", has(fn) ? "ok" : "fail", ""));
+  add("Programa", "Aseo o baño en planta baja", F.pb.rooms.some(r => r.t && CAT[r.t].bath) ? "incluido" : "falta", "recomendable", F.pb.rooms.some(r => r.t && CAT[r.t].bath) ? "ok" : "warn", "");
+  add("Programa", "Vestíbulo de entrada", F.pb.rooms.some(r => r.t === "Vestíbulo") ? "incluido" : "falta", "recomendable", F.pb.rooms.some(r => r.t === "Vestíbulo") ? "ok" : "warn", F.pb.rooms.some(r => r.t === "Vestíbulo") ? "" : "La puerta de entrada abre a la estancia a calle que da al distribuidor.");
+  res.filter(r => r.t && CAT[r.t].anexo && !r.anexo).forEach(r => add("Programa", r.name + " sin pieza principal", "abre al distribuidor", CAT[r.t].anexo === "dorm" ? "junto a un dormitorio" : "junto a la cocina", "warn", "Colócalo en la misma banda que " + (CAT[r.t].anexo === "dorm" ? "un dormitorio" : "la cocina") + " para que se acceda desde ella."));
+  if (p.modo === "ajustar") add("Programa", "Ajuste del programa al objetivo", "× " + fmt(M.s, 2), "entre × 0,90 y × 1,10", st(M.s >= 0.9 && M.s <= 1.1, M.s >= 0.8 && M.s <= 1.25),
+    "Tu programa necesita " + fmt(M.reqTotal) + " m² construidos; para llegar a " + fmt(p.edif) + " m² las estancias " + (M.s < 1 ? "se reducen un " + fmt((1 - M.s) * 100, 0) : "crecen un " + fmt((M.s - 1) * 100, 0)) + " %.");
+  if (M.garMin) add("Programa", "Fondo mínimo por el garaje", "banda a calle " + fmt(M.front) + " m", "garaje ≥ 5,00 m de fondo", "warn", "La banda a calle se ha alargado para que quepa el coche; la superficie construida sube.");
   add("Habitabilidad", "Crujías vivideras", "delantera " + fmt(M.front) + " · trasera " + fmt(M.rearP1) + " m", "≥ 2,50 m", st(M.front >= 2.5 && M.rearP1 >= 2.5, M.front >= 2.2 && M.rearP1 >= 2.2), "Fondo libre en P1 junto a fachada trasera.");
   add("Agrupación", "Lindes laterales ciegos", "sin huecos", "apto para adosar", "ok", "Todas las estancias ventilan a fachada delantera o trasera. Baños interiores con extracción mecánica (CTE DB HS 3).");
   add("Agrupación", "Medianera", "doble hoja independiente", "DB HR", "info", "Cada vivienda tiene su propia hoja de " + fmt(p.tM) + " m con junta y banda elástica. Permite construir por fases y cumplir el aislamiento acústico entre unidades.");
@@ -685,41 +782,40 @@ function buildPanel(){
   });
   h += `<div class="tools" style="margin-top:14px"><button class="btn" id="reset" type="button">Restablecer valores de ejemplo</button></div>`;
   el.innerHTML = h;
-  el.addEventListener("input", e => {
-    const k = e.target.dataset.k; if (!k) return;
-    if (e.target.type === "checkbox") P[k] = e.target.checked;
-    else { const v = parseFloat(e.target.value); if (isNaN(v)) return; P[k] = v;
-      const other = e.target.type === "range" ? $("#in-" + k) : $("#rg-" + k); if (other) other.value = v; }
-    schedule();
-  });
-  el.addEventListener("click", e => {
-    const b = e.target.closest("button[data-k]");
-    if (b){ const k = b.dataset.k, v = b.dataset.v; P[k] = isNaN(+v) ? v : +v;
-      el.querySelectorAll(`button[data-k="${k}"]`).forEach(x => x.setAttribute("aria-pressed", String(x.dataset.v === v))); schedule(); }
-    if (e.target.id === "reset"){ P = Object.assign({}, DEF); buildPanel(); schedule(); }
-  });
   updateVis();
 }
 function updateVis(){
   document.querySelectorAll("[data-show]").forEach(n => { const [g, f] = n.dataset.show.split(":").map(Number); n.hidden = !GROUPS[g].f[f].show(P); });
 }
-let raf = 0;
-function schedule(){ cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { save(); updateVis(); render(); }); }
+$("#panel").addEventListener("input", e => {
+  const k = e.target.dataset.k; if (!k) return;
+  if (e.target.type === "checkbox") P[k] = e.target.checked;
+  else { const v = parseFloat(e.target.value); if (isNaN(v)) return; P[k] = v;
+    const other = e.target.type === "range" ? $("#in-" + k) : $("#rg-" + k); if (other) other.value = v; }
+  schedule();
+});
+document.addEventListener("click", e => {
+  const b = e.target.closest("button[data-k]");
+  if (b){ const k = b.dataset.k, v = b.dataset.v; P[k] = isNaN(+v) ? v : +v;
+    document.querySelectorAll(`button[data-k="${k}"]`).forEach(x => x.setAttribute("aria-pressed", String(x.dataset.v === v))); schedule(); }
+  if (e.target.id === "reset"){ P = Object.assign({}, DEF, { prog:clone(PROG_DEF) }); buildPanel(); schedule(); }
+});
+let raf = 0, partial = true;
+function schedule(onlyNumbers){ partial = partial && !!onlyNumbers; cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { save(); updateVis(); render(partial); partial = true; }); }
 
-const TABS = [["plantas","Plantas"],["seccion","Sección"],["agrupacion","Agrupación"],["superficies","Superficies"],["comprobaciones","Comprobaciones"],["memoria","Criterios"]];
+const TABS = [["plantas","Plantas"],["programa","Programa"],["seccion","Sección"],["agrupacion","Agrupación"],["superficies","Superficies"],["comprobaciones","Comprobaciones"],["memoria","Criterios"]];
 function floorsFor(M){
   const L = P.tipo !== "aislada", R = P.tipo === "adosada";
   const o = { medL:L, medR:R, mirror:P.espejo };
   return { ss:buildFloor(M, "ss", o), pb:buildFloor(M, "pb", o), p1:buildFloor(M, "p1", o) };
 }
 let LAST = null;
-function render(){
+function render(onlyNumbers){
   const M = compute(P);
   const errs = [];
-  const bW = P.W - (P.tipo === "aislada" ? P.tE : P.tM) - (P.tipo === "adosada" ? P.tM : P.tE) - M.Ws - P.Wd - P.tP;
-  if (bW < 1.5) errs.push(`El ancho de fachada no deja sitio a la crujía de baños (${fmt(bW)} m libres, mínimo 1,50 m). Aumenta el ancho de fachada o reduce el distribuidor o la escalera.`);
-  if (M.front < 1.8 || M.rearP1 < 1.8) errs.push(`El fondo resultante (${fmt(M.Dpb)} m) es demasiado corto para el núcleo de escalera de ${fmt(M.Ls)} m. Reduce el ancho de fachada, ajusta el reparto PB/P1 o mueve el núcleo.`);
-  if (P.dorms === 3 && bW < P.suite - 0.01) errs.push(`El baño principal (${fmt(P.suite)} m) no cabe en la crujía lateral de ${fmt(bW)} m.`);
+  const bW = M.X.x1 - M.X.xB0;
+  if (bW < 1.2) errs.push(`El ancho de fachada no deja sitio a la crujía de baños (${fmt(bW)} m libres, mínimo 1,20 m). Aumenta el ancho de fachada o reduce el distribuidor o la escalera.`);
+  if (M.front < 1.8 || M.rearP1 < 1.8) errs.push(`Una banda de estancias queda con menos de 1,80 m de fondo (a calle ${fmt(M.front)} m, a jardín ${fmt(M.rearP1)} m). Aumenta las superficies del programa o reduce el ancho de fachada.`);
   $("#errors").innerHTML = errs.map(e => `<div class="err">${e}</div>`).join("");
   const F = floorsFor(M);
   const C = checks(M, F);
@@ -727,15 +823,19 @@ function render(){
   const nf = C.filter(c => c.s === "fail").length, nw = C.filter(c => c.s === "warn").length;
   const util = f => f.rooms.reduce((a, r) => a + r.area, 0);
   const uT = util(F.pb) + util(F.p1);
+  const nD = [...F.pb.rooms, ...F.p1.rooms].filter(r => r.t && CAT[r.t].dorm).length;
+  const nB = [...F.ss.rooms, ...F.pb.rooms, ...F.p1.rooms].filter(r => r.t && CAT[r.t].bath).length;
   const stCls = nf ? "st-fail" : nw ? "st-warn" : "st-ok";
   $("#kpis").innerHTML = `
     <div class="kpi"><b>${fmt(M.Apb + M.Ap1)} m²</b><small>Computable PB+P1</small></div>
     <div class="kpi below"><b>${fmt(M.W * M.Dpb)} m²</b><small>Semisótano · no computa</small></div>
     <div class="kpi"><b>${fmt(uT + util(F.ss))} m²</b><small>Útil total</small></div>
     <div class="kpi"><b>${fmt(M.W)} × ${fmt(M.Dpb)}</b><small>Huella (m)</small></div>
+    <div class="kpi"><b>${nD} D · ${nB} B</b><small>Dormitorios · baños y aseos</small></div>
     <div class="kpi"><b class="${stCls}">${nf ? nf + " no cumple" : nw ? nw + " revisar" : "Cumple"}</b><small>Comprobaciones</small></div>`;
   $("#tabs").innerHTML = TABS.map(([k, t]) => `<button role="tab" id="tab-${k}" type="button" data-tab="${k}" aria-selected="${TAB === k}">${t}${k === "comprobaciones" && (nf || nw) ? `<span class="dot" style="background:var(${nf ? "--fail" : "--warn"})"></span>` : ""}</button>`).join("");
   const v = $("#view");
+  if (TAB === "programa"){ if (onlyNumbers && $("#progtable")) updatePrograma(M, F); else { v.innerHTML = viewPrograma(M, F); updatePrograma(M, F); } }
   if (TAB === "plantas") v.innerHTML = viewPlantas(M, F);
   if (TAB === "seccion") v.innerHTML = viewSeccion(M);
   if (TAB === "agrupacion") v.innerHTML = viewAgrup(M);
@@ -744,6 +844,57 @@ function render(){
   if (TAB === "memoria") v.innerHTML = viewMemoria(M);
 }
 
+function viewPrograma(M, F){
+  const LV = [["pb","Planta baja"],["p1","Planta primera"],["ss","Semisótano"]];
+  let h = `<div class="tools"><div class="seg" role="group" style="grid-column:auto;flex:0 1 420px">${[["ajustar","Ajustar a " + fmt(P.edif, 0) + " m²"],["programa","Según programa"]].map(([v, t]) => `<button type="button" id="pseg-${v}" data-k="modo" data-v="${v}" aria-pressed="${P.modo === v}">${t}</button>`).join("")}</div>
+    <button class="btn" type="button" data-act="resetprog">Restablecer programa</button></div>
+    <div class="kpis" id="progsum" style="margin-bottom:14px"></div>
+    <div class="progwrap"><div class="tbl"><table id="progtable"><thead><tr><th>Zona</th><th>Estancia</th><th class="n">Deseada</th><th class="n">Resultado</th><th class="n">Dif.</th></tr></thead><tbody>`;
+  LV.forEach(([lv, title]) => {
+    h += `<tr class="floor ${lv === "ss" ? "ss" : ""}"><td colspan="5">${title}</td></tr>`;
+    ZONES.forEach(([z, zl]) => {
+      [0, 1].forEach(i => {
+        const id = `${lv}-${z}-${i}`, q = P.prog[lv][z][i];
+        const zc = i === 0 ? `<td rowspan="2">${zl}${z === "nucleo" ? `<br><small class="note">${lv === "ss" && P.garaje ? "" : "fondo fijo " + fmt(M.Ls) + " m"}</small>` : ""}</td>` : "";
+        if (lv === "ss" && P.garaje && (z === "nucleo" || (z === "calle" && i === 1))){
+          h += `<tr>${zc}<td colspan="4" class="note">${i === 0 || z === "calle" ? "Ocupado por el garaje" : ""}</td></tr>`; return;
+        }
+        const opts = (lv === "ss" ? OPTS.ss : OPTS.res).map(o => `<option${o === q.t ? " selected" : ""}>${o}</option>`).join("");
+        const lockA = !q.t || (lv === "ss" && P.garaje && z === "calle");
+        h += `<tr>${zc}<td><select class="sel" id="pg-${id}" data-pg="${lv}.${z}.${i}" aria-label="${title} ${zl} ${i + 1}"><option value="">— Sin estancia —</option>${opts}</select></td>
+          <td class="n"><div class="num" style="width:92px;margin-left:auto"><input type="number" id="pga-${id}" data-pga="${lv}.${z}.${i}" min="0" max="80" step="0.5" value="${q.a}"${lockA ? " disabled" : ""} aria-label="Superficie deseada"><span>m²</span></div></td>
+          <td class="n" id="pgr-${id}"></td><td class="n" id="pgd-${id}"></td></tr>`;
+      });
+    });
+  });
+  h += `</tbody></table></div><div class="progplans" id="progplans"></div></div>
+  <p class="note" style="margin-top:10px">Cada planta tiene dos huecos a calle, dos en el núcleo interior y dos a jardín. Las estancias a calle y a jardín fijan el fondo de la casa; en el núcleo y en el semisótano la superficie solo reparte el espacio disponible. Baño en suite y vestidor se abren desde el dormitorio contiguo, y la despensa desde la cocina.</p>`;
+  return h;
+}
+function updatePrograma(M, F){
+  const util = f => f.rooms.reduce((a, r) => a + r.area, 0);
+  let want = 0;
+  ["pb","p1"].forEach(lv => ["calle","nucleo","jardin"].forEach(z => P.prog[lv][z].forEach(q => { if (q.t) want += +q.a; })));
+  const got = util(F.pb) + util(F.p1) - F.pb.rooms.concat(F.p1.rooms).filter(r => !r.t).reduce((a, r) => a + r.area, 0);
+  const tot = M.Apb + M.Ap1, dif = tot - P.edif;
+  $("#progsum").innerHTML = `
+    <div class="kpi"><b>${fmt(want)} m²</b><small>Programa deseado PB+P1</small></div>
+    <div class="kpi"><b>${fmt(got)} m²</b><small>Estancias resultantes</small></div>
+    <div class="kpi"><b>${fmt(tot)} m²</b><small>Computable · objetivo ${fmt(P.edif, 0)}</small></div>
+    <div class="kpi"><b class="${P.modo === "ajustar" ? (Math.abs(M.s - 1) <= 0.1 ? "st-ok" : "st-warn") : (dif > 0.05 ? "st-fail" : "st-ok")}">${P.modo === "ajustar" ? "× " + fmt(M.s, 2) : (dif > 0 ? "+" : "") + fmt(dif) + " m²"}</b><small>${P.modo === "ajustar" ? "Escala del programa" : "Diferencia con objetivo"}</small></div>`;
+  ["ss","pb","p1"].forEach(lv => ["calle","nucleo","jardin"].forEach(z => [0, 1].forEach(i => {
+    const id = `${lv}-${z}-${i}`, rc = $("#pgr-" + id), dc = $("#pgd-" + id); if (!rc) return;
+    const r = F[lv].rooms.find(x => x.key === `${lv}.${z}.${i}`), q = P.prog[lv][z][i];
+    if (!r || !q.t){ rc.textContent = "—"; dc.textContent = ""; return; }
+    rc.innerHTML = `${fmt(r.area)} m²<br><small class="note">${fmt(r.w)} × ${fmt(r.h)}</small>`;
+    const prop = lv === "ss" || z === "nucleo";
+    if (prop){ dc.innerHTML = `<small class="note">reparto</small>`; return; }
+    const d = r.area - q.a;
+    dc.innerHTML = `<span style="color:var(${Math.abs(d) <= Math.max(0.5, q.a * 0.08) ? "--ok" : "--warn"})">${d >= 0 ? "+" : "−"}${fmt(Math.abs(d))}</span>`;
+  })));
+  const fr = frameFor(M);
+  $("#progplans").innerHTML = [["pb","Planta baja"],["p1","Planta primera"],["ss","Semisótano"]].map(([lv, t]) => `<article class="sheet ${lv === "ss" ? "ss" : ""}"><header><h3>${t}</h3><span>${fmt(M.W)} × ${fmt(lv === "p1" ? M.Dp1 : M.Dpb)} m</span></header><div class="svgbox">${geomSVG([{ g:F[lv] }], fr, 40)}</div></article>`).join("");
+}
 function frameFor(M){ const ex = P.patio ? P.patioF : 0; return [-2.3, -2.4, M.W + 2.3, M.Dpb + ex + 0.5]; }
 function viewPlantas(M, F){
   const fr = frameFor(M), S = 40;
@@ -829,7 +980,7 @@ function viewMemoria(M){
       <li><b>Crujía de escalera</b> (${fmt(M.Ws)} m) junto a la medianera, con escalera en U que conecta las tres plantas en la misma vertical.</li>
       <li><b>Crujía de distribuidor</b> (${fmt(P.Wd)} m): todas las piezas abren a él, por lo que no hay pasillos.</li>
       <li><b>Crujía húmeda</b> junto a la otra medianera: aseo, lavadero y baño apilados con una sola bajante.</li>
-      <li>Bandas: estancias a calle (${fmt(M.front)} m), núcleo (${fmt(M.Ls)} m) y estancias a jardín (${fmt(M.rear)} m).</li>
+      <li>Bandas: estancias a calle (${fmt(M.front)} m), núcleo (${fmt(M.Ls)} m) y estancias a jardín (${fmt(M.rear)} m). Su fondo sale del programa elegido en la pestaña Programa.</li>
     </ul></div>
   <div class="prose"><h4>Por qué se puede adosar o parear</h4><ul>
     <li>Ninguna estancia necesita hueco en fachada lateral: luz y ventilación entran solo por fachadas delantera y trasera.</li>
@@ -895,6 +1046,7 @@ document.addEventListener("click", e => {
     const s = svgs.map(x => x.outerHTML.replace(/fill="url\(#h\d+\)"/g, 'fill="#1e6c68" fill-opacity="0.35"').replace(/^<svg /, "<svg " + (/xmlns=/.test(x.outerHTML) ? "" : 'xmlns="http://www.w3.org/2000/svg" ')).replace(/>/, ">" + SVG_STYLE));
     download("vivienda-semisotano-" + TAB + ".svg", s[0] || "", "image/svg+xml");
   }
+  if (act === "resetprog"){ P.prog = clone(PROG_DEF); schedule(); return; }
   if (act === "json") download("vivienda-semisotano.json", JSON.stringify(P, null, 2), "application/json");
   if (act === "copydxf"){
     const txt = dxfAll();
@@ -903,10 +1055,18 @@ document.addEventListener("click", e => {
     else fallback();
   }
 });
+document.addEventListener("input", e => {
+  const pa = e.target.dataset && e.target.dataset.pga; if (!pa) return;
+  const v = parseFloat(e.target.value); if (isNaN(v)) return;
+  const [lv, z, i] = pa.split("."); P.prog[lv][z][+i].a = Math.max(0, v); schedule(true);
+});
 document.addEventListener("change", e => {
+  const pg = e.target.dataset && e.target.dataset.pg;
+  if (pg){ const [lv, z, i] = pg.split("."); const q = P.prog[lv][z][+i]; q.t = e.target.value;
+    if (q.t && (!q.a || q.a < 0.5)) q.a = Math.max(CAT[q.t].min || 4, 4); schedule(); return; }
   if (e.target.id !== "imp" || !e.target.files[0]) return;
   const r = new FileReader();
-  r.onload = () => { try { const o = JSON.parse(r.result); P = Object.assign({}, DEF, o); save(); buildPanel(); render(); toast("Parámetros importados."); } catch(err){ toast("El archivo no es un JSON de parámetros válido."); } };
+  r.onload = () => { try { const o = JSON.parse(r.result); P = Object.assign({}, DEF, o, { prog:normProg(o.prog) }); save(); buildPanel(); render(); toast("Parámetros importados."); } catch(err){ toast("El archivo no es un JSON de parámetros válido."); } };
   r.readAsText(e.target.files[0]);
 });
 

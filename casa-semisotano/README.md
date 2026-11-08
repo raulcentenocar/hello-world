@@ -7,6 +7,10 @@ con una planta tipo que sirve igual para vivienda **aislada, pareada o adosada**
 Abrir `index.html` en el navegador (o vía GitHub Pages en `/casa-semisotano/`).
 
 ## Qué genera
+- **Programa a medida**: en cada planta eliges qué estancia va en cada hueco (dos a calle, dos en el núcleo
+  interior y dos a jardín) y su superficie deseada. Dos modos de dimensionado: *Ajustar al objetivo* (escala el
+  programa hasta los m² computables fijados) o *Según programa* (respeta tus superficies y calcula lo que ocupa).
+  Tabla de deseado / resultado / diferencia y plantas en vivo al lado.
 - **Plantas** de semisótano, planta baja y planta primera con muros, medianeras rayadas, carpinterías,
   puertas, escalera en U, cotas y superficies útiles por estancia.
 - **Sección longitudinal** con rasante, límite de cota del semisótano, rampa de garaje, patio inglés,
