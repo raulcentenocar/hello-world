@@ -7,6 +7,11 @@ con una planta tipo que sirve igual para vivienda **aislada, pareada o adosada**
 Abrir `index.html` en el navegador (o vía GitHub Pages en `/casa-semisotano/`).
 
 ## Qué genera
+- **Ficha de parcela editable + lector de cédulas**: la pestaña *Parcela* guarda parámetros urbanísticos,
+  vértices UTM y linderos (calle, lindero o zona verde, con arcos y radios). Puede rellenarse a mano, pegando un
+  JSON o, dentro de claude.ai, subiendo la cédula en PDF o imagen: Claude la lee (página completa y ampliaciones)
+  y propone la ficha para revisarla antes de aplicarla. Fuera de claude.ai se ofrecen unas instrucciones para
+  copiar en un chat con Claude y pegar la respuesta. La IA solo se usa para leer el documento: el resto es cálculo.
 - **Programa a medida**: en cada planta eliges qué estancia va en cada hueco (dos a calle, dos en el núcleo
   interior y dos a jardín) y su superficie deseada. Dos modos de dimensionado: *Ajustar al objetivo* (escala el
   programa hasta los m² computables fijados) o *Según programa* (respeta tus superficies y calcula lo que ocupa).
