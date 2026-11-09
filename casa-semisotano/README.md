@@ -19,6 +19,9 @@ Abrir `index.html` en el navegador (o vía GitHub Pages en `/casa-semisotano/`).
 - **Tipos de implantación**: hileras paralelas, calle curva, peine a 90° con fondos de saco, anillo con patio
   central, plazoletas en racimo, malla ortogonal, bucle y patio común con garaje. Viales rectos o curvos (spline),
   modo 90°, anillos cerrados y fondos de saco redondos con viviendas alrededor.
+- **Lados con parcelas por vial**: al dibujar se elige si el vial lleva parcelas a ambos lados, solo a la
+  izquierda, solo a la derecha o ninguna; después se cambia en el panel del vial o con la herramienta *Lados*
+  (clic a un lado del vial). Los lados se marcan en el plano (I/D, verde con parcelas, rojo sin ellas).
 - **Editor de viales (tipo TestFit)**: dibujas los viales sobre la parcela (clic para añadir puntos, doble clic o
   Intro para terminar, arrastrar nodos para moverlos, rueda para acercar) y a ambos lados se generan parcelas privadas
   con vivienda, frente de acceso y jardín. El motor es un algoritmo geométrico determinista que se ejecuta en el

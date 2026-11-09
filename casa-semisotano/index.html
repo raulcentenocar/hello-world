@@ -207,6 +207,8 @@ svg .roof.cab{fill:var(--roof-cab)}
 svg .node{fill:var(--sheet);stroke:var(--accent);stroke-width:2;vector-effect:non-scaling-stroke;cursor:move} svg .node.sel{fill:var(--accent)}
 svg .snap{fill:none;stroke:var(--warn);stroke-width:2;vector-effect:non-scaling-stroke}
 svg .roadsel{fill:none;stroke:var(--accent);stroke-width:3;stroke-dasharray:6 4} svg .roadbad{fill:none;stroke:var(--fail);stroke-width:3;stroke-dasharray:3 3}
+svg .sideon{fill:none;stroke:var(--ok);stroke-width:3} svg .sideoff{fill:none;stroke:var(--fail);stroke-width:2;stroke-dasharray:4 4}
+svg .sidedot{fill:var(--fail)} svg .sidedot.on{fill:var(--ok)} svg .sidetxt{fill:#fff;font-weight:700;font-family:var(--f-body)}
 svg .roadl{fill:none;stroke:var(--asph)} svg .roadl.ghost{stroke-opacity:.35} svg .axisl{fill:none;stroke:#fff;stroke-opacity:.7;stroke-width:1.2;stroke-dasharray:8 7}
 svg .ctrl{fill:none;stroke:var(--accent);stroke-width:1;stroke-dasharray:3 4;stroke-opacity:.7}
 .fl-draw{left:50%;transform:translateX(-50%);bottom:52px;display:flex;gap:6px;padding:6px}
@@ -895,6 +897,8 @@ document.addEventListener("click", e => {
     const cb = $('[data-ordc="frontAv"]'); if (cb) cb.checked = P.ord.frontAv; const cf = $('[data-ordc="frontFl"]'); if (cf) cf.checked = P.ord.frontFl;
     schedule(true); return; }
   const tl = e.target.closest("[data-tool]"); if (tl){ TOOL = tl.dataset.tool; DRAW = null; if (TOOL !== "select") SEL = -1; if (isDraw() && P.ord.vista === "3d") P.ord.vista = "cubiertas"; schedule(true); return; }
+  const sl = e.target.closest("[data-sellados]"); if (sl && SEL >= 0){ P.ord.roads[SEL].lados = sl.dataset.sellados; P.ord.preset = "custom"; save(); redrawMap(true); return; }
+  const ln = e.target.closest("[data-ladosnuevo]"); if (ln){ P.ord.ladosNuevo = ln.dataset.ladosnuevo; save(); redrawMap(true); return; }
   const oo = e.target.closest("[data-ortho]"); if (oo){ ORTHO = !ORTHO; schedule(true); return; }
   const ov = e.target.closest("[data-ordv]"); if (ov){ P.ord.vista = ov.dataset.ordv; schedule(true); return; }
   const os = e.target.closest("[data-ordset]"); if (os){ P.ord[os.dataset.ordset] = os.dataset.v; schedule(true); return; }
@@ -1360,7 +1364,12 @@ function updateParcela(){
 }
 
 /* ================================================================== ORDENACIÓN */
-const ORD_DEF = { modo:"viales", preset:"curva", rFondo:8, roads:null, frontAv:true, frontFl:false, objetivo:34, parking:"superficie", gLote:6, wCalle:7, bloque:0, pasoBloque:4, gMin:5, paseo:6, front:2, vista:"cubiertas", capas:{} };
+const LADOS = [["ambos","Ambos lados"],["izq","Izquierda"],["der","Derecha"],["ninguno","Ninguno"]];
+const sidesOf = r => { const l = r.lados || "ambos"; return l === "izq" ? [1] : l === "der" ? [-1] : l === "ninguno" ? [] : [1, -1]; };
+const setSide = (r, sd, on) => { const L = sidesOf(r).includes(1), R = sidesOf(r).includes(-1); const nl = sd > 0 ? on : L, nr = sd < 0 ? on : R; r.lados = nl && nr ? "ambos" : nl ? "izq" : nr ? "der" : "ninguno"; };
+/* línea paralela a una polilínea, a distancia d (positiva = izquierda según el sentido de dibujo) */
+function offsetLine(Q, d){ return Q.map((p, i) => { const a = Q[Math.max(0, i - 1)], b = Q[Math.min(Q.length - 1, i + 1)], t = v2.sub(b, a), L = v2.len(t) || 1; return v2.add(p, v2.mul([-t[1] / L, t[0] / L], d)); }); }
+const ORD_DEF = { ladosNuevo:"ambos", modo:"viales", preset:"curva", rFondo:8, roads:null, frontAv:true, frontFl:false, objetivo:34, parking:"superficie", gLote:6, wCalle:7, bloque:0, pasoBloque:4, gMin:5, paseo:6, front:2, vista:"cubiertas", capas:{} };
 function inPoly(p, poly){ let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++){ const a = poly[i], b = poly[j]; if ((a[1] > p[1]) !== (b[1] > p[1]) && p[0] < (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; }
 function dSeg(p, a, b){ const d = v2.sub(b, a), t = Math.max(0, Math.min(1, ((p[0]-a[0])*d[0] + (p[1]-a[1])*d[1]) / (d[0]*d[0] + d[1]*d[1] || 1))); return v2.len(v2.sub(p, v2.add(a, v2.mul(d, t)))); }
 function dPolyline(p, pts, closed){ let m = Infinity; const n = pts.length; for (let i = 0; i < (closed ? n : n - 1); i++) m = Math.min(m, dSeg(p, pts[i], pts[(i + 1) % n])); return m; }
@@ -1724,8 +1733,8 @@ function genViales(M, o, roads){
   const pub = e => ({ src:e.n, pub:true, pts:e.pts, t0:0.05, sides:[1] });
   if (o.frontAv) fronts.push(pub(UAG.edges[IDX.base]));
   if (o.frontFl && IDX.acc !== IDX.base) fronts.push(pub(UAG.edges[IDX.acc]));
-  roads.map((r, ri) => ({ r, ri, d:dens[ri], L:polyLen(dens[ri]) })).sort((x, y) => y.L - x.L).forEach(x => fronts.push({ src:"V" + (x.ri + 1), pts:x.d, t0:x.r.w / 2, sides:[1, -1] }));
-  bulbs.forEach((bl, bi) => { const N = 64, pts = []; for (let k = 0; k <= N; k++){ const a = 2 * Math.PI * k / N; pts.push([bl.c[0] + bl.r * Math.cos(a), bl.c[1] + bl.r * Math.sin(a)]); } fronts.push({ src:"Plazoleta " + (bi + 1), pts, t0:0.05, sides:[-1] }); });
+  roads.map((r, ri) => ({ r, ri, d:dens[ri], L:polyLen(dens[ri]) })).sort((x, y) => y.L - x.L).forEach(x => { const sd = sidesOf(x.r); if (sd.length) fronts.push({ src:"V" + (x.ri + 1), pts:x.d, t0:x.r.w / 2, sides:sd }); });
+  bulbs.forEach((bl, bi) => { if (!sidesOf(roads[bl.ri]).length) return; const N = 64, pts = []; for (let k = 0; k <= N; k++){ const a = 2 * Math.PI * k / N; pts.push([bl.c[0] + bl.r * Math.cos(a), bl.c[1] + bl.r * Math.sin(a)]); } fronts.push({ src:"Plazoleta " + (bi + 1), pts, t0:0.05, sides:[-1] }); });
   const Bk = o.bloque > 0 ? o.bloque : 999;
   const runs = [];
   fronts.forEach(fr => {
@@ -1868,6 +1877,9 @@ function mapSVG(M, L, opt = {}){
   if (P.ord.modo !== "patio"){
     (P.ord.roads || []).forEach((r, ri) => {
       if (L.conn && !L.conn[ri]) s += `<polyline points="${pts(r.pts)}" class="roadbad" vector-effect="non-scaling-stroke"/>`;
+      if ((ri === SEL || TOOL === "sides") && L.roadsD && L.roadsD[ri]){ const d0 = L.roadsD[ri].pts, sd = sidesOf(r), off = r.w / 2 + 1.6;
+        [1, -1].forEach(k => { const ln = offsetLine(d0, k * off), on = sd.includes(k); s += `<polyline points="${pts(ln)}" class="${on ? "sideon" : "sideoff"}" vector-effect="non-scaling-stroke"/>`;
+          const m = ln[Math.floor(ln.length / 2)], m2 = ln[Math.min(ln.length - 1, Math.floor(ln.length / 2) + 1)]; s += `<circle cx="${m[0].toFixed(2)}" cy="${(-m[1]).toFixed(2)}" r="1.7" class="${on ? "sidedot on" : "sidedot"}"/>` + txt(m, k > 0 ? "I" : "D", "sidetxt", 1.6); }); }
       if (ri === SEL || r.curva) s += `<polyline points="${pts(r.cerrado ? [...r.pts, r.pts[0]] : r.pts)}" class="${ri === SEL ? "roadsel" : "ctrl"}" vector-effect="non-scaling-stroke"/>`;
       if (TOOL === "select" || TOOL === "erase") r.pts.forEach((p, pi) => { s += `<circle cx="${p[0].toFixed(2)}" cy="${(-p[1]).toFixed(2)}" r="${(VIEW.w / 140).toFixed(2)}" class="node${ri === SEL ? " sel" : ""}" data-node="${ri}:${pi}"/>`; });
     });
@@ -1924,6 +1936,10 @@ function bindMap(){
       redrawMap(true); return;
     }
     try { box.setPointerCapture(e.pointerId); } catch(_) {}
+    if (TOOL === "sides" && P.ord.modo !== "patio"){ const ri = nearestRoad(p, 14); if (ri >= 0){ const r = P.ord.roads[ri], d0 = denseRoad(r); let bi = 0, bd = Infinity;
+        for (let i = 0; i + 1 < d0.length; i++){ const dd = dSeg(p, d0[i], d0[i + 1]); if (dd < bd){ bd = dd; bi = i; } }
+        const a = d0[bi], b = d0[bi + 1], cr = (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0]), sd = cr >= 0 ? 1 : -1;
+        setSide(r, sd, !sidesOf(r).includes(sd)); SEL = ri; P.ord.preset = "custom"; save(); redrawMap(true); } return; }
     if (TOOL === "erase" && P.ord.modo !== "patio"){ const ri = nearestRoad(p); if (ri >= 0){ P.ord.roads.splice(ri, 1); P.ord.preset = "custom"; SEL = -1; save(); redrawMap(true); } return; }
     if (node){ const [ri, pi] = node.dataset.node.split(":").map(Number); DRAG = { type:"node", ri, pi }; SEL = ri; return; }
     const ri = P.ord.modo !== "patio" ? nearestRoad(p) : -1;
@@ -1938,10 +1954,10 @@ function bindMap(){
   });
   box.addEventListener("pointerup", () => { const was = DRAG; DRAG = null; if (was && was.type === "node"){ save(); redrawMap(true); } else if (was && was.type === "pan" && !was.moved && SEL >= 0){ SEL = -1; redrawMap(true); } });
 }
-function nearestRoad(p){ let best = -1, bd = Infinity; (P.ord.roads || []).forEach((r, ri) => { const d0 = denseRoad(r); for (let i = 0; i + 1 < d0.length; i++){ const d = dSeg(p, d0[i], d0[i + 1]); if (d < bd){ bd = d; best = ri; } } }); return bd <= Math.max(4, ((P.ord.roads[best] || {}).w || 7) / 2 + 1) ? best : -1; }
+function nearestRoad(p, tol){ let best = -1, bd = Infinity; (P.ord.roads || []).forEach((r, ri) => { const d0 = denseRoad(r); for (let i = 0; i + 1 < d0.length; i++){ const d = dSeg(p, d0[i], d0[i + 1]); if (d < bd){ bd = d; best = ri; } } }); return bd <= (tol || Math.max(4, ((P.ord.roads[best] || {}).w || 7) / 2 + 1)) ? best : -1; }
 function finishDraw(){
   if (DRAW){ const pts = DRAW.pts.filter((p, i, a) => !i || v2.len(v2.sub(p, a[i - 1])) > 0.6);
-    if (pts.length >= 2){ P.ord.roads.push({ pts, w:P.ord.wCalle, curva:!!DRAW.curva, cerrado:!!DRAW.cerrado && pts.length >= 3 }); P.ord.preset = "custom"; SEL = P.ord.roads.length - 1; save(); toast("Vial añadido. Puedes mover sus puntos con «Mover»."); }
+    if (pts.length >= 2){ P.ord.roads.push({ pts, w:P.ord.wCalle, curva:!!DRAW.curva, cerrado:!!DRAW.cerrado && pts.length >= 3, lados:P.ord.ladosNuevo || "ambos" }); P.ord.preset = "custom"; SEL = P.ord.roads.length - 1; save(); toast("Vial añadido. Puedes mover sus puntos con «Mover»."); }
     else if (pts.length) toast("Un vial necesita al menos dos puntos."); }
   DRAW = null; redrawMap(true);
 }
@@ -1963,6 +1979,7 @@ function viewOrd(M){
       <button type="button" class="tb" data-tool="line" title="Vial recto: clic para cada punto. Termina al llegar a otro vial o calle, al pulsar otra vez el último punto o con «Terminar»">Vial recto</button>
       <button type="button" class="tb" data-tool="curve" title="Vial curvo: los puntos son de control y el vial pasa por ellos con curvas suaves">Vial curvo</button>
       <button type="button" class="tb" data-ortho="1" title="Ángulos de 90°: cada tramo sigue o gira en ángulo recto">90°</button>
+      <button type="button" class="tb" data-tool="sides" title="Lados con parcelas: clic a un lado de un vial para poner o quitar parcelas en ese lado">Lados</button>
       <button type="button" class="tb" data-tool="erase" title="Borrar vial: clic sobre el vial">Borrar</button>
       <span class="tsep"></span>
       <button type="button" class="tb" data-ordv="cubiertas">Cubiertas</button><button type="button" class="tb" data-ordv="planta">Planta</button><button type="button" class="tb" data-ordv="3d">3D</button>
@@ -1970,7 +1987,7 @@ function viewOrd(M){
       <button type="button" class="tb" data-act="fit" title="Encajar la parcela">Encajar</button>
     </div>
     <div class="fl fl-hint" id="maphint"></div>
-    <div class="fl fl-draw" id="drawbar" hidden><button type="button" class="btn pri" data-act="drawdone">Terminar vial</button><button type="button" class="btn" data-act="drawundo">Deshacer punto</button><button type="button" class="btn" data-act="drawcancel">Cancelar</button></div>
+    <div class="fl fl-draw" id="drawbar" hidden><span class="seg mini" title="Lados con parcelas en el vial que estás dibujando">${LADOS.map(([v, t]) => `<button type="button" data-ladosnuevo="${v}" aria-pressed="${(o.ladosNuevo || "ambos") === v}">${t}</button>`).join("")}</span><button type="button" class="btn pri" data-act="drawdone">Terminar vial</button><button type="button" class="btn" data-act="drawundo">Deshacer punto</button><button type="button" class="btn" data-act="drawcancel">Cancelar</button></div>
     <div class="fl fl-layers"><b>Capas</b>${[["retr","Retranqueos"],["arbol","Arbolado"],["cotas","Rótulos"]].map(([k, t]) => `<label class="chk"><input type="checkbox" data-capa="${k}"${(o.capas || {})[k] !== false ? " checked" : ""}>${t}</label>`).join("")}</div>
     <aside class="fl fl-panel" id="ordpanel">
       <section><h4>Proyecto</h4><div class="mk" id="ordkpi"></div></section>
@@ -2027,13 +2044,15 @@ function updateOrd(M, light){
   const pz = $("#ordpresets"); if (pz && pz.dataset.k !== tkey){ pz.innerHTML = ORDC.thumbs; pz.dataset.k = tkey; }
   document.querySelectorAll("[data-preset]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.preset === (o.modo === "patio" ? "patio" : o.preset))));
   document.querySelectorAll("[data-tool]").forEach(b => { b.setAttribute("aria-pressed", String(b.dataset.tool === TOOL)); b.disabled = o.modo === "patio" && b.dataset.tool !== "select"; });
+  document.querySelectorAll("[data-ladosnuevo]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.ladosnuevo === (o.ladosNuevo || "ambos"))));
   document.querySelectorAll("[data-ortho]").forEach(b => { b.setAttribute("aria-pressed", String(ORTHO)); b.disabled = o.modo === "patio"; });
-  const db = $("#drawbar"); if (db) db.hidden = !(isDraw() && DRAW && DRAW.pts.length);
+  const db = $("#drawbar"); if (db){ db.hidden = !isDraw() || o.modo === "patio"; db.querySelectorAll("[data-act]").forEach(x => { x.disabled = !(DRAW && DRAW.pts.length) || (x.dataset.act === "drawdone" && DRAW.pts.length < 2); }); }
   document.querySelectorAll("[data-ordv]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.ordv === o.vista)));
   document.querySelectorAll('[data-ordset="parking"]').forEach(b => { b.setAttribute("aria-pressed", String(b.dataset.v === o.parking)); b.disabled = o.modo === "patio"; });
   const po = document.querySelector(".patioonly"); if (po) po.hidden = o.modo !== "patio";
   const hint = $("#maphint");
   if (hint) hint.textContent = o.modo === "patio" ? "Patio común: sin viales en superficie. Elige otra plantilla para trabajar con calles." :
+    TOOL === "sides" ? "Haz clic a un lado de un vial para poner o quitar parcelas en ese lado. Verde: con parcelas; rojo: sin parcelas." :
     isDraw() ? (DRAW && DRAW.pts.length ? "Añade puntos con clic. Termina al llegar a otro vial o calle, pulsando otra vez el último punto o con «Terminar vial». Clic en el primer punto: anillo cerrado." : (TOOL === "curve" ? "Vial curvo: " : "Vial recto: ") + "haz clic en " + UAG.edges[IDX.acc].n + " o sobre otro vial para empezar" + (ORTHO ? " · 90° activado" : "")) :
     TOOL === "erase" ? "Clic sobre un vial para borrarlo" : "Arrastra los nodos para mover un vial · rueda para acercar · arrastra el fondo para desplazar";
   const is3d = o.vista === "3d";
@@ -2049,7 +2068,7 @@ function updateOrd(M, light){
   const sr = $("#selroad");
   if (sr){ const r = o.modo !== "patio" && SEL >= 0 ? o.roads[SEL] : null;
     sr.hidden = !r;
-    if (r && !(document.activeElement && document.activeElement.id === "selw")) sr.innerHTML = `<h4>Vial V${SEL + 1}</h4><label class="pf"><span>Ancho</span><span class="num"><input type="number" id="selw" min="4" max="16" step="0.5" value="${r.w}"><span>m</span></span></label><label class="chk"><input type="checkbox" id="selcurva"${r.curva ? " checked" : ""}>Trazado curvo</label><label class="chk"><input type="checkbox" id="selcerr"${r.cerrado ? " checked" : ""}>Cerrado (anillo)</label><p class="note">${fmt(L.roadLen[SEL] || 0, 1)} m de longitud · ${L.conn[SEL] ? "conectado" : "sin conexión a vía pública"}</p><button type="button" class="btn" data-act="delroad">Eliminar vial</button>`; }
+    if (r && !(document.activeElement && document.activeElement.id === "selw")) sr.innerHTML = `<h4>Vial V${SEL + 1}</h4><label class="pf"><span>Ancho</span><span class="num"><input type="number" id="selw" min="4" max="16" step="0.5" value="${r.w}"><span>m</span></span></label><div class="pf" style="display:grid;gap:4px;justify-content:stretch"><span>Parcelas en</span><span class="seg mini">${LADOS.map(([v, t]) => `<button type="button" data-sellados="${v}" aria-pressed="${(r.lados || "ambos") === v}">${t}</button>`).join("")}</span></div><p class="note">Izquierda (I) y derecha (D) según el sentido en que se dibujó el vial; están marcadas en el plano.</p><label class="chk"><input type="checkbox" id="selcurva"${r.curva ? " checked" : ""}>Trazado curvo</label><label class="chk"><input type="checkbox" id="selcerr"${r.cerrado ? " checked" : ""}>Cerrado (anillo)</label><p class="note">${fmt(L.roadLen[SEL] || 0, 1)} m de longitud · ${L.conn[SEL] ? "conectado" : "sin conexión a vía pública"}</p><button type="button" class="btn" data-act="delroad">Eliminar vial</button>`; }
   if (light) return;
   const C = ordChecks(M, L), lbl = { ok:"Cumple", warn:"Revisar", fail:"No cumple", info:"Info" };
   const rowsT = L.rows.map(r => `<tr><td>Hilera ${r.id}${r.src ? ` <small class="note">${r.src}</small>` : ""}</td><td class="n">${r.n}</td><td>${r.houses.filter(h => h.cab).length} cab.</td><td>jardín al ${r.gardenDir}</td><td class="n">${r.n ? fmt(r.houses.reduce((a, h) => a + polyArea(h.garden), 0) / r.n, 0) : "—"} m²</td></tr>`).join("");
