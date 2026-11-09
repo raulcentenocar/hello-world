@@ -11,6 +11,10 @@ Abrir `index.html` en el navegador (o vía GitHub Pages en `/casa-semisotano/`).
   interior y dos a jardín) y su superficie deseada. Dos modos de dimensionado: *Ajustar al objetivo* (escala el
   programa hasta los m² computables fijados) o *Según programa* (respeta tus superficies y calcula lo que ocupa).
   Tabla de deseado / resultado / diferencia y plantas en vivo al lado.
+- **Ordenación UA-03-01** (Sector 1 «Los Pocillos», Villanueva de la Cañada): parcela real dibujada desde las
+  coordenadas UTM de la cédula, hileras paramétricas (sur, norte, central y oeste) con la planta baja del modelo,
+  jardines privados, patio común sobre garaje comunitario con una sola rampa desde Calle Floristas y
+  comprobación frente a la cédula (34 viviendas, 5.100 m²c, 60 % de ocupación, retranqueos, 2 plazas por vivienda).
 - **Plantas** de semisótano, planta baja y planta primera con muros, medianeras rayadas, carpinterías,
   puertas, escalera en U, cotas y superficies útiles por estancia.
 - **Sección longitudinal** con rasante, límite de cota del semisótano, rampa de garaje, patio inglés,

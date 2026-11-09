@@ -152,6 +152,17 @@ tr.tot td{font-weight:600;border-top:1px solid var(--ink)}
 @media (max-width:1100px){.progwrap{grid-template-columns:minmax(0,1fr)}}
 .sel{width:100%;min-width:150px;border:1px solid var(--rule);background:var(--paper);border-radius:3px;padding:5px 6px;font-size:13px}
 .num input:disabled{opacity:.45}
+.ordwrap{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;align-items:start}
+.ordside{display:grid;gap:14px;min-width:0}
+@media (max-width:1200px){.ordwrap{grid-template-columns:minmax(0,1fr)}}
+svg .plot{fill:var(--sheet);stroke:var(--ink);stroke-width:1.6}
+svg .retr{fill:none;stroke:var(--below);stroke-opacity:.18}
+svg .zv{fill:var(--accent-soft)} svg .neigh{fill:var(--rule);opacity:.35}
+svg .garage{fill:var(--below-soft);stroke:var(--below);stroke-width:1.2;stroke-dasharray:6 4;fill-opacity:.55}
+svg .pgarden{fill:var(--accent-soft);stroke:var(--accent);stroke-width:.6}
+svg .pfront{fill:var(--paper);stroke:var(--muted);stroke-width:.5}
+svg .ramp.bad{fill:var(--fail);fill-opacity:.35}
+svg .muted{fill:var(--muted)}
 textarea.out{width:100%;height:140px;font-family:var(--f-mono);font-size:11px;background:var(--paper);color:var(--ink);border:1px solid var(--rule);margin-top:8px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -187,13 +198,13 @@ const CAT = {
   "Salón-comedor":{ min:18, liv:1 }, "Salón":{ min:14, liv:1 }, "Comedor":{ min:8, liv:1 }, "Estudio":{ min:6 },
   "Dormitorio principal":{ min:10, dorm:1 }, "Dormitorio doble":{ min:8, dorm:1 }, "Dormitorio individual":{ min:6, dorm:1 },
   "Baño":{ min:3, bath:1 }, "Aseo":{ min:1.5, bath:1 }, "Baño en suite":{ min:3, bath:1, anexo:"dorm" }, "Vestidor":{ min:2, anexo:"dorm", nowin:1 },
-  "Despensa":{ min:1, anexo:"cocina", nowin:1 }, "Lavadero":{ min:2 }, "Lavadero · despensa":{ min:2.5 }, "Armarios":{ nowin:1 },
+  "Despensa":{ min:1, anexo:"cocina", nowin:1 }, "Lavadero":{ min:2 }, "Lavadero · despensa":{ min:2.5 }, "Armarios":{ nowin:1 }, "Paso a garaje comunitario":{ nowin:1 },
   "Trastero":{ nowin:1 }, "Bodega":{ nowin:1 }, "Sala polivalente":{}, "Gimnasio":{}, "Cuarto de juegos":{},
   "Instalaciones":{ nowin:1 }, "Instalaciones · lavandería":{}
 };
 const OPTS = {
   res:["Vestíbulo","Cocina","Cocina-comedor","Salón-comedor","Salón","Comedor","Estudio","Dormitorio principal","Dormitorio doble","Dormitorio individual","Baño","Aseo","Baño en suite","Vestidor","Despensa","Lavadero","Lavadero · despensa","Armarios"],
-  ss:["Trastero","Bodega","Sala polivalente","Gimnasio","Cuarto de juegos","Instalaciones","Instalaciones · lavandería","Lavadero","Aseo","Despensa","Armarios"]
+  ss:["Paso a garaje comunitario","Trastero","Bodega","Sala polivalente","Gimnasio","Cuarto de juegos","Instalaciones","Instalaciones · lavandería","Lavadero","Aseo","Despensa","Armarios"]
 };
 const ZONES = [["calle","A calle"],["nucleo","Núcleo interior"],["jardin","A jardín"]];
 const PROG_DEF = {
@@ -216,12 +227,12 @@ const DEF = {
   ssSobre:1.00, ssLimite:1.00, ssLibre:2.40, garaje:true, pendRampa:20, meseta:3.00, patio:true, patioF:1.50,
   hPB:2.70, hP1:2.60, forj:0.30, huella:0.27, cmax:0.185, ancho:0.90, ojo:0.10,
   frente:10.00, fondo:28.00, coef:0.60, ocupMax:50, alturaMax:7.50, fondoMax:15.00, retFrente:5.00, retFondo:3.00, retLat:3.00,
-  tE:0.30, tM:0.25, tP:0.10, prog:clone(PROG_DEF)
+  tE:0.30, tM:0.25, tP:0.10, prog:clone(PROG_DEF), ord:null
 };
 const KEY = "vivienda-semisotano-150";
 let P = Object.assign({}, DEF);
 P.prog = clone(PROG_DEF);
-try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s) P = Object.assign({}, DEF, s, { prog:normProg(s.prog) }); } catch(e) {}
+try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s) P = Object.assign({}, DEF, s, { prog:normProg(s.prog), ord:s.ord }); } catch(e) {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(P)); } catch(e) {} };
 
 const GROUPS = [
@@ -798,12 +809,12 @@ document.addEventListener("click", e => {
   const b = e.target.closest("button[data-k]");
   if (b){ const k = b.dataset.k, v = b.dataset.v; P[k] = isNaN(+v) ? v : +v;
     document.querySelectorAll(`button[data-k="${k}"]`).forEach(x => x.setAttribute("aria-pressed", String(x.dataset.v === v))); schedule(); }
-  if (e.target.id === "reset"){ P = Object.assign({}, DEF, { prog:clone(PROG_DEF) }); buildPanel(); schedule(); }
+  if (e.target.id === "reset"){ P = Object.assign({}, DEF, { prog:clone(PROG_DEF), ord:Object.assign({}, ORD_DEF) }); buildPanel(); schedule(); }
 });
 let raf = 0, partial = true;
 function schedule(onlyNumbers){ partial = partial && !!onlyNumbers; cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { save(); updateVis(); render(partial); partial = true; }); }
 
-const TABS = [["plantas","Plantas"],["programa","Programa"],["seccion","Sección"],["agrupacion","Agrupación"],["superficies","Superficies"],["comprobaciones","Comprobaciones"],["memoria","Criterios"]];
+const TABS = [["plantas","Plantas"],["programa","Programa"],["ordenacion","Ordenación UA-03-01"],["seccion","Sección"],["agrupacion","Agrupación"],["superficies","Superficies"],["comprobaciones","Comprobaciones"],["memoria","Criterios"]];
 function floorsFor(M){
   const L = P.tipo !== "aislada", R = P.tipo === "adosada";
   const o = { medL:L, medR:R, mirror:P.espejo };
@@ -838,6 +849,7 @@ function render(onlyNumbers){
   if (TAB === "programa"){ if (onlyNumbers && $("#progtable")) updatePrograma(M, F); else { v.innerHTML = viewPrograma(M, F); updatePrograma(M, F); } }
   if (TAB === "plantas") v.innerHTML = viewPlantas(M, F);
   if (TAB === "seccion") v.innerHTML = viewSeccion(M);
+  if (TAB === "ordenacion"){ if (onlyNumbers && $("#ordctl")) updateOrd(M); else { v.innerHTML = viewOrd(M); updateOrd(M); } }
   if (TAB === "agrupacion") v.innerHTML = viewAgrup(M);
   if (TAB === "superficies") v.innerHTML = viewSup(M, F);
   if (TAB === "comprobaciones") v.innerHTML = viewChecks(C);
@@ -1000,6 +1012,254 @@ function viewMemoria(M){
   </div></div>`;
 }
 
+/* ================================================================== ORDENACIÓN · PARCELA UA-03-01 */
+/* Cédula urbanística UA-03-01, Sector 1 «Los Pocillos», Villanueva de la Cañada (Madrid). Coordenadas ETRS89 UTM 30N,
+   origen local en el vértice 3 (414.896,93 / 4.478.781,24). Polígono en sentido antihorario: 3 → 2 → 1 → 6 → 5 → 4. */
+const UA = {
+  id:"UA-03-01", sup:8839, edif:5100, viv:34, ocup:60, plantas:2, altura:7.5, coron:10.5, plazas:2, ret:3,
+  O:[414896.93, 4478781.24],
+  V:[[0,0],[91.85,0.76],[91.85,73.52],[71.90,77.05],[-2.47,93.07],[-31.45,96.66]],
+  VN:["3","2","1","6","5","4"],
+  E:[
+    { t:"calle",   n:"Avenida de la Dehesa", arc:92.02, sag:2.39, conc:true },
+    { t:"lindero", n:"Parcela UA-03-02", arc:71.30 },
+    { t:"lindero", n:"Zona verde ZV-02", arc:20.26, sag:0.10, conc:true, R:500 },
+    { t:"lindero", n:"Zona verde ZV-02", arc:76.12, sag:1.10, conc:true, R:659.75 },
+    { t:"lindero", n:"Zona verde ZV-02", arc:29.30, sag:1.07, conc:false, R:100 },
+    { t:"calle",   n:"Calle Floristas", arc:101.65 }
+  ]
+};
+const ORD_DEF = { nS:12, nN:12, nW:0, nC:10, gS:8, gN:8, gW:5, gC:6, paseo:6, alS:"centro", alN:"centro", alW:"centro", alC:"fin", sep:8, front:2.0, garaje:true, rampaPos:34, rampaPend:16 };
+const v2 = { add:(a,b)=>[a[0]+b[0],a[1]+b[1]], sub:(a,b)=>[a[0]-b[0],a[1]-b[1]], mul:(a,k)=>[a[0]*k,a[1]*k], len:a=>Math.hypot(a[0],a[1]) };
+const UAG = (() => {
+  const edges = UA.E.map((e, i) => {
+    const A = UA.V[i], B = UA.V[(i + 1) % UA.V.length], d = v2.sub(B, A), L = v2.len(d), u = v2.mul(d, 1 / L), nIn = [-u[1], u[0]];
+    const bulge = e.sag ? v2.mul(nIn, e.conc ? e.sag : -e.sag) : [0, 0];
+    const pts = []; const N = e.sag ? 24 : 1;
+    for (let k = 0; k <= N; k++){ const t = k / N; pts.push(v2.add(v2.add(A, v2.mul(d, t)), v2.mul(bulge, 4 * t * (1 - t)))); }
+    return Object.assign({}, e, { A, B, u, nIn, L, pts });
+  });
+  const poly = []; edges.forEach(e => e.pts.slice(0, -1).forEach(p => poly.push(p)));
+  let a = 0; for (let i = 0; i < poly.length; i++){ const p = poly[i], q = poly[(i + 1) % poly.length]; a += p[0] * q[1] - q[0] * p[1]; }
+  return { edges, poly, area:a / 2 };
+})();
+function inPoly(p, poly){ let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++){ const a = poly[i], b = poly[j]; if ((a[1] > p[1]) !== (b[1] > p[1]) && p[0] < (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; }
+function dSeg(p, a, b){ const d = v2.sub(b, a), t = Math.max(0, Math.min(1, ((p[0]-a[0])*d[0] + (p[1]-a[1])*d[1]) / (d[0]*d[0] + d[1]*d[1] || 1))); return v2.len(v2.sub(p, v2.add(a, v2.mul(d, t)))); }
+function dPolyline(p, pts, closed){ let m = Infinity; const n = pts.length; for (let i = 0; i < (closed ? n : n - 1); i++) m = Math.min(m, dSeg(p, pts[i], pts[(i + 1) % n])); return m; }
+function dEdge(p, e){ return dPolyline(p, e.pts, false); }
+function polyArea(P){ let a = 0; for (let i = 0; i < P.length; i++){ const p = P[i], q = P[(i + 1) % P.length]; a += p[0] * q[1] - q[0] * p[1]; } return Math.abs(a / 2); }
+/* Sutherland–Hodgman: recorta un polígono cualquiera por un polígono convexo antihorario */
+function clipConvex(subject, clip){
+  let out = subject;
+  for (let i = 0; i < clip.length && out.length; i++){
+    const a = clip[i], b = clip[(i + 1) % clip.length], inside = p => (b[0]-a[0])*(p[1]-a[1]) - (b[1]-a[1])*(p[0]-a[0]) >= 0;
+    const inter = (p, q) => { const x1=p[0],y1=p[1],x2=q[0],y2=q[1],x3=a[0],y3=a[1],x4=b[0],y4=b[1]; const den=(x1-x2)*(y3-y4)-(y1-y2)*(x3-x4); const t=((x1-x3)*(y3-y4)-(y1-y3)*(x3-x4))/den; return [x1+t*(x2-x1), y1+t*(y2-y1)]; };
+    const inp = out; out = [];
+    for (let j = 0; j < inp.length; j++){ const p = inp[j], q = inp[(j + 1) % inp.length];
+      if (inside(q)){ if (!inside(p)) out.push(inter(p, q)); out.push(q); } else if (inside(p)) out.push(inter(p, q)); }
+  }
+  return out;
+}
+const ccw = P => { let a = 0; for (let i = 0; i < P.length; i++){ const p = P[i], q = P[(i + 1) % P.length]; a += p[0]*q[1] - q[0]*p[1]; } return a >= 0 ? P : P.slice().reverse(); };
+function rectPts(A, u, v, s0, s1, o0, o1){ const P = (s, o) => v2.add(v2.add(A, v2.mul(u, s)), v2.mul(v, o)); return ccw([P(s0, o0), P(s1, o0), P(s1, o1), P(s0, o1)]); }
+function dRect(p, R){ return inPoly(p, R) ? 0 : dPolyline(p, R, true); }
+const compass = v => { const a = (Math.atan2(v[0], v[1]) * 180 / Math.PI + 360) % 360; return ["norte","noreste","este","sureste","sur","suroeste","oeste","noroeste"][Math.round(a / 45) % 8]; };
+
+function computeOrd(M){
+  const o = P.ord, W = M.W, Dh = M.Dpb, req = UA.ret;
+  const eS = UAG.edges[0], offS = o.gS + eS.sag;
+  const fC = offS + Dh + o.front + o.paseo + o.front;  /* frente de la hilera central, medido desde la Avenida */
+  const defs = [{ k:"S", e:0, n:o.nS, g:o.gS, al:o.alS, name:"Hilera sur" }, { k:"N", e:3, n:o.nN, g:o.gN, al:o.alN, name:"Hilera norte" },
+    { k:"C", n:o.nC, g:o.gC, al:o.alC, name:"Hilera central", A:v2.add(eS.A, v2.mul(eS.nIn, fC + Dh + o.gC)), u:eS.u, v:v2.mul(eS.nIn, -1), gFrom:0 },
+    { k:"W", e:5, n:o.nW, g:o.gW, al:o.alW, name:"Hilera oeste" }];
+  const rows = [], placed = [];
+  defs.forEach(df => {
+    const e = df.e !== undefined ? UAG.edges[df.e] : { L:eS.L };
+    const A = df.A || e.A, u = df.u || e.u, v = df.v || e.nIn;
+    const off = df.e !== undefined ? df.g + (e.sag && e.conc ? e.sag : 0) : df.g;
+    const ok = s => {
+      const pr = v2.add(v2.add(A, v2.mul(u, s)), v2.mul(v, off)), pf = v2.add(pr, v2.mul(v, Dh)), pm = v2.add(pr, v2.mul(v, Dh / 2)), pz = v2.add(pf, v2.mul(v, o.front));
+      const chk = df.gFrom === 0 ? [v2.add(v2.add(A, v2.mul(u, s)), v2.mul(v, 0)), pr, pm, pf] : [pr, pm, pf];
+      for (const p of chk){ if (!inPoly(p, UAG.poly)) return false; for (const ed of UAG.edges) if (dEdge(p, ed) < req - 1e-6) return false; for (const R of placed) if (dRect(p, R) < o.sep) return false; }
+      return inPoly(pz, UAG.poly);
+    };
+    let best = [0, 0], cur = null; const step = 0.1;
+    for (let s = -60; s <= e.L + 60; s += step){ if (ok(s)){ if (cur === null) cur = s; if (s - cur > best[1] - best[0]) best = [cur, s]; } else cur = null; }
+    const avail = best[1] - best[0], fit = Math.max(0, Math.floor(avail / W + 1e-9)), n = Math.min(df.n, fit);
+    let s0 = df.al === "inicio" ? best[0] : df.al === "fin" ? best[1] - n * W : (best[0] + best[1] - n * W) / 2;
+    const houses = [];
+    for (let i = 0; i < n; i++){
+      const a = s0 + i * W, b = a + W;
+      houses.push({ i, a, b, cab:i === 0 || i === n - 1,
+        rect:rectPts(A, u, v, a, b, off, off + Dh),
+        garden:clipConvex(UAG.poly, rectPts(A, u, v, a, b, df.gFrom === 0 ? 0 : -12, off)),
+        frontS:rectPts(A, u, v, a, b, off + Dh, off + Dh + o.front) });
+    }
+    if (n) placed.push(rectPts(A, u, v, s0, s0 + n * W, df.gFrom === 0 ? 0 : off, off + Dh));
+    rows.push(Object.assign({}, df, { e, A, u, v, off, avail, fit, n, s0, houses, gardenDir:compass(v2.mul(v, -1)), frontDir:compass(v) }));
+  });
+  /* distancias mínimas reales a cada lindero */
+  const minD = UAG.edges.map(() => Infinity);
+  rows.forEach(r => r.houses.forEach(h => h.rect.forEach(p => UAG.edges.forEach((ed, k) => { minD[k] = Math.min(minD[k], dEdge(p, ed)); }))));
+  /* garaje comunitario bajo el patio común (aprox.: polígono entre frentes de hileras) */
+  const R = Object.fromEntries(rows.map(r => [r.k, r]));
+  const fp = (r, s) => v2.add(v2.add(r.A, v2.mul(r.u, s)), v2.mul(r.v, r.off + Dh + o.front));
+  let garagePoly = null, garageA = 0;
+  if (o.garaje && R.S.n && R.N.n){
+    const xE = UA.V[1][0] - req, ew = UAG.edges[5];
+    const xWest = y => { const t = (y - ew.A[1]) / (ew.B[1] - ew.A[1]); return ew.A[0] + t * (ew.B[0] - ew.A[0]) + req / Math.abs(ew.nIn[0]) ; };
+    const S1 = fp(R.S, R.S.s0), S2 = fp(R.S, R.S.s0 + R.S.n * W), N1 = fp(R.N, R.N.s0), N2 = fp(R.N, R.N.s0 + R.N.n * W);
+    const west = R.W.n ? [fp(R.W, R.W.s0), fp(R.W, R.W.s0 + R.W.n * W)] : [[xWest(N2[1]), N2[1]], [xWest(S1[1]), S1[1]]];
+    garagePoly = [S1, S2, [xE, S2[1]], [xE, N1[1]], N1, N2, ...west];
+    garageA = polyArea(garagePoly) - R.C.n * W * Dh;
+  }
+  /* rampa desde Calle Floristas */
+  const ew = UAG.edges[5], rLen = (-M.ssFloor) / (o.rampaPend / 100) + 4.5, rW = 4.0;
+  const sR = ew.L - o.rampaPos;
+  const ramp = o.garaje ? rectPts(ew.A, ew.u, ew.nIn, sR - rW / 2, sR + rW / 2, 0, rLen) : null;
+  let rampHit = false;
+  if (ramp) rows.forEach(r => r.houses.forEach(h => { if (h.rect.some(p => inPoly(p, ramp)) || ramp.some(p => inPoly(p, h.rect))) rampHit = true; }));
+  const houses = rows.flatMap(r => r.houses);
+  const n = houses.length, foot = n * W * Dh;
+  const gardens = houses.reduce((a, h) => a + polyArea(h.garden), 0);
+  const fronts = houses.reduce((a, h) => a + polyArea(h.frontS), 0);
+  const comun = UAG.area - foot - gardens - fronts;
+  return { rows, n, foot, gardens, fronts, comun, minD, garagePoly, garageA, plazasCap:Math.floor(garageA / 27), ramp, rLen, rampHit, W, Dh };
+}
+
+/* render en SVG: norte arriba */
+function ordSVG(M, O){
+  const pad = 14, S = 7;
+  const xs = UAG.poly.map(p => p[0]), ys = UAG.poly.map(p => p[1]);
+  const fx0 = Math.min(...xs) - pad, fx1 = Math.max(...xs) + pad, fy0 = Math.min(...ys) - pad, fy1 = Math.max(...ys) + pad;
+  const X = x => (x - fx0) * S, Y = y => (fy1 - y) * S;
+  const pts = P => P.map(p => X(p[0]).toFixed(1) + "," + Y(p[1]).toFixed(1)).join(" ");
+  const poly = (P, c, extra = "") => `<polygon points="${pts(P)}" class="${c}"${extra}/>`;
+  const txt = (p, t, c, sz, rot = 0) => `<text x="${X(p[0]).toFixed(1)}" y="${Y(p[1]).toFixed(1)}" font-size="${sz}" class="${c}" text-anchor="middle" dominant-baseline="middle"${rot ? ` transform="rotate(${rot.toFixed(1)} ${X(p[0]).toFixed(1)} ${Y(p[1]).toFixed(1)})"` : ""}>${esc(t)}</text>`;
+  const W = (fx1 - fx0) * S, H = (fy1 - fy0) * S;
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W.toFixed(0)} ${H.toFixed(0)}" role="img" aria-label="Ordenación de la parcela UA-03-01"><defs><clipPath id="clipUA"><polygon points="${pts(UAG.poly)}"/></clipPath></defs>`;
+  /* entorno: viales, zona verde, parcela vecina */
+  const band = (e, w, c) => { const A = e.pts[0], B = e.pts[e.pts.length - 1], out = v2.mul(e.nIn, -1); const ext = v2.mul(e.u, 8);
+    const P = [...e.pts.map(p => v2.add(p, [0,0])), v2.add(v2.add(B, ext), v2.mul(out, w)), v2.add(v2.sub(A, ext), v2.mul(out, w))]; return poly(P, c); };
+  s += band(UAG.edges[0], 12, "street") + band(UAG.edges[5], 12, "street");
+  [2, 3, 4].forEach(k => { s += band(UAG.edges[k], 10, "zv"); });
+  s += band(UAG.edges[1], 10, "neigh");
+  /* parcela, banda de retranqueo 3 m */
+  s += poly(UAG.poly, "plot");
+  s += `<g clip-path="url(#clipUA)"><polygon points="${pts(UAG.poly)}" class="retr" stroke-width="${(2 * UA.ret * S).toFixed(1)}"/></g>`;
+  if (O.garagePoly) s += poly(O.garagePoly, "garage");
+  /* jardines y frentes privados */
+  O.rows.forEach(r => r.houses.forEach(h => { s += poly(h.garden, "pgarden") + poly(h.frontS, "pfront"); }));
+  /* viviendas con su planta baja real */
+  O.rows.forEach(r => {
+    r.houses.forEach((h, i) => {
+      const n = r.houses.length, first = i === 0, last = i === n - 1, mir = i % 2 === 1;
+      const finalL = !first, finalR = !last; // medianera a cada lado según posición en hilera
+      const g = buildFloor(M, "pb", { medL:mir ? finalR : finalL, medR:mir ? finalL : finalR, mirror:mir });
+      const org = v2.add(v2.add(r.A, v2.mul(r.u, h.a)), v2.mul(r.v, r.off + O.Dh));
+      const a = S * r.u[0], b = -S * r.u[1], c = -S * r.v[0], d = S * r.v[1], ee = X(org[0]), ff = Y(org[1]);
+      s += `<g transform="matrix(${a.toFixed(4)} ${b.toFixed(4)} ${c.toFixed(4)} ${d.toFixed(4)} ${ee.toFixed(2)} ${ff.toFixed(2)})">`;
+      g.rects.forEach(q => { if (q.c === "car") return; s += `<rect x="${q.x.toFixed(3)}" y="${q.y.toFixed(3)}" width="${q.w.toFixed(3)}" height="${q.h.toFixed(3)}" class="${q.c === "med" ? "wall" : q.c}"/>`; });
+      g.lines.forEach(l => { if (l.c === "dim") return; s += `<line x1="${l.x1.toFixed(3)}" y1="${l.y1.toFixed(3)}" x2="${l.x2.toFixed(3)}" y2="${l.y2.toFixed(3)}" class="${l.c}" vector-effect="non-scaling-stroke"/>`; });
+      s += `</g>`;
+      const c0 = v2.add(v2.add(r.A, v2.mul(r.u, (h.a + h.b) / 2)), v2.mul(r.v, r.off - 2.2));
+      s += txt(c0, r.k + (i + 1), h.cab ? "lbl acc" : "lbl", 10);
+    });
+  });
+  if (O.ramp){ s += poly(O.ramp, O.rampHit ? "ramp bad" : "ramp"); const c = O.ramp.reduce((a, p) => v2.add(a, v2.mul(p, 0.25)), [0, 0]); s += txt(c, "Rampa", "bel", 10, -Math.atan2(UAG.edges[5].nIn[1], UAG.edges[5].nIn[0]) * 180 / Math.PI); }
+  if (O.garagePoly){ const rc = O.rows.find(r => r.k === "C");
+    const c = rc && rc.n ? v2.add(v2.add(rc.A, v2.mul(rc.u, rc.s0 / 2 - 2)), v2.mul(rc.v, rc.off + O.Dh * 0.2)) : O.garagePoly.reduce((a, p) => v2.add(a, v2.mul(p, 1 / O.garagePoly.length)), [0, 0]);
+    s += txt(c, "PATIO COMÚN", "lbl", 13) + txt(v2.add(c, [0, -3.2]), `garaje comunitario bajo rasante · ${fmt(O.garageA, 0)} m²`, "bel", 10.5); }
+  /* rotulación de bordes y vértices */
+  UAG.edges.forEach((e, k) => { const m = e.pts[Math.floor(e.pts.length / 2)], out = v2.mul(e.nIn, -(k === 0 || k === 5 ? 6.5 : 5)); let ang = -Math.atan2(e.u[1], e.u[0]) * 180 / Math.PI; if (ang > 90) ang -= 180; if (ang < -90) ang += 180;
+    if (k === 3 || k === 0 || k === 5 || k === 1) s += txt(v2.add(m, out), e.n.toUpperCase(), "lbl muted", 11, ang); });
+  UA.V.forEach((p, i) => { s += `<circle cx="${X(p[0]).toFixed(1)}" cy="${Y(p[1]).toFixed(1)}" r="3" class="acc"/>` + txt(v2.add(p, v2.mul(v2.sub(p, [30, 45]), 0.045)), UA.VN[i], "dimt", 10); });
+  /* norte y escala */
+  const nx = fx1 - 8, ny = fy1 - 10;
+  s += `<polygon points="${X(nx)},${Y(ny + 4)} ${X(nx - 1.6)},${Y(ny - 1)} ${X(nx + 1.6)},${Y(ny - 1)}" class="acc"/>` + txt([nx, ny - 3], "N", "lbl", 11);
+  const sx = fx0 + 4, sy = fy0 + 4;
+  s += `<line x1="${X(sx)}" y1="${Y(sy)}" x2="${X(sx + 20)}" y2="${Y(sy)}" class="ground"/>` + txt([sx + 10, sy + 2.2], "20 m", "dimt", 10);
+  return s + `</svg>`;
+}
+
+function viewOrd(M){
+  const o = P.ord;
+  const num = (k, label, u, min, max, step) => `<div class="f"><label for="ord-${k}">${label}</label><div class="num"><input type="number" id="ord-${k}" data-ord="${k}" min="${min}" max="${max}" step="${step}" value="${o[k]}"><span>${u}</span></div></div>`;
+  const sel = (k, label) => `<div class="f"><label for="ord-${k}">${label}</label><select class="sel" id="ord-${k}" data-ords="${k}" style="min-width:0">${[["inicio","Inicio"],["centro","Centrada"],["fin","Final"]].map(([v, t]) => `<option value="${v}"${o[k] === v ? " selected" : ""}>${t}</option>`).join("")}</select></div>`;
+  return `<div class="tools"><button class="btn pri" type="button" data-act="applyUA">Aplicar ordenanza UA-03-01 a la vivienda</button><span class="toast" id="toast" aria-live="polite"></span></div>
+  <div class="ordwrap">
+    <article class="sheet"><header><h3>Propuesta de ordenación · UA-03-01</h3><span id="ordhead"></span></header><div class="svgbox wide" id="ordsvg"></div></article>
+    <div class="ordside">
+      <div class="kpis" id="ordkpi"></div>
+      <div class="prose" id="ordctl"><h4>Hileras</h4>
+        <div class="fields" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));display:grid;gap:8px 16px">
+          ${num("nS", "Viviendas hilera sur", "ud", 0, 20, 1)}${num("gS", "Jardín trasero sur", "m", 3, 20, 0.5)}${sel("alS", "Posición hilera sur")}
+          ${num("nN", "Viviendas hilera norte", "ud", 0, 20, 1)}${num("gN", "Jardín trasero norte", "m", 3, 20, 0.5)}${sel("alN", "Posición hilera norte")}
+          ${num("nW", "Viviendas hilera oeste", "ud", 0, 20, 1)}${num("gW", "Jardín trasero oeste", "m", 3, 20, 0.5)}${sel("alW", "Posición hilera oeste")}
+          ${num("nC", "Viviendas hilera central", "ud", 0, 20, 1)}${num("gC", "Jardín trasero central", "m", 3, 20, 0.5)}${sel("alC", "Posición hilera central")}
+          ${num("paseo", "Paseo entre hileras sur y central", "m", 3, 15, 0.5)}
+          ${num("front", "Frente privado de acceso", "m", 0, 6, 0.5)}${num("sep", "Separación entre hileras", "m", 3, 20, 0.5)}
+          ${num("rampaPos", "Rampa: distancia al vértice 3", "m", 5, 95, 0.5)}${num("rampaPend", "Rampa: pendiente", "%", 10, 20, 1)}
+        </div>
+        <label class="chk" style="margin-top:8px"><input type="checkbox" id="ord-garaje" data-ordc="garaje"${o.garaje ? " checked" : ""}>Garaje comunitario bajo el patio con una sola rampa</label>
+        <p class="note">El ancho de cada vivienda (${fmt(M.W)} m) y su fondo (${fmt(M.Dpb)} m) vienen del modelo de vivienda. Cámbialos en el panel izquierdo o en la pestaña Programa.</p>
+      </div>
+    </div>
+  </div>
+  <div class="cols" id="ordtables"></div>`;
+}
+function updateOrd(M){
+  const O = computeOrd(M); LAST.O = O;
+  const o = P.ord, comp = M.Apb + M.Ap1;
+  const edif = O.n * comp, ocup = O.foot / UA.sup * 100, plz = 2 * O.n;
+  const st = (ok, warn) => ok ? "ok" : warn ? "warn" : "fail";
+  const lbl = { ok:"Cumple", warn:"Revisar", fail:"No cumple", info:"Info" };
+  $("#ordhead").textContent = `${fmt(UAG.area, 0)} m² de parcela · ${O.n} viviendas`;
+  $("#ordsvg").innerHTML = ordSVG(M, O);
+  const C = [
+    ["Número de viviendas", O.n + " ud", "≤ " + UA.viv + " ud", st(O.n <= UA.viv && O.n === UA.viv, O.n <= UA.viv), O.n < UA.viv ? "Faltan " + (UA.viv - O.n) + " viviendas para agotar el número máximo." : ""],
+    ["Edificabilidad", fmt(edif) + " m²c", "≤ " + fmt(UA.edif) + " m²c", st(edif <= UA.edif + 0.5, false), O.n + " × " + fmt(comp) + " m²c por vivienda"],
+    ["Ocupación sobre parcela", fmt(ocup, 1) + " %", "≤ " + UA.ocup + " %", st(ocup <= UA.ocup), fmt(O.foot) + " m² de huella"],
+    ["Altura", fmt(M.zRoof) + " m · 2 plantas", "≤ 7,50 m · 2 plantas", st(M.zRoof <= UA.altura + 1e-6), "Coronación máxima 10,50 m"],
+    ["Retranqueo a Avenida de la Dehesa", fmt(O.minD[0]) + " m", "≥ 3,00 m", st(O.minD[0] >= 2.999), ""],
+    ["Retranqueo a Calle Floristas", fmt(O.minD[5]) + " m", "≥ 3,00 m", st(O.minD[5] >= 2.999), ""],
+    ["Separación a la zona verde ZV-02", fmt(Math.min(O.minD[2], O.minD[3], O.minD[4])) + " m", "≥ 3,00 m", st(Math.min(O.minD[2], O.minD[3], O.minD[4]) >= 2.999), "Lectura conservadora: testero 3 m."],
+    ["Separación a la parcela UA-03-02", fmt(O.minD[1]) + " m", "≥ 3,00 m en extremo de hilera", st(O.minD[1] >= 2.999), ""],
+    ["Plazas de aparcamiento", plz + " plazas necesarias", "2 por vivienda", o.garaje ? st(O.plazasCap >= plz, O.plazasCap >= plz * 0.85) : "warn", o.garaje ? "Capacidad estimada del garaje comunitario: " + O.plazasCap + " plazas (≈ 27 m² por plaza con circulación)." : "Sin garaje comunitario: hay que resolver 2 plazas por vivienda en cada parcela."],
+    ["Rampa de garaje", o.garaje ? fmt(O.rLen) + " m × 4,00 m" : "—", "libre de viviendas", o.garaje ? st(!O.rampHit) : "info", o.garaje ? "Desnivel " + fmt(-M.ssFloor) + " m al " + o.rampaPend + " % más meseta de 4,50 m." : ""],
+    ["Viviendas por promoción", O.n + " ud", "mínimo 8", st(O.n >= 8), "Condición de adosamiento de la cédula."]
+  ];
+  $("#ordkpi").innerHTML = `
+    <div class="kpi"><b class="${O.n === UA.viv ? "st-ok" : "st-warn"}">${O.n} / ${UA.viv}</b><small>Viviendas</small></div>
+    <div class="kpi"><b>${fmt(edif, 0)} / ${fmt(UA.edif, 0)}</b><small>m²c edificables</small></div>
+    <div class="kpi"><b>${fmt(ocup, 1)} %</b><small>Ocupación (máx. 60 %)</small></div>
+    <div class="kpi"><b>${fmt(O.comun, 0)} m²</b><small>Espacio común</small></div>`;
+  const rowsT = O.rows.map(r => `<tr><td>${r.name}</td><td class="n">${r.n}${r.n < r.fit ? "" : r.n < (r.k === "S" ? o.nS : r.k === "N" ? o.nN : o.nW) ? ` <span class="pill warn">máx. ${r.fit}</span>` : ""}</td><td class="n">${fmt(r.avail)} m</td><td>${r.n ? (r.n >= 2 ? r.n - 2 + " intermedias + 2 cabeceras" : "1 exenta") : "—"}</td><td>jardín al ${r.gardenDir}<br><small class="note">acceso desde el ${r.frontDir === "norte" ? "patio (norte)" : "patio (" + r.frontDir + ")"}</small></td><td class="n">${r.n ? fmt(r.houses.reduce((a, h) => a + polyArea(h.garden), 0) / r.n) : "—"} m²</td></tr>`).join("");
+  $("#ordtables").innerHTML = `
+    <div class="tbl"><table><thead><tr><th>Hilera</th><th class="n">Viviendas</th><th class="n">Longitud útil</th><th>Tipos</th><th>Orientación</th><th class="n">Jardín medio</th></tr></thead><tbody>${rowsT}
+      <tr class="tot"><td>Total</td><td class="n">${O.n}</td><td></td><td colspan="2">${O.rows.reduce((a, r) => a + Math.max(0, r.n - 2), 0)} intermedias · ${O.rows.reduce((a, r) => a + Math.min(2, r.n), 0)} cabeceras</td><td class="n">${O.n ? fmt(O.gardens / O.n) : "—"} m²</td></tr></tbody></table></div>
+    <div class="tbl"><table><thead><tr><th>Comprobación UA-03-01</th><th>Propuesta</th><th>Cédula</th><th>Estado</th></tr></thead><tbody>
+      ${C.map(c => `<tr><td>${c[0]}${c[4] ? `<br><small class="note">${c[4]}</small>` : ""}</td><td class="n" style="text-align:left">${c[1]}</td><td>${c[2]}</td><td><span class="pill ${c[3]}">${lbl[c[3]]}</span></td></tr>`).join("")}
+    </tbody></table></div>
+    <div class="tbl"><table><thead><tr><th>Reparto del suelo</th><th class="n">m²</th><th class="n">%</th></tr></thead><tbody>
+      <tr><td>Huella de viviendas</td><td class="n">${fmt(O.foot, 0)}</td><td class="n">${fmt(O.foot / UAG.area * 100, 1)}</td></tr>
+      <tr><td>Jardines privados traseros</td><td class="n">${fmt(O.gardens, 0)}</td><td class="n">${fmt(O.gardens / UAG.area * 100, 1)}</td></tr>
+      <tr><td>Frentes privados de acceso</td><td class="n">${fmt(O.fronts, 0)}</td><td class="n">${fmt(O.fronts / UAG.area * 100, 1)}</td></tr>
+      <tr><td>Patio y espacio común</td><td class="n">${fmt(O.comun, 0)}</td><td class="n">${fmt(O.comun / UAG.area * 100, 1)}</td></tr>
+      <tr class="tot"><td>Parcela (geometría de cédula)</td><td class="n">${fmt(UAG.area, 0)}</td><td class="n">100,0</td></tr>
+      ${o.garaje ? `<tr><td>Garaje comunitario bajo rasante (no computa)</td><td class="n">${fmt(O.garageA, 0)}</td><td class="n">—</td></tr>` : ""}
+    </tbody></table></div>
+    <div class="prose"><h4>Datos de la cédula</h4><ul>
+      <li>Superficie 8.839 m²s · residencial unifamiliar adosada (UA), vivienda en categoría 1ª y 2ª.</li>
+      <li>Edificabilidad 5.100 m²c, asociada 0 · máximo 34 viviendas, es decir, 150 m²c por vivienda.</li>
+      <li>2 plantas y 7,50 m a cornisa (10,50 m a coronación) · ocupación máxima 60 %.</li>
+      <li>Retranqueos: 3 m a alineación exterior, 0 m a linderos (3 m en extremo de hilera), 3 m a testeros. Bajo rasante, 3 m a calle.</li>
+      <li>2 plazas de aparcamiento por vivienda · mínimo 8 viviendas por promoción.</li>
+      <li>Garaje permitido en planta baja, semisótano y sótano, también en régimen de división horizontal.</li>
+      <li>Acceso por Calle Floristas nº 2.</li>
+    </ul></div>`;
+}
+
 /* exportación */
 function dxfAll(){
   const { M, F } = LAST, gap = 6;
@@ -1046,6 +1306,12 @@ document.addEventListener("click", e => {
     const s = svgs.map(x => x.outerHTML.replace(/fill="url\(#h\d+\)"/g, 'fill="#1e6c68" fill-opacity="0.35"').replace(/^<svg /, "<svg " + (/xmlns=/.test(x.outerHTML) ? "" : 'xmlns="http://www.w3.org/2000/svg" ')).replace(/>/, ">" + SVG_STYLE));
     download("vivienda-semisotano-" + TAB + ".svg", s[0] || "", "image/svg+xml");
   }
+  if (act === "applyUA"){
+    Object.assign(P, { tipo:"adosada", edif:150, modo:"ajustar", alturaMax:7.5, ocupMax:60, retFrente:3, retFondo:3, retLat:3, coef:+(UA.edif / UA.sup).toFixed(3), fondoMax:30, garaje:false });
+    /* parcela equivalente por vivienda: 8.839 m² / 34 viviendas, con el frente del módulo */
+    P.frente = +P.W.toFixed(2); P.fondo = +(UA.sup / UA.viv / P.W).toFixed(2); P.nUnid = 10;
+    P.prog.ss.calle = [{ t:"Trastero", a:6 }, { t:"Paso a garaje comunitario", a:8 }];
+    buildPanel(); schedule(); toast("Ordenanza UA-03-01 aplicada: adosada, 7,50 m, 60 %, retranqueos 3 m y garaje comunitario."); return; }
   if (act === "resetprog"){ P.prog = clone(PROG_DEF); schedule(); return; }
   if (act === "json") download("vivienda-semisotano.json", JSON.stringify(P, null, 2), "application/json");
   if (act === "copydxf"){
@@ -1056,20 +1322,25 @@ document.addEventListener("click", e => {
   }
 });
 document.addEventListener("input", e => {
+  const ok = e.target.dataset && e.target.dataset.ord;
+  if (ok){ const v = parseFloat(e.target.value); if (!isNaN(v)){ P.ord[ok] = v; schedule(true); } return; }
   const pa = e.target.dataset && e.target.dataset.pga; if (!pa) return;
   const v = parseFloat(e.target.value); if (isNaN(v)) return;
   const [lv, z, i] = pa.split("."); P.prog[lv][z][+i].a = Math.max(0, v); schedule(true);
 });
 document.addEventListener("change", e => {
+  if (e.target.dataset && e.target.dataset.ords){ P.ord[e.target.dataset.ords] = e.target.value; schedule(true); return; }
+  if (e.target.dataset && e.target.dataset.ordc){ P.ord[e.target.dataset.ordc] = e.target.checked; schedule(true); return; }
   const pg = e.target.dataset && e.target.dataset.pg;
   if (pg){ const [lv, z, i] = pg.split("."); const q = P.prog[lv][z][+i]; q.t = e.target.value;
     if (q.t && (!q.a || q.a < 0.5)) q.a = Math.max(CAT[q.t].min || 4, 4); schedule(); return; }
   if (e.target.id !== "imp" || !e.target.files[0]) return;
   const r = new FileReader();
-  r.onload = () => { try { const o = JSON.parse(r.result); P = Object.assign({}, DEF, o, { prog:normProg(o.prog) }); save(); buildPanel(); render(); toast("Parámetros importados."); } catch(err){ toast("El archivo no es un JSON de parámetros válido."); } };
+  r.onload = () => { try { const o = JSON.parse(r.result); P = Object.assign({}, DEF, o, { prog:normProg(o.prog), ord:o.ord }); P.ord = Object.assign({}, ORD_DEF, P.ord || {}); save(); buildPanel(); render(); toast("Parámetros importados."); } catch(err){ toast("El archivo no es un JSON de parámetros válido."); } };
   r.readAsText(e.target.files[0]);
 });
 
+P.ord = Object.assign({}, ORD_DEF, P.ord || {});
 buildPanel();
 render();
 })();
