@@ -1,0 +1,85 @@
+# Criterios de búsqueda de piso en Sevilla
+# Edita este archivo para cambiar lo que buscas; no hace falta tocar el código.
+
+[criterios]
+operacion = "rent"            # alquiler
+precio_max = 900              # € / mes (incluido)
+dormitorios_min = 2
+dormitorios_max = 2           # pon 3 si también te valen pisos de 3 dormitorios
+superficie_min = 0            # m² (0 = sin mínimo)
+excluir_bajos = false         # true = descarta plantas bajas / sótanos
+
+# Zona de búsqueda en el portal: un círculo que cubre todas las zonas de abajo.
+# Después se filtra con precisión por barrio y por distancia a cada zona.
+[busqueda]
+centro_lat = 37.3800
+centro_lon = -5.9720
+radio_m = 3500
+
+# Zonas que te interesan.
+#  - nombres: textos que pueden aparecer en el barrio, distrito o dirección del anuncio
+#  - lat/lon: punto central aproximado de la zona
+#  - radio_m: un anuncio dentro de este radio también cuenta como "en la zona"
+[[zonas]]
+nombre = "Viapol"
+nombres = ["viapol", "huerta del pilar"]
+lat = 37.3829
+lon = -5.9786
+radio_m = 450
+
+[[zonas]]
+nombre = "Gran Plaza"
+nombres = ["gran plaza", "marques de pickman", "ciudad jardin"]
+lat = 37.3790
+lon = -5.9700
+radio_m = 500
+
+[[zonas]]
+nombre = "Nervión"
+nombres = ["nervion", "la buhaira", "buhaira", "huerta del rey", "ramon y cajal"]
+lat = 37.3847
+lon = -5.9720
+radio_m = 700
+
+[[zonas]]
+nombre = "San Pablo"
+nombres = ["san pablo", "santa clara", "barrio c", "barrio d", "barrio e"]
+lat = 37.3960
+lon = -5.9575
+radio_m = 800
+
+[[zonas]]
+nombre = "El Porvenir"
+nombres = ["porvenir"]
+lat = 37.3720
+lon = -5.9805
+radio_m = 450
+
+[[zonas]]
+nombre = "Felipe II"
+nombres = ["felipe ii", "felipe 2", "manuel siurot"]
+lat = 37.3712
+lon = -5.9750
+radio_m = 450
+
+[[zonas]]
+nombre = "Tiro de Línea"
+nombres = ["tiro de linea", "santa genoveva"]
+lat = 37.3640
+lon = -5.9745
+radio_m = 500
+
+[[zonas]]
+nombre = "Bami"
+nombres = ["bami", "huerta de la salud", "virgen del rocio"]
+lat = 37.3685
+lon = -5.9845
+radio_m = 450
+
+# Puedes añadir más zonas copiando un bloque [[zonas]], por ejemplo:
+# [[zonas]]
+# nombre = "La Florida"
+# nombres = ["la florida"]
+# lat = 37.3870
+# lon = -5.9800
+# radio_m = 400
