@@ -11,6 +11,10 @@ Abrir `index.html` en el navegador (o vía GitHub Pages en `/casa-semisotano/`).
   interior y dos a jardín) y su superficie deseada. Dos modos de dimensionado: *Ajustar al objetivo* (escala el
   programa hasta los m² computables fijados) o *Según programa* (respeta tus superficies y calcula lo que ocupa).
   Tabla de deseado / resultado / diferencia y plantas en vivo al lado.
+- **Ordenación UA-03-01 por esquemas**: cuatro esquemas de implantación que se calculan y comparan a la vez
+  (patio común con garaje comunitario, una calle interior, calle interior + Avenida, dos calles interiores),
+  con viario privado en fondo de saco y martillo de giro, aparcamiento en parcela (2 plazas en el frente o garaje
+  con rampa), bloques opcionales, vista de cubiertas, planta baja y modelo 3D (three.js).
 - **Ordenación UA-03-01** (Sector 1 «Los Pocillos», Villanueva de la Cañada): parcela real dibujada desde las
   coordenadas UTM de la cédula, hileras paramétricas (sur, norte, central y oeste) con la planta baja del modelo,
   jardines privados, patio común sobre garaje comunitario con una sola rampa desde Calle Floristas y
