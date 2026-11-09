@@ -11,6 +11,12 @@ Abrir `index.html` en el navegador (o vía GitHub Pages en `/casa-semisotano/`).
   interior y dos a jardín) y su superficie deseada. Dos modos de dimensionado: *Ajustar al objetivo* (escala el
   programa hasta los m² computables fijados) o *Según programa* (respeta tus superficies y calcula lo que ocupa).
   Tabla de deseado / resultado / diferencia y plantas en vivo al lado.
+- **Editor de viales (tipo TestFit)**: dibujas los viales sobre la parcela (clic para añadir puntos, doble clic o
+  Intro para terminar, arrastrar nodos para moverlos, rueda para acercar) y a ambos lados se generan parcelas privadas
+  con vivienda, frente de acceso y jardín. El motor es un algoritmo geométrico determinista que se ejecuta en el
+  navegador, sin IA: respeta parcela, retranqueos, viales, martillos de giro en fondos de saco y parcelas ya colocadas.
+  Plantillas de partida (una calle, calle + Avenida, dos calles, en L, en bucle, patio común), capas, vista de
+  cubiertas o planta baja y 3D, con paneles flotantes al estilo Giraffe.
 - **Ordenación UA-03-01 por esquemas**: cuatro esquemas de implantación que se calculan y comparan a la vez
   (patio común con garaje comunitario, una calle interior, calle interior + Avenida, dos calles interiores),
   con viario privado en fondo de saco y martillo de giro, aparcamiento en parcela (2 plazas en el frente o garaje
