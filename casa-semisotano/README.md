@@ -16,6 +16,11 @@ Abrir `index.html` en el navegador (o vía GitHub Pages en `/casa-semisotano/`).
   interior y dos a jardín) y su superficie deseada. Dos modos de dimensionado: *Ajustar al objetivo* (escala el
   programa hasta los m² computables fijados) o *Según programa* (respeta tus superficies y calcula lo que ocupa).
   Tabla de deseado / resultado / diferencia y plantas en vivo al lado.
+- **Espacio de trabajo de ordenación** (inspirado en TestFit y Giraffe): barra superior de herramientas con iconos,
+  panel izquierdo de elementos (viales, hileras), usos del suelo con superficies y capas; panel derecho de
+  propiedades del elemento seleccionado, tipos de implantación y generación; barra inferior de resultados con
+  barras de uso. Deshacer/rehacer (Ctrl+Z / Ctrl+Y), atajos (V, L, C, S, E, O, T), puntos «+» para insertar
+  vértices, eliminar punto y mapa base claro con colores por uso.
 - **Tipos de implantación**: hileras paralelas, calle curva, peine a 90° con fondos de saco, anillo con patio
   central, plazoletas en racimo, malla ortogonal, bucle y patio común con garaje. Viales rectos o curvos (spline),
   modo 90°, anillos cerrados y fondos de saco redondos con viviendas alrededor.

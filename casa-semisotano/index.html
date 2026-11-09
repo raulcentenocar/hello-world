@@ -11,7 +11,10 @@
 <style>
 /* Layout: hoja de proyecto — panel de parámetros a la izquierda, láminas (plantas, sección, agrupación) a la derecha, cajetín de cifras arriba. */
 :root{
-  --mapbg:#e9ebe6; --roof-cab:#f3ecdc;
+  --ws-panel:#ffffff; --ws-line:#e3e5e2; --ws-sunk:#f1f2ef; --ws-hover:#eef1ef;
+  --m-site:#fbfbf8; --m-road:#ffffff; --m-roadc:#d3d6d9; --m-zv:#dcebd2; --m-neigh:#e7e7e3; --m-deck:#efe9dc; --m-garden:#d7e8cc; --m-garden-l:#b9d2aa; --m-yard:#ecebe6;
+  --m-bound:#e8692a; --m-tree:#7fa86b; --m-bline:#3b4a5f; --m-lz:#6f8a62; --use-a:#a9c1ea; --use-b:#f3c08f;
+  --mapbg:#eef0ec; --roof-cab:#f3ecdc;
   --site:#ece8dc; --asph:#6b7075; --lawn:#c7dbb3; --lawn-edge:#9fb98a; --pave:#e2ded4; --deck:#e4dccb; --tree:#6f9a5e; --tree-edge:#4f7a42; --roof:#fbfaf6; --roof-low:#d9d6cd;
   --paper:#eef0ec; --sheet:#fbfbf9; --ink:#1d2327; --muted:#5b6569; --rule:#c8cdc6;
   --accent:#1e6c68; --accent-soft:#d6e7e4; --below:#9a6b12; --below-soft:#f1e5cc;
@@ -22,14 +25,20 @@
   --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --mapbg:#1d2124; --roof-cab:#e8dcc0;
+  --ws-panel:#1b2023; --ws-line:#30373b; --ws-sunk:#252b2f; --ws-hover:#283034;
+  --m-site:#22272a; --m-road:#3a4146; --m-roadc:#4b5358; --m-zv:#25332a; --m-neigh:#262a2c; --m-deck:#2d2a23; --m-garden:#2c3d2c; --m-garden-l:#3d5a3c; --m-yard:#2c2f31;
+  --m-bound:#f08a4b; --m-tree:#5f8a52; --m-bline:#dfe6ef; --m-lz:#8fb07f; --use-a:#5b78a8; --use-b:#a8774b;
+  --mapbg:#1a1e20; --roof-cab:#e8dcc0;
   --site:#2a2b26; --asph:#4b4f53; --lawn:#33452c; --lawn-edge:#4c6640; --pave:#3a3934; --deck:#3a352b; --tree:#4f7a42; --tree-edge:#6f9a5e; --roof:#d9dbd6; --roof-low:#8b8d88;
   --paper:#13171a; --sheet:#1a1f22; --ink:#e4e7e2; --muted:#98a2a5; --rule:#343c40;
   --accent:#62b5ad; --accent-soft:#1f3634; --below:#d9a64a; --below-soft:#33291a;
   --wall:#cfd5d1; --room:#1a1f22; --terrain:#3b3529; --glass:#7fb6dc;
   --ok:#62c08a; --warn:#e0a640; --fail:#f07a70; color-scheme:dark }}
 :root[data-theme="dark"]{
-  --mapbg:#1d2124; --roof-cab:#e8dcc0;
+  --ws-panel:#1b2023; --ws-line:#30373b; --ws-sunk:#252b2f; --ws-hover:#283034;
+  --m-site:#22272a; --m-road:#3a4146; --m-roadc:#4b5358; --m-zv:#25332a; --m-neigh:#262a2c; --m-deck:#2d2a23; --m-garden:#2c3d2c; --m-garden-l:#3d5a3c; --m-yard:#2c2f31;
+  --m-bound:#f08a4b; --m-tree:#5f8a52; --m-bline:#dfe6ef; --m-lz:#8fb07f; --use-a:#5b78a8; --use-b:#a8774b;
+  --mapbg:#1a1e20; --roof-cab:#e8dcc0;
   --site:#2a2b26; --asph:#4b4f53; --lawn:#33452c; --lawn-edge:#4c6640; --pave:#3a3934; --deck:#3a352b; --tree:#4f7a42; --tree-edge:#6f9a5e; --roof:#d9dbd6; --roof-low:#8b8d88;
   --paper:#13171a; --sheet:#1a1f22; --ink:#e4e7e2; --muted:#98a2a5; --rule:#343c40;
   --accent:#62b5ad; --accent-soft:#1f3634; --below:#d9a64a; --below-soft:#33291a;
@@ -231,6 +240,67 @@ table.edit td{padding:4px 6px}
 svg .ed-calle{fill:none;stroke:var(--asph);stroke-width:5} svg .ed-zv{fill:none;stroke:var(--tree);stroke-width:5} svg .ed-lin{fill:none;stroke:var(--muted);stroke-width:3;stroke-dasharray:6 4}
 .sw.lin{background:var(--muted)}
 label[aria-disabled=true]{opacity:.5;pointer-events:none}
+/* ---------- espacio de trabajo de ordenación */
+.wrap.ws-mode{grid-template-columns:minmax(0,1fr)} .wrap.ws-mode>aside#panel{display:none} .wrap.ws-mode main{padding-top:10px}
+.ws{display:grid;grid-template-columns:250px minmax(0,1fr) 300px;grid-template-rows:auto minmax(0,1fr) auto;height:max(600px,calc(100vh - 200px));border:1px solid var(--ws-line);border-radius:8px;overflow:hidden;background:var(--ws-panel);box-shadow:0 1px 2px rgba(20,28,32,.06)}
+.ws-top{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:6px 10px;border-bottom:1px solid var(--ws-line);background:var(--ws-panel)}
+.ws-title{display:grid;line-height:1.15;margin-right:6px} .ws-title b{font-family:var(--f-display);font-stretch:85%;font-size:15px} .ws-title span{font-size:11.5px;color:var(--muted)}
+.tgroup{display:flex;flex-wrap:wrap;gap:2px;padding:2px;border-radius:7px;background:var(--ws-sunk);max-width:100%}
+@media (max-width:760px){ .tb span{display:none} .tb{padding:7px} }
+.tb{display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;padding:6px 9px;border-radius:6px;font-size:12.5px;cursor:pointer;color:var(--ink)}
+.tb .ic,.ctl .ic,.ws h4 .ic{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.tb:hover{background:var(--ws-hover)} .tb[aria-pressed=true]{background:var(--ws-panel);color:var(--accent);box-shadow:0 1px 3px rgba(0,0,0,.12)} .tb:disabled{opacity:.35;cursor:default}
+.ws-left,.ws-right{overflow:auto;padding:10px 12px;display:grid;gap:14px;align-content:start;background:var(--ws-panel);min-width:0}
+.ws-left{border-right:1px solid var(--ws-line)} .ws-right{border-left:1px solid var(--ws-line)}
+.ws h4{display:flex;align-items:center;gap:6px;margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.ws h4 .lnk{margin-left:auto;border:0;background:none;color:var(--accent);font-size:11.5px;cursor:pointer;text-transform:none;letter-spacing:0}
+.ws section{display:grid;gap:6px}
+.elist{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.elist button{width:100%;display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;gap:8px;align-items:center;border:0;background:transparent;padding:6px 7px;border-radius:6px;font-size:12.5px;text-align:left;cursor:pointer;color:var(--ink)}
+.elist button:hover{background:var(--ws-hover)} .elist button[aria-pressed=true]{background:var(--accent-soft)}
+.elist span{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis} .elist em{font-style:normal;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.elist .empty{font-size:12px;color:var(--muted);padding:4px 7px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--ok);display:inline-block} .dot.bad{background:var(--fail)} .dot.use-a{background:var(--use-a)}
+.uses{list-style:none;margin:0;padding:0;display:grid;gap:5px;font-size:12.5px}
+.uses li{display:grid;grid-template-columns:auto minmax(0,1fr) auto 34px;gap:8px;align-items:center}
+.uses b{font-family:var(--f-mono);font-weight:500;font-size:12px} .uses small{color:var(--muted);font-size:11px;text-align:right} .uses span small{text-align:left}
+.sw2{width:14px;height:14px;border-radius:3px;border:1px solid rgba(0,0,0,.15);display:inline-block}
+.sw2.use-a{background:var(--use-a)} .sw2.use-b{background:var(--use-b)} .sw2.use-g{background:var(--m-garden)} .sw2.use-y{background:var(--m-yard)} .sw2.use-r{background:var(--m-road);border-color:var(--m-roadc)} .sw2.use-c{background:var(--m-site)}
+.ws-canvas{position:relative;min-width:0;min-height:0;background:var(--mapbg)}
+.ws-canvas .mapbox,.ws-canvas .box3d{position:absolute;inset:0}
+.ctl{position:absolute;background:var(--ws-panel);border:1px solid var(--ws-line);border-radius:8px;box-shadow:0 4px 14px rgba(20,28,32,.12)}
+.ctl-zoom{right:12px;top:12px;display:grid} .ctl-zoom button{border:0;background:transparent;width:34px;height:32px;display:grid;place-items:center;cursor:pointer;color:var(--ink)} .ctl-zoom button+button{border-top:1px solid var(--ws-line)} .ctl-zoom button:hover{background:var(--ws-hover)}
+.ctl-hint{left:12px;bottom:12px;padding:6px 10px;font-size:12px;color:var(--muted);max-width:min(520px,calc(100% - 24px))}
+.ctl-draw{left:50%;transform:translateX(-50%);top:12px;display:flex;flex-wrap:wrap;gap:6px;padding:6px;align-items:center;max-width:calc(100% - 80px)}
+.ws-bottom{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--ws-line);background:var(--ws-panel)}
+.kb{display:grid;gap:2px;padding:8px 14px;border:0;border-right:1px solid var(--ws-line);background:transparent;text-align:left;min-width:120px;color:var(--ink);font:inherit}
+.kb small{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)} .kb b{font-family:var(--f-mono);font-weight:500;font-size:16px;white-space:nowrap} .kb b span{font-size:11.5px;color:var(--muted);margin-left:3px}
+.kb .bar{display:block;height:4px;border-radius:2px;background:var(--ws-sunk);overflow:hidden} .kb .bar i{display:block;height:100%;background:var(--accent);border-radius:2px}
+.kstate{margin-left:auto;cursor:pointer;border-right:0;border-left:1px solid var(--ws-line)} .kstate.ok b{color:var(--ok)} .kstate.warn b{color:var(--warn)} .kstate.fail b{color:var(--fail)} .kstate:hover{background:var(--ws-hover)}
+.props{border:1px solid var(--accent);border-radius:8px;padding:10px;background:var(--accent-soft)}
+#gensec.dim{opacity:.75}
+.pf.col{display:grid;justify-content:stretch;gap:4px}
+.ws .presets{grid-template-columns:1fr 1fr}
+@media (max-width:1100px){ .ws{grid-template-columns:minmax(0,1fr);grid-template-rows:auto 62vh auto auto auto;height:auto}
+  .ws-canvas{grid-row:2;min-height:62vh} .ws-right{grid-row:3;border:0;border-top:1px solid var(--ws-line)} .ws-left{grid-row:4;border:0;border-top:1px solid var(--ws-line)} .ws-bottom{grid-row:5} .kstate{margin-left:0} }
+/* mapa base claro */
+.mapbox svg .m-site,.pth svg .m-site{fill:var(--m-site)} svg .m-street{fill:var(--m-road);stroke:var(--m-roadc);stroke-width:.5} svg .m-curb{fill:none;stroke:var(--m-roadc);stroke-width:1}
+svg .m-zv{fill:var(--m-zv)} svg .m-neigh{fill:var(--m-neigh)} svg .m-deck{fill:var(--m-deck)}
+svg .m-garden{fill:var(--m-garden);stroke:var(--m-garden-l);stroke-width:.25} svg .m-yard{fill:var(--m-yard);stroke:var(--m-garden-l);stroke-width:.2}
+svg .m-roadc{fill:none;stroke:var(--m-roadc)} svg .m-road{fill:none;stroke:var(--m-road)} svg .m-roadcf{fill:var(--m-roadc)} svg .m-roadf{fill:var(--m-road)}
+svg .m-axis{fill:none;stroke:var(--m-roadc);stroke-width:1;stroke-dasharray:6 6}
+svg .m-retr{fill:none;stroke:var(--m-bound);stroke-opacity:.12}
+svg .m-bound{fill:none;stroke:var(--m-bound);stroke-width:2.2;stroke-dasharray:10 5}
+svg .m-tree{fill:var(--m-tree);fill-opacity:.55;stroke:var(--m-tree);stroke-width:.25}
+svg .m-b{stroke:var(--m-bline);stroke-width:.12} svg .m-bpb{stroke:var(--m-bline);stroke-width:.1;opacity:.55}
+svg .m-b.use-a,svg .m-bpb.use-a{fill:var(--use-a)} svg .m-b.use-b,svg .m-bpb.use-b{fill:var(--use-b)}
+svg .m-b.sel{stroke:var(--accent);stroke-width:.5}
+svg .m-parapet{fill:none;stroke:var(--m-bline);stroke-opacity:.35;stroke-width:.6} svg .m-sky{fill:#fff;fill-opacity:.55}
+svg .m-hid{font-family:var(--f-mono);font-weight:500;fill:var(--m-bline)}
+svg .m-lstreet{font-family:var(--f-body);font-weight:600;fill:var(--muted);letter-spacing:.08em} svg .m-lzone{font-family:var(--f-body);font-weight:600;fill:var(--m-lz);letter-spacing:.06em}
+svg .m-lroad{font-family:var(--f-mono);font-weight:500;fill:var(--muted)} svg .m-ramp{fill:var(--below-soft);stroke:var(--below);stroke-width:.3}
+svg .mid circle{fill:var(--ws-panel);stroke:var(--accent);stroke-width:1.5;vector-effect:non-scaling-stroke;cursor:copy} svg .mid text{fill:var(--accent);font-weight:700;pointer-events:none}
+svg .node.on{fill:var(--warn)}
 h2.step{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-stretch:85%;font-weight:650;font-size:17px;margin:18px 0 10px}
 h2.step span{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--sheet);font-size:13px;font-family:var(--f-mono)}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px}
@@ -893,11 +963,13 @@ $("#panel").addEventListener("input", e => {
 });
 document.addEventListener("click", e => {
   const pr = e.target.closest("[data-preset]"); if (pr){ const k = pr.dataset.preset; SEL = -1; DRAW = null; TOOL = "select";
-    if (k === "patio") P.ord.modo = "patio"; else { const q = presetRoads(LAST.M, P.ord, k); Object.assign(P.ord, { modo:"viales", preset:k, roads:q.roads, frontAv:q.frontAv, frontFl:false }); }
+    pushHist(); if (k === "patio") P.ord.modo = "patio"; else { const q = presetRoads(LAST.M, P.ord, k); Object.assign(P.ord, { modo:"viales", preset:k, roads:q.roads, frontAv:q.frontAv, frontFl:false }); }
     const cb = $('[data-ordc="frontAv"]'); if (cb) cb.checked = P.ord.frontAv; const cf = $('[data-ordc="frontFl"]'); if (cf) cf.checked = P.ord.frontFl;
     schedule(true); return; }
   const tl = e.target.closest("[data-tool]"); if (tl){ TOOL = tl.dataset.tool; DRAW = null; if (TOOL !== "select") SEL = -1; if (isDraw() && P.ord.vista === "3d") P.ord.vista = "cubiertas"; schedule(true); return; }
-  const sl = e.target.closest("[data-sellados]"); if (sl && SEL >= 0){ P.ord.roads[SEL].lados = sl.dataset.sellados; P.ord.preset = "custom"; save(); redrawMap(true); return; }
+  const srd = e.target.closest("[data-selroad]"); if (srd){ SEL = +srd.dataset.selroad; SELNODE = null; SELROW = null; TOOL = "select"; redrawMap(true); return; }
+  const srw = e.target.closest("[data-selrow]"); if (srw){ SELROW = SELROW === srw.dataset.selrow ? null : srw.dataset.selrow; SEL = -1; redrawMap(true); return; }
+  const sl = e.target.closest("[data-sellados]"); if (sl && SEL >= 0){ pushHist(); P.ord.roads[SEL].lados = sl.dataset.sellados; P.ord.preset = "custom"; save(); redrawMap(true); return; }
   const ln = e.target.closest("[data-ladosnuevo]"); if (ln){ P.ord.ladosNuevo = ln.dataset.ladosnuevo; save(); redrawMap(true); return; }
   const oo = e.target.closest("[data-ortho]"); if (oo){ ORTHO = !ORTHO; schedule(true); return; }
   const ov = e.target.closest("[data-ordv]"); if (ov){ P.ord.vista = ov.dataset.ordv; schedule(true); return; }
@@ -919,6 +991,7 @@ function floorsFor(M){
 let LAST = null;
 function render(onlyNumbers){
   const M = compute(P);
+  const wr = document.querySelector(".wrap"); if (wr) wr.classList.toggle("ws-mode", TAB === "ordenacion");
   const errs = [];
   const bW = M.X.x1 - M.X.xB0;
   if (bW < 1.2) errs.push(`El ancho de fachada no deja sitio a la crujía de baños (${fmt(bW)} m libres, mínimo 1,20 m). Aumenta el ancho de fachada o reduce el distribuidor o la escalera.`);
@@ -1547,20 +1620,22 @@ function render3D(box, M, L){
   const scene = new T.Scene();
   const cx3 = UAG.poly.reduce((a, p) => v2.add(a, v2.mul(p, 1 / UAG.poly.length)), [0, 0]);
   const css = getComputedStyle(document.documentElement);
-  scene.background = new T.Color(css.getPropertyValue("--paper").trim() || "#eef0ec");
+  scene.background = new T.Color(css.getPropertyValue("--mapbg").trim() || "#eef0ec");
   scene.add(new T.HemisphereLight(0xffffff, 0x8a8f80, 0.75));
   const sun = new T.DirectionalLight(0xffffff, 0.75); sun.position.set(cx3[0] + 35, 90, -cx3[1] + 115); sun.target.position.set(cx3[0], 0, -cx3[1]);
   sun.castShadow = true; sun.shadow.bias = -0.0005; sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left:-150, right:150, top:150, bottom:-150, near:1, far:500 });
   scene.add(sun); scene.add(sun.target);
   const mat = c => new T.MeshLambertMaterial({ color:c });
-  const M_ = { ground:mat(0xd9d3c1), lawn:mat(0x9fbf86), zv:mat(0x86ab78), asph:mat(0x5e6266), pave:mat(0xc9c6bd), deck:mat(0xd8cfbd), white:mat(0xf4f2ec), plinth:mat(0x9c9486), glass:mat(0x4a5d6b), trunk:mat(0x6b5440), leaf:mat(0x5f8f55), ramp:mat(0x8c7a5c) };
+  const M_ = { ground:mat(0xeae8e1), lawn:mat(0xc9deb9), zv:mat(0xb7d3a5), asph:mat(0xffffff), pave:mat(0xdedbd3), deck:mat(0xd8cfbd), white:mat(0xf4f2ec), useA:mat(0xa9c1ea), useB:mat(0xf3c08f), plinth:mat(0x9c9486), glass:mat(0x4a5d6b), trunk:mat(0x6b5440), leaf:mat(0x5f8f55), ramp:mat(0x8c7a5c) };
   const flat = (Q, m, y) => { if (!Q || Q.length < 3) return; const sh = new T.Shape(Q.map(p => new T.Vector2(p[0], p[1]))); const g = new T.ShapeGeometry(sh); g.rotateX(-Math.PI / 2); const me = new T.Mesh(g, m); me.position.y = y; me.receiveShadow = true; scene.add(me); };
   const slab = (Q, m, h0, h) => { const sh = new T.Shape(Q.map(p => new T.Vector2(p[0], p[1]))); const g = new T.ExtrudeGeometry(sh, { depth:h, bevelEnabled:false }); g.rotateX(-Math.PI / 2); const me = new T.Mesh(g, m); me.position.y = h0; me.castShadow = me.receiveShadow = true; scene.add(me); };
   /* entorno */
   const big = [[cx3[0] - 250, cx3[1] - 250], [cx3[0] + 250, cx3[1] - 250], [cx3[0] + 250, cx3[1] + 250], [cx3[0] - 250, cx3[1] + 250]];
-  flat(big, M_.zv, -0.05);
+  flat(big, mat(0xeceee9), -0.06);
+  UAG.edges.forEach(e => { if (e.t === "zona verde"){ const out = v2.mul(e.nIn, -30), ext = v2.mul(e.u, 10); flat([...e.pts, v2.add(v2.add(e.pts[e.pts.length - 1], ext), out), v2.add(v2.sub(e.pts[0], ext), out)], M_.zv, -0.04); } });
   UAG.edges.forEach((e, k) => { if (e.t !== "calle") return; const out = v2.mul(e.nIn, -16), ext = v2.mul(e.u, 25); flat([...e.pts, v2.add(v2.add(e.pts[e.pts.length - 1], ext), out), v2.add(v2.sub(e.pts[0], ext), out)], M_.asph, 0.0); });
   flat(UAG.poly, M_.ground, 0.02);
+  { const g = new T.BufferGeometry().setFromPoints([...UAG.poly, UAG.poly[0]].map(p => new T.Vector3(p[0], 0.12, -p[1]))); scene.add(new T.Line(g, new T.LineBasicMaterial({ color:0xe8692a }))); }
   L.streets.forEach(st => { flat(st.poly, M_.asph, 0.05); flat(st.head, M_.asph, 0.05); });
   const disc = (c, r, y) => { const g = new T.CircleGeometry(r, 32); g.rotateX(-Math.PI / 2); const me = new T.Mesh(g, M_.asph); me.position.set(c[0], y, -c[1]); me.receiveShadow = true; scene.add(me); };
   (L.roadsD || []).forEach(r => { for (let i = 1; i < r.pts.length; i++){ const a = r.pts[i - 1], b = r.pts[i], Ls = v2.len(v2.sub(b, a)); if (Ls < 0.01) continue; const u = v2.mul(v2.sub(b, a), 1 / Ls); flat(rectPts(a, u, [-u[1], u[0]], 0, Ls, -r.w / 2, r.w / 2), M_.asph, 0.05); if (i < r.pts.length - 1) disc(b, r.w / 2, 0.049); } });
@@ -1587,8 +1662,9 @@ function render3D(box, M, L){
   const Wd = L.W, Dpb = M.Dpb, Dp1 = M.Dp1, f = P.forj;
   L.houses.forEach(hh => {
     boxAt(hh, 0, Wd, 0, Dpb, 0, M.ssTop, M_.plinth);
-    boxAt(hh, 0.02, Wd - 0.02, 0, Dpb, M.ssTop, M.zP1, M_.white);
-    boxAt(hh, 0.02, Wd - 0.02, 0, Dp1, M.zP1, M.zRoof + 0.6, M_.white);
+    const mu = hh.cab ? M_.useB : M_.useA;
+    boxAt(hh, 0.02, Wd - 0.02, 0, Dpb, M.ssTop, M.zP1, mu);
+    boxAt(hh, 0.02, Wd - 0.02, 0, Dp1, M.zP1, M.zRoof + 0.6, mu);
     [[M.ssTop + 0.9, M.ssTop + 2.3], [M.zP1 + 0.9, M.zP1 + 2.2]].forEach(([z0, z1], fl) => {
       boxAt(hh, Wd * 0.18, Wd * 0.82, -0.04, 0.02, z0 + (fl === 0 ? -0.9 : 0), z1, M_.glass, false);
       const yr = fl === 0 ? Dpb : Dp1; boxAt(hh, Wd * 0.12, Wd * 0.88, yr - 0.02, yr + 0.04, fl === 0 ? z0 - 0.9 : z0, z1, M_.glass, false);
@@ -1801,7 +1877,7 @@ function fitView(){
   const xs = UAG.poly.map(p => p[0]), ys = UAG.poly.map(p => p[1]), m = 6;
   const x0 = Math.min(...xs) - m, x1 = Math.max(...xs) + m, y0 = -Math.max(...ys) - m, y1 = -Math.min(...ys) + m;
   const box = $("#mapbox"), cw = box && box.clientWidth || 1000, ch = box && box.clientHeight || 700;
-  const wide = cw > 900, padL = wide ? 20 : 10, padR = wide ? 345 : 10, padT = wide ? 64 : 10, padB = wide ? 46 : 10;
+  const padL = 14, padR = 58, padT = 14, padB = 44;
   const k = Math.max((x1 - x0) / Math.max(200, cw - padL - padR), (y1 - y0) / Math.max(200, ch - padT - padB));
   VIEW = { x:x0 - padL * k - ((cw - padL - padR) * k - (x1 - x0)) / 2, y:y0 - padT * k - ((ch - padT - padB) * k - (y1 - y0)) / 2, w:cw * k, h:ch * k };
 }
@@ -1813,7 +1889,7 @@ function mapSVG(M, L, opt = {}){
   const poly = (Q, c, ex = "") => Q && Q.length > 2 ? `<polygon points="${pts(Q)}" class="${c}"${ex}/>` : "";
   const line = (a, b, c) => `<line x1="${a[0].toFixed(2)}" y1="${(-a[1]).toFixed(2)}" x2="${b[0].toFixed(2)}" y2="${(-b[1]).toFixed(2)}" class="${c}" vector-effect="non-scaling-stroke"/>`;
   const txt = (p, t, c, sz, rot = 0) => `<text x="${p[0].toFixed(2)}" y="${(-p[1]).toFixed(2)}" font-size="${sz}" class="${c}" text-anchor="middle" dominant-baseline="middle"${rot ? ` transform="rotate(${rot.toFixed(1)} ${p[0].toFixed(2)} ${(-p[1]).toFixed(2)})"` : ""}>${esc(t)}</text>`;
-  const tree = (p, r) => `<circle cx="${p[0].toFixed(2)}" cy="${(-p[1]).toFixed(2)}" r="${r}" class="tree"/>`;
+  const tree = (p, r) => `<circle cx="${p[0].toFixed(2)}" cy="${(-p[1]).toFixed(2)}" r="${r}" class="m-tree"/>`;
   const ang = u => { let a = -Math.atan2(u[1], u[0]) * 180 / Math.PI; if (a > 90) a -= 180; if (a < -90) a += 180; return a; };
   const id = "m" + (++uid);
   let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb.x.toFixed(2)} ${vb.y.toFixed(2)} ${vb.w.toFixed(2)} ${vb.h.toFixed(2)}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Plano de ordenación UA-03-01">
@@ -1822,21 +1898,23 @@ function mapSVG(M, L, opt = {}){
   s += `<rect x="${vb.x - 400}" y="${vb.y - 400}" width="${vb.w + 800}" height="${vb.h + 800}" class="mapbg"/>`;
   /* contexto urbano */
   const band = (e, w, c) => { const A = e.pts[0], B = e.pts[e.pts.length - 1], out = v2.mul(e.nIn, -1), ext = v2.mul(e.u, 30); return poly([...e.pts, v2.add(v2.add(B, ext), v2.mul(out, w)), v2.add(v2.sub(A, ext), v2.mul(out, w))], c); };
-  UAG.edges.forEach(e => { if (e.t === "zona verde") s += band(e, 40, "zv"); else if (e.t !== "calle") s += band(e, 40, "neigh"); });
-  UAG.edges.forEach(e => { if (e.t === "calle") s += band(e, 14, "asph"); });
-  UAG.edges.forEach(e => { if (e.t !== "calle") return; const out = v2.mul(e.nIn, -2); s += `<polyline points="${pts(e.pts.map(p => v2.add(p, out)))}" class="curb" vector-effect="non-scaling-stroke"/>`; });
+  UAG.edges.forEach(e => { if (e.t === "zona verde") s += band(e, 40, "m-zv"); else if (e.t !== "calle") s += band(e, 40, "m-neigh"); });
+  UAG.edges.forEach(e => { if (e.t === "calle") s += band(e, 14, "m-street"); });
+  UAG.edges.forEach(e => { if (e.t !== "calle") return; const out = v2.mul(e.nIn, -2); s += `<polyline points="${pts(e.pts.map(p => v2.add(p, out)))}" class="m-curb" vector-effect="non-scaling-stroke"/>`; });
   if (!thumb && cap.arbol !== false) UAG.edges.forEach(e => { if (e.t !== "zona verde") return; for (let q = 3; q < e.L; q += 7) s += tree(v2.add(v2.add(e.A, v2.mul(e.u, q)), v2.mul(e.nIn, -5.5)), 2.3); });
-  s += poly(UAG.poly, "ground");
-  if (L.garagePoly) s += poly(L.garagePoly, "deck");
+  s += poly(UAG.poly, "m-site");
+  if (L.garagePoly) s += poly(L.garagePoly, "m-deck");
   /* parcelas privadas */
-  L.houses.forEach(h => { s += poly(h.garden, "lawn") + poly(h.yard, "pave"); });
+  L.houses.forEach(h => { s += poly(h.garden, "m-garden") + poly(h.yard, "m-yard"); });
   /* viario */
-  L.streets.forEach(st => { s += poly(st.poly, "asph"); });
-  (L.roadsD || []).forEach(r => { s += `<polyline points="${pts(r.pts)}" class="roadl" stroke-width="${r.w}" stroke-linejoin="round" stroke-linecap="butt"/>`; });
-  (L.bulbs || []).forEach(b => { s += `<circle cx="${b.c[0].toFixed(2)}" cy="${(-b.c[1]).toFixed(2)}" r="${b.r.toFixed(2)}" class="asph"/>`; });
-  if (!thumb) (L.roadsD || []).forEach(r => { s += `<polyline points="${pts(r.pts)}" class="axisl" vector-effect="non-scaling-stroke"/>`; });
-  if (L.ramp) s += poly(L.ramp, "rampp");
-  if (!thumb && cap.retr !== false) s += `<g clip-path="url(#${id})"><polygon points="${pts(UAG.poly)}" class="retr" stroke-width="${2 * UA.retCalle}"/></g>`;
+  L.streets.forEach(st => { s += poly(st.poly, "m-street"); });
+  (L.roadsD || []).forEach(r => { s += `<polyline points="${pts(r.pts)}" class="m-roadc" stroke-width="${r.w + 0.8}" stroke-linejoin="round" stroke-linecap="butt"/>`; });
+  (L.bulbs || []).forEach(b => { s += `<circle cx="${b.c[0].toFixed(2)}" cy="${(-b.c[1]).toFixed(2)}" r="${(b.r + 0.4).toFixed(2)}" class="m-roadcf"/>`; });
+  (L.roadsD || []).forEach(r => { s += `<polyline points="${pts(r.pts)}" class="m-road" stroke-width="${r.w}" stroke-linejoin="round" stroke-linecap="butt"/>`; });
+  (L.bulbs || []).forEach(b => { s += `<circle cx="${b.c[0].toFixed(2)}" cy="${(-b.c[1]).toFixed(2)}" r="${b.r.toFixed(2)}" class="m-roadf"/>`; });
+  if (!thumb) (L.roadsD || []).forEach(r => { s += `<polyline points="${pts(r.pts)}" class="m-axis" vector-effect="non-scaling-stroke"/>`; });
+  if (L.ramp) s += poly(L.ramp, "m-ramp");
+  if (!thumb && cap.retr !== false) s += `<g clip-path="url(#${id})"><polygon points="${pts(UAG.poly)}" class="m-retr" stroke-width="${2 * UA.retCalle}"/></g>`;
   if (!thumb && cap.arbol !== false){
     L.houses.forEach(h => { if (polyArea(h.garden) > 25){ const c = h.garden.reduce((a, p) => v2.add(a, v2.mul(p, 1 / h.garden.length)), [0, 0]); s += tree(c, 1.7); } });
     (L.roadsD || []).forEach(r => { let acc = 0; for (let i = 1; i < r.pts.length; i++){ const a = r.pts[i - 1], b = r.pts[i], Ls = v2.len(v2.sub(b, a)); if (Ls < 0.01) continue; const u = v2.mul(v2.sub(b, a), 1 / Ls), n = [-u[1], u[0]];
@@ -1859,29 +1937,31 @@ function mapSVG(M, L, opt = {}){
       g.rects.forEach(q => { if (q.c === "car" || q.c === "patio" || q.c === "terr") return; gg += `<rect x="${q.x.toFixed(3)}" y="${q.y.toFixed(3)}" width="${q.w.toFixed(3)}" height="${q.h.toFixed(3)}" class="${q.c === "med" ? "wall" : q.c}"/>`; });
       g.lines.forEach(l => { if (l.c === "dim") return; gg += `<line x1="${l.x1.toFixed(3)}" y1="${l.y1.toFixed(3)}" x2="${l.x2.toFixed(3)}" y2="${l.y2.toFixed(3)}" class="${l.c}" vector-effect="non-scaling-stroke"/>`; });
     } else {
-      gg += `<g${thumb ? "" : ` filter="url(#${id}s)"`}><rect x="0" y="0" width="${L.W}" height="${L.D}" class="roofpb"/><rect x="0" y="0" width="${L.W}" height="${M.Dp1}" class="roof${h.cab ? " cab" : ""}"/></g>`;
-      if (!thumb) gg += `<rect x="0.3" y="0.3" width="${L.W - 0.6}" height="${M.Dp1 - 0.6}" class="parapet" vector-effect="non-scaling-stroke"/><rect x="${(mir ? L.W - M.X.x0 - M.Ws : M.X.x0).toFixed(2)}" y="${(M.front + P.tE + P.tP).toFixed(2)}" width="${M.Ws.toFixed(2)}" height="${M.Ls.toFixed(2)}" class="skylight"/>`;
+      gg += `<g${thumb ? "" : ` filter="url(#${id}s)"`}><rect x="0" y="0" width="${L.W}" height="${L.D}" class="m-bpb ${h.cab ? "use-b" : "use-a"}"/><rect x="0" y="0" width="${L.W}" height="${M.Dp1}" class="m-b ${h.cab ? "use-b" : "use-a"}${SELROW === r.id && !thumb ? " sel" : ""}"/></g>`;
+      if (!thumb) gg += `<rect x="0.3" y="0.3" width="${L.W - 0.6}" height="${M.Dp1 - 0.6}" class="m-parapet" vector-effect="non-scaling-stroke"/><rect x="${(mir ? L.W - M.X.x0 - M.Ws : M.X.x0).toFixed(2)}" y="${(M.front + P.tE + P.tP).toFixed(2)}" width="${M.Ws.toFixed(2)}" height="${M.Ls.toFixed(2)}" class="m-sky"/>`;
     }
     s += `<g transform="${tf}">${gg}</g>`;
-    if (!thumb && cap.cotas !== false){ const c0 = v2.add(v2.add(h.org, v2.mul(h.ex, L.W / 2)), v2.mul(h.ey, M.Dp1 / 2)); s += txt(c0, r.id + (i + 1), "hid", 1.25); }
+    if (!thumb && cap.cotas !== false){ const c0 = v2.add(v2.add(h.org, v2.mul(h.ex, L.W / 2)), v2.mul(h.ey, M.Dp1 / 2)); s += txt(c0, r.id + (i + 1), "m-hid", 1.2); }
   }));
+  s += `<polygon points="${pts(UAG.poly)}" class="m-bound" vector-effect="non-scaling-stroke"/>`;
   if (thumb) return s + "</svg>";
   /* rótulos */
   const seen = {};
   UAG.edges.slice().map((e, k) => [e, k]).sort((x, y) => y[0].L - x[0].L).forEach(([e]) => { if (seen[e.n] || e.L < 12) return; seen[e.n] = 1;
-    const m = e.pts[Math.floor(e.pts.length / 2)]; s += txt(v2.add(m, v2.mul(e.nIn, e.t === "calle" ? -7 : -9)), e.n.toUpperCase(), e.t === "calle" ? "lbl inv" : "lbl muted", 2.1, ang(e.u)); });
+    const m = e.pts[Math.floor(e.pts.length / 2)]; s += txt(v2.add(m, v2.mul(e.nIn, e.t === "calle" ? -7 : -9)), e.n.toUpperCase(), e.t === "calle" ? "m-lstreet" : "m-lzone", 2.0, ang(e.u)); });
   (L.roadsD || []).forEach(r => { if (r.pts.length < 2) return; const Ltot = polyLen(r.pts); if (Ltot < 16) return; let acc = 0, i = 1; while (i < r.pts.length - 1 && acc + v2.len(v2.sub(r.pts[i], r.pts[i - 1])) < Ltot / 2){ acc += v2.len(v2.sub(r.pts[i], r.pts[i - 1])); i++; }
-    const a = r.pts[i - 1], b = r.pts[i], u = v2.mul(v2.sub(b, a), 1 / (v2.len(v2.sub(b, a)) || 1)), m = v2.mul(v2.add(a, b), 0.5); s += txt(m, "V" + (r.ri + 1) + " · " + fmt(r.w, 1) + " m", "lbl inv", 1.5, ang(u)); });
-  if (L.garagePoly){ const rc = L.rows.find(r => r.id === "C"); const sm = rc && rc.n ? (rc.houses[0].a + rc.houses[rc.n - 1].b) / 2 : 40; const eb = UAG.edges[IDX.base]; const p = P_(eb.A, eb.u, eb.nIn, sm, (rc ? rc.h1 + rc.g : 40) + 5.5); s += txt(p, "PATIO COMÚN · garaje debajo", "lbl", 1.8); }
+    const a = r.pts[i - 1], b = r.pts[i], u = v2.mul(v2.sub(b, a), 1 / (v2.len(v2.sub(b, a)) || 1)), m = v2.mul(v2.add(a, b), 0.5); s += txt(m, "V" + (r.ri + 1), "m-lroad", 1.5, ang(u)); });
+  if (L.garagePoly){ const rc = L.rows.find(r => r.id === "C"); const sm = rc && rc.n ? (rc.houses[0].a + rc.houses[rc.n - 1].b) / 2 : 40; const eb = UAG.edges[IDX.base]; const p = P_(eb.A, eb.u, eb.nIn, sm, (rc ? rc.h1 + rc.g : 40) + 5.5); s += txt(p, "PATIO COMÚN · garaje debajo", "m-lzone", 1.8); }
   /* edición */
   if (P.ord.modo !== "patio"){
     (P.ord.roads || []).forEach((r, ri) => {
       if (L.conn && !L.conn[ri]) s += `<polyline points="${pts(r.pts)}" class="roadbad" vector-effect="non-scaling-stroke"/>`;
-      if ((ri === SEL || TOOL === "sides") && L.roadsD && L.roadsD[ri]){ const d0 = L.roadsD[ri].pts, sd = sidesOf(r), off = r.w / 2 + 1.6;
+      if ((ri === SEL || TOOL === "sides" || cap.lados === true) && L.roadsD && L.roadsD[ri]){ const d0 = L.roadsD[ri].pts, sd = sidesOf(r), off = r.w / 2 + 1.6;
         [1, -1].forEach(k => { const ln = offsetLine(d0, k * off), on = sd.includes(k); s += `<polyline points="${pts(ln)}" class="${on ? "sideon" : "sideoff"}" vector-effect="non-scaling-stroke"/>`;
           const m = ln[Math.floor(ln.length / 2)], m2 = ln[Math.min(ln.length - 1, Math.floor(ln.length / 2) + 1)]; s += `<circle cx="${m[0].toFixed(2)}" cy="${(-m[1]).toFixed(2)}" r="1.7" class="${on ? "sidedot on" : "sidedot"}"/>` + txt(m, k > 0 ? "I" : "D", "sidetxt", 1.6); }); }
       if (ri === SEL || r.curva) s += `<polyline points="${pts(r.cerrado ? [...r.pts, r.pts[0]] : r.pts)}" class="${ri === SEL ? "roadsel" : "ctrl"}" vector-effect="non-scaling-stroke"/>`;
-      if (TOOL === "select" || TOOL === "erase") r.pts.forEach((p, pi) => { s += `<circle cx="${p[0].toFixed(2)}" cy="${(-p[1]).toFixed(2)}" r="${(VIEW.w / 140).toFixed(2)}" class="node${ri === SEL ? " sel" : ""}" data-node="${ri}:${pi}"/>`; });
+      if (TOOL === "select" && ri === SEL){ const cp = r.cerrado ? [...r.pts, r.pts[0]] : r.pts; for (let i = 0; i + 1 < cp.length; i++){ const mpt = v2.mul(v2.add(cp[i], cp[i + 1]), 0.5); s += `<g class="mid" data-mid="${ri}:${i}"><circle cx="${mpt[0].toFixed(2)}" cy="${(-mpt[1]).toFixed(2)}" r="${(VIEW.w / 170).toFixed(2)}"/><text x="${mpt[0].toFixed(2)}" y="${(-mpt[1]).toFixed(2)}" font-size="${(VIEW.w / 120).toFixed(2)}" text-anchor="middle" dominant-baseline="central">+</text></g>`; } }
+      if (TOOL === "select" || TOOL === "erase") r.pts.forEach((p, pi) => { s += `<circle cx="${p[0].toFixed(2)}" cy="${(-p[1]).toFixed(2)}" r="${(VIEW.w / 140).toFixed(2)}" class="node${ri === SEL ? " sel" : ""}${SELNODE && SELNODE[0] === ri && SELNODE[1] === pi ? " on" : ""}" data-node="${ri}:${pi}"/>`; });
     });
     if (DRAW && DRAW.pts.length){ const all0 = DRAW.cursor ? [...DRAW.pts, DRAW.cursor] : DRAW.pts, all = DRAW.curva && all0.length > 2 ? crSpline(all0, false) : all0;
       s += `<polyline points="${pts(all)}" class="roadl ghost" stroke-width="${P.ord.wCalle}" stroke-linejoin="round"/><polyline points="${pts(all)}" class="drawline" vector-effect="non-scaling-stroke"/>`; DRAW.pts.forEach(p => { s += `<circle cx="${p[0]}" cy="${-p[1]}" r="${(VIEW.w / 160).toFixed(2)}" class="node"/>`; }); }
@@ -1936,79 +2016,152 @@ function bindMap(){
       redrawMap(true); return;
     }
     try { box.setPointerCapture(e.pointerId); } catch(_) {}
-    if (TOOL === "sides" && P.ord.modo !== "patio"){ const ri = nearestRoad(p, 14); if (ri >= 0){ const r = P.ord.roads[ri], d0 = denseRoad(r); let bi = 0, bd = Infinity;
+    if (TOOL === "sides" && P.ord.modo !== "patio"){ const ri = nearestRoad(p, 14); if (ri >= 0){ pushHist(); const r = P.ord.roads[ri], d0 = denseRoad(r); let bi = 0, bd = Infinity;
         for (let i = 0; i + 1 < d0.length; i++){ const dd = dSeg(p, d0[i], d0[i + 1]); if (dd < bd){ bd = dd; bi = i; } }
         const a = d0[bi], b = d0[bi + 1], cr = (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0]), sd = cr >= 0 ? 1 : -1;
         setSide(r, sd, !sidesOf(r).includes(sd)); SEL = ri; P.ord.preset = "custom"; save(); redrawMap(true); } return; }
-    if (TOOL === "erase" && P.ord.modo !== "patio"){ const ri = nearestRoad(p); if (ri >= 0){ P.ord.roads.splice(ri, 1); P.ord.preset = "custom"; SEL = -1; save(); redrawMap(true); } return; }
-    if (node){ const [ri, pi] = node.dataset.node.split(":").map(Number); DRAG = { type:"node", ri, pi }; SEL = ri; return; }
+    if (TOOL === "erase" && P.ord.modo !== "patio"){ const ri = nearestRoad(p); if (ri >= 0){ pushHist(); P.ord.roads.splice(ri, 1); P.ord.preset = "custom"; SEL = -1; save(); redrawMap(true); } return; }
+    const mid = e.target.closest && e.target.closest("[data-mid]");
+    if (mid){ const [ri, i] = mid.dataset.mid.split(":").map(Number); pushHist(); const r = P.ord.roads[ri], cp = r.cerrado ? [...r.pts, r.pts[0]] : r.pts; r.pts.splice(i + 1, 0, v2.mul(v2.add(cp[i], cp[i + 1]), 0.5)); DRAG = { type:"node", ri, pi:i + 1 }; SEL = ri; SELNODE = [ri, i + 1]; return; }
+    if (node){ const [ri, pi] = node.dataset.node.split(":").map(Number); pushHist(); DRAG = { type:"node", ri, pi, moved:false }; SEL = ri; SELNODE = [ri, pi]; return; }
     const ri = P.ord.modo !== "patio" ? nearestRoad(p) : -1;
     if (ri >= 0 && ri !== SEL){ SEL = ri; redrawMap(true); }
     DRAG = { type:"pan", c0:[e.clientX, e.clientY], v0:Object.assign({}, VIEW), moved:false };
   });
   box.addEventListener("pointermove", e => {
-    if (DRAG && DRAG.type === "node"){ const sn = snapPt(sitePt(e), [DRAG.ri, DRAG.pi]); P.ord.roads[DRAG.ri].pts[DRAG.pi] = sn.p; P.ord.preset = "custom"; redrawMap(false); return; }
+    if (DRAG && DRAG.type === "node"){ DRAG.moved = true; const sn = snapPt(sitePt(e), [DRAG.ri, DRAG.pi]); P.ord.roads[DRAG.ri].pts[DRAG.pi] = sn.p; P.ord.preset = "custom"; redrawMap(false); return; }
     if (DRAG && DRAG.type === "pan"){ const svg = $("#mapbox svg"); const r = svg.getBoundingClientRect(), k = Math.max(VIEW.w / r.width, VIEW.h / r.height);
       VIEW = Object.assign({}, DRAG.v0, { fit:true, x:DRAG.v0.x - (e.clientX - DRAG.c0[0]) * k, y:DRAG.v0.y - (e.clientY - DRAG.c0[1]) * k }); DRAG.moved = true; redrawMap(false); return; }
     if (isDraw() && DRAW){ const sn = drawPoint(sitePt(e)); DRAW.cursor = sn.p; DRAW.snap = sn.snap; redrawMap(false); }
   });
-  box.addEventListener("pointerup", () => { const was = DRAG; DRAG = null; if (was && was.type === "node"){ save(); redrawMap(true); } else if (was && was.type === "pan" && !was.moved && SEL >= 0){ SEL = -1; redrawMap(true); } });
+  box.addEventListener("pointerup", () => { const was = DRAG; DRAG = null; if (was && was.type === "node"){ if (was.moved === false){ HIST.u.pop(); } save(); redrawMap(true); } else if (was && was.type === "pan" && !was.moved && (SEL >= 0 || SELROW)){ SEL = -1; SELNODE = null; SELROW = null; redrawMap(true); } });
 }
 function nearestRoad(p, tol){ let best = -1, bd = Infinity; (P.ord.roads || []).forEach((r, ri) => { const d0 = denseRoad(r); for (let i = 0; i + 1 < d0.length; i++){ const d = dSeg(p, d0[i], d0[i + 1]); if (d < bd){ bd = d; best = ri; } } }); return bd <= (tol || Math.max(4, ((P.ord.roads[best] || {}).w || 7) / 2 + 1)) ? best : -1; }
 function finishDraw(){
   if (DRAW){ const pts = DRAW.pts.filter((p, i, a) => !i || v2.len(v2.sub(p, a[i - 1])) > 0.6);
-    if (pts.length >= 2){ P.ord.roads.push({ pts, w:P.ord.wCalle, curva:!!DRAW.curva, cerrado:!!DRAW.cerrado && pts.length >= 3, lados:P.ord.ladosNuevo || "ambos" }); P.ord.preset = "custom"; SEL = P.ord.roads.length - 1; save(); toast("Vial añadido. Puedes mover sus puntos con «Mover»."); }
+    if (pts.length >= 2){ pushHist(); P.ord.roads.push({ pts, w:P.ord.wCalle, curva:!!DRAW.curva, cerrado:!!DRAW.cerrado && pts.length >= 3, lados:P.ord.ladosNuevo || "ambos" }); P.ord.preset = "custom"; SEL = P.ord.roads.length - 1; save(); toast("Vial añadido. Puedes mover sus puntos con «Mover»."); }
     else if (pts.length) toast("Un vial necesita al menos dos puntos."); }
   DRAW = null; redrawMap(true);
 }
 window.addEventListener("keydown", e => {
   if (TAB !== "ordenacion" || /INPUT|SELECT|TEXTAREA/.test((document.activeElement || {}).tagName || "")) return;
+  const k = e.key.toLowerCase();
+  if ((e.ctrlKey || e.metaKey) && k === "z"){ e.preventDefault(); e.shiftKey ? redoOrd() : undoOrd(); return; }
+  if ((e.ctrlKey || e.metaKey) && k === "y"){ e.preventDefault(); redoOrd(); return; }
   if (e.key === "Enter" && DRAW) finishDraw();
-  if (e.key === "Escape"){ DRAW = null; TOOL = "select"; redrawMap(true); }
-  if ((e.key === "Delete" || e.key === "Backspace") && SEL >= 0 && P.ord.modo !== "patio" && !DRAW){ P.ord.roads.splice(SEL, 1); SEL = -1; P.ord.preset = "custom"; save(); redrawMap(true); }
+  if (e.key === "Escape"){ DRAW = null; TOOL = "select"; SELNODE = null; redrawMap(true); return; }
+  if ((e.key === "Delete" || e.key === "Backspace") && P.ord.modo !== "patio" && !DRAW){
+    if (SELNODE && P.ord.roads[SELNODE[0]] && P.ord.roads[SELNODE[0]].pts.length > 2){ pushHist(); P.ord.roads[SELNODE[0]].pts.splice(SELNODE[1], 1); SELNODE = null; }
+    else if (SEL >= 0){ pushHist(); P.ord.roads.splice(SEL, 1); SEL = -1; SELNODE = null; }
+    P.ord.preset = "custom"; save(); redrawMap(true); return; }
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const map = { v:"select", l:"line", c:"curve", s:"sides", e:"erase" };
+  if (map[k]){ TOOL = map[k]; DRAW = null; redrawMap(true); }
+  if (k === "o"){ ORTHO = !ORTHO; redrawMap(true); }
+  if (k === "t"){ P.ord.vista = P.ord.vista === "3d" ? "cubiertas" : "3d"; schedule(true); }
 });
 
-/* ---------- pestaña */
+/* ---------- iconos (trazo) */
+const ICONS = {
+  select:'<path d="M5 3l14 8-6 2-2 6z"/>', line:'<path d="M4 20L20 4"/><circle cx="4" cy="20" r="1.6"/><circle cx="20" cy="4" r="1.6"/>',
+  curve:'<path d="M3 19c5 0 4-14 9-14s4 14 9 14"/>', ortho:'<path d="M5 4v15h15"/><path d="M5 13h6v6"/>', sides:'<path d="M3 12h18"/><path d="M7 8V5M12 8V5M17 8V5M7 16v3"/>',
+  erase:'<path d="M4 16l9-9 6 6-7 7H8z"/><path d="M14 20h6"/>', undo:'<path d="M9 7L4 12l5 5"/><path d="M4 12h11a5 5 0 010 10h-3"/>', redo:'<path d="M15 7l5 5-5 5"/><path d="M20 12H9a5 5 0 000 10h3"/>',
+  fit:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>', plus:'<path d="M12 5v14M5 12h14"/>', minus:'<path d="M5 12h14"/>',
+  roof:'<path d="M3 11l9-6 9 6v8H3z"/>', plan:'<rect x="4" y="4" width="16" height="16"/><path d="M4 12h8V4M12 16h8"/>', cube:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>',
+  road:'<path d="M8 3L5 21M16 3l3 18M12 5v2M12 11v2M12 17v2"/>', rows:'<rect x="3" y="6" width="18" height="5"/><rect x="3" y="14" width="18" height="5"/><path d="M9 6v5M15 6v5M9 14v5M15 14v5"/>',
+  eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>', check:'<path d="M5 12l5 5L20 7"/>'
+};
+const IC = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n] || ""}</svg>`;
+/* ---------- historial para deshacer y rehacer */
+const HIST = { u:[], r:[] };
+const snapOrd = () => JSON.stringify({ roads:P.ord.roads, frontAv:P.ord.frontAv, frontFl:P.ord.frontFl, modo:P.ord.modo, preset:P.ord.preset });
+function pushHist(){ HIST.u.push(snapOrd()); if (HIST.u.length > 60) HIST.u.shift(); HIST.r = []; }
+function undoOrd(){ if (!HIST.u.length) return; HIST.r.push(snapOrd()); Object.assign(P.ord, JSON.parse(HIST.u.pop())); SEL = -1; SELNODE = null; DRAW = null; save(); redrawMap(true); }
+function redoOrd(){ if (!HIST.r.length) return; HIST.u.push(snapOrd()); Object.assign(P.ord, JSON.parse(HIST.r.pop())); SEL = -1; SELNODE = null; save(); redrawMap(true); }
+let SELNODE = null, SELROW = null, WIDTHHIST = false;
+
+/* ---------- pestaña: espacio de trabajo */
 function viewOrd(M){
   const o = P.ord;
   const num = (k, label, u, min, max, step) => `<label class="pf"><span>${label}</span><span class="num"><input type="number" id="ord-${k}" data-ord="${k}" min="${min}" max="${max}" step="${step}" value="${o[k]}"><span>${u}</span></span></label>`;
-  return `<div class="mapwrap">
-    <div class="mapbox" id="mapbox"></div><div id="ord3d" class="box3d" hidden></div>
-    <div class="fl fl-tools" role="toolbar" aria-label="Herramientas">
-      <button type="button" class="tb" data-tool="select" title="Seleccionar y mover nodos (arrastra para desplazar)">Mover</button>
-      <button type="button" class="tb" data-tool="line" title="Vial recto: clic para cada punto. Termina al llegar a otro vial o calle, al pulsar otra vez el último punto o con «Terminar»">Vial recto</button>
-      <button type="button" class="tb" data-tool="curve" title="Vial curvo: los puntos son de control y el vial pasa por ellos con curvas suaves">Vial curvo</button>
-      <button type="button" class="tb" data-ortho="1" title="Ángulos de 90°: cada tramo sigue o gira en ángulo recto">90°</button>
-      <button type="button" class="tb" data-tool="sides" title="Lados con parcelas: clic a un lado de un vial para poner o quitar parcelas en ese lado">Lados</button>
-      <button type="button" class="tb" data-tool="erase" title="Borrar vial: clic sobre el vial">Borrar</button>
-      <span class="tsep"></span>
-      <button type="button" class="tb" data-ordv="cubiertas">Cubiertas</button><button type="button" class="tb" data-ordv="planta">Planta</button><button type="button" class="tb" data-ordv="3d">3D</button>
-      <span class="tsep"></span>
-      <button type="button" class="tb" data-act="fit" title="Encajar la parcela">Encajar</button>
+  const tb = (attr, icon, label, title) => `<button type="button" class="tb" ${attr} title="${title}">${IC(icon)}<span>${label}</span></button>`;
+  return `<div class="ws" id="ws">
+  <div class="ws-top">
+    <div class="ws-title"><b>${esc(UA.id)}</b><span>Ordenación · ${fmt(UAG.area, 0)} m²</span></div>
+    <div class="tgroup" role="toolbar" aria-label="Herramientas de dibujo">
+      ${tb('data-tool="select"', "select", "Mover", "Seleccionar y mover puntos (V)")}
+      ${tb('data-tool="line"', "line", "Vial recto", "Vial recto (L): clic para cada punto; termina al llegar a otro vial o calle")}
+      ${tb('data-tool="curve"', "curve", "Vial curvo", "Vial curvo (C): los puntos son de control")}
+      ${tb('data-ortho="1"', "ortho", "90°", "Ángulos rectos (O)")}
+      ${tb('data-tool="sides"', "sides", "Lados", "Poner o quitar parcelas a un lado del vial (S)")}
+      ${tb('data-tool="erase"', "erase", "Borrar", "Borrar vial (E)")}
     </div>
-    <div class="fl fl-hint" id="maphint"></div>
-    <div class="fl fl-draw" id="drawbar" hidden><span class="seg mini" title="Lados con parcelas en el vial que estás dibujando">${LADOS.map(([v, t]) => `<button type="button" data-ladosnuevo="${v}" aria-pressed="${(o.ladosNuevo || "ambos") === v}">${t}</button>`).join("")}</span><button type="button" class="btn pri" data-act="drawdone">Terminar vial</button><button type="button" class="btn" data-act="drawundo">Deshacer punto</button><button type="button" class="btn" data-act="drawcancel">Cancelar</button></div>
-    <div class="fl fl-layers"><b>Capas</b>${[["retr","Retranqueos"],["arbol","Arbolado"],["cotas","Rótulos"]].map(([k, t]) => `<label class="chk"><input type="checkbox" data-capa="${k}"${(o.capas || {})[k] !== false ? " checked" : ""}>${t}</label>`).join("")}</div>
-    <aside class="fl fl-panel" id="ordpanel">
-      <section><h4>Proyecto</h4><div class="mk" id="ordkpi"></div></section>
-      <section><h4>Plantillas</h4><div class="presets" id="ordpresets"></div></section>
-      <section id="selroad"></section>
-      <section><h4>Generación</h4>
-        ${num("objetivo", "Viviendas objetivo", "ud", 1, UA.viv || 200, 1)}
-        <div class="pf"><span>Aparcamiento</span><span class="seg mini">${[["superficie","2 en frente"],["rampa","Rampa"]].map(([v, t]) => `<button type="button" data-ordset="parking" data-v="${v}">${t}</button>`).join("")}</span></div>
-        ${num("gLote", "Fondo de jardín", "m", 3, 20, 0.5)}
-        ${num("wCalle", "Ancho de vial nuevo", "m", 5, 14, 0.5)}
-        ${num("rFondo", "Radio de fondo de saco", "m", 6, 16, 0.5)}
-        ${num("bloque", "Viviendas por bloque", "ud", 0, 20, 1)}
-        ${num("pasoBloque", "Paso entre bloques", "m", 2, 10, 0.5)}
-        <label class="chk"><input type="checkbox" data-ordc="frontAv"${o.frontAv ? " checked" : ""}>Viviendas con fachada a ${esc(UAG.edges[IDX.base].n)}</label>
-        ${IDX.acc !== IDX.base ? `<label class="chk"><input type="checkbox" data-ordc="frontFl"${o.frontFl ? " checked" : ""}>Viviendas con fachada a ${esc(UAG.edges[IDX.acc].n)}</label>` : ""}
-        <div class="patioonly">${num("gMin", "Jardín mínimo (patio)", "m", 3, 15, 0.5)}${num("paseo", "Paseo del patio", "m", 3, 15, 0.5)}</div>
-      </section>
-      <button class="btn pri" type="button" data-act="applyUA" style="width:100%">Ajustar la vivienda a la normativa</button><span class="toast" id="toast" aria-live="polite"></span>
-    </aside>
+    <div class="tgroup">${tb('data-act="undo"', "undo", "", "Deshacer (Ctrl+Z)")}${tb('data-act="redo"', "redo", "", "Rehacer (Ctrl+Y)")}</div>
+    <div class="tgroup seg2" role="group" aria-label="Vista">
+      ${tb('data-ordv="cubiertas"', "roof", "Cubiertas", "Vista de cubiertas")}${tb('data-ordv="planta"', "plan", "Planta", "Planta baja de cada vivienda")}${tb('data-ordv="3d"', "cube", "3D", "Vista 3D (T)")}
+    </div>
   </div>
-  <div class="cols" id="ordtables"></div>`;
+  <aside class="ws-left" id="wsleft">
+    <section><h4>${IC("road")}Viales <button type="button" class="lnk" data-tool="line">+ Añadir</button></h4><ul class="elist" id="lroads"></ul></section>
+    <section><h4>${IC("rows")}Hileras</h4><ul class="elist" id="lrows"></ul></section>
+    <section><h4>Usos del suelo</h4><ul class="uses" id="luses"></ul></section>
+    <section><h4>${IC("eye")}Capas</h4>${[["retr","Retranqueos"],["arbol","Arbolado"],["cotas","Rótulos de viviendas"],["lados","Lados con parcelas"]].map(([k, t]) => `<label class="chk"><input type="checkbox" data-capa="${k}"${(o.capas || {})[k] !== false ? " checked" : ""}>${t}</label>`).join("")}</section>
+  </aside>
+  <div class="ws-canvas">
+    <div class="mapbox" id="mapbox"></div><div id="ord3d" class="box3d" hidden></div>
+    <div class="ctl ctl-zoom"><button type="button" data-act="zin" title="Acercar">${IC("plus")}</button><button type="button" data-act="zout" title="Alejar">${IC("minus")}</button><button type="button" data-act="fit" title="Encajar la parcela">${IC("fit")}</button></div>
+    <div class="ctl ctl-hint" id="maphint"></div>
+    <div class="ctl ctl-draw" id="drawbar" hidden><span class="seg mini" title="Lados con parcelas en el vial que estás dibujando">${LADOS.map(([v, t]) => `<button type="button" data-ladosnuevo="${v}" aria-pressed="${(o.ladosNuevo || "ambos") === v}">${t}</button>`).join("")}</span><button type="button" class="btn pri" data-act="drawdone">Terminar vial</button><button type="button" class="btn" data-act="drawundo">Deshacer punto</button><button type="button" class="btn" data-act="drawcancel">Cancelar</button></div>
+  </div>
+  <aside class="ws-right">
+    <section id="selroad" class="props"></section>
+    <section><h4>Tipo de implantación</h4><div class="presets" id="ordpresets"></div></section>
+    <section id="gensec"><h4>Generación</h4>
+      ${num("objetivo", "Viviendas objetivo", "ud", 1, UA.viv || 200, 1)}
+      <div class="pf"><span>Aparcamiento</span><span class="seg mini">${[["superficie","2 en frente"],["rampa","Rampa"]].map(([v, t]) => `<button type="button" data-ordset="parking" data-v="${v}">${t}</button>`).join("")}</span></div>
+      ${num("gLote", "Fondo de jardín", "m", 3, 20, 0.5)}
+      ${num("wCalle", "Ancho de vial nuevo", "m", 5, 14, 0.5)}
+      ${num("rFondo", "Radio de fondo de saco", "m", 6, 16, 0.5)}
+      ${num("bloque", "Viviendas por bloque", "ud", 0, 20, 1)}
+      ${num("pasoBloque", "Paso entre bloques", "m", 2, 10, 0.5)}
+      <label class="chk"><input type="checkbox" data-ordc="frontAv"${o.frontAv ? " checked" : ""}>Fachada a ${esc(UAG.edges[IDX.base].n)}</label>
+      ${IDX.acc !== IDX.base ? `<label class="chk"><input type="checkbox" data-ordc="frontFl"${o.frontFl ? " checked" : ""}>Fachada a ${esc(UAG.edges[IDX.acc].n)}</label>` : ""}
+      <div class="patioonly">${num("gMin", "Jardín mínimo (patio)", "m", 3, 15, 0.5)}${num("paseo", "Paseo del patio", "m", 3, 15, 0.5)}</div>
+      <p class="note">Vivienda tipo ${fmt(M.W)} × ${fmt(M.Dpb)} m. Se cambia en <a href="#" data-tab="plantas">Vivienda</a>.</p>
+      <button class="btn" type="button" data-act="applyUA" style="width:100%">Ajustar la vivienda a la normativa</button><span class="toast" id="toast" aria-live="polite"></span>
+    </section>
+  </aside>
+  <div class="ws-bottom" id="ordkpi"></div>
+</div>
+<div class="cols" id="ordtables"></div>`;
+}
+function wsPanels(M, L){
+  const o = P.ord, comp = M.Apb + M.Ap1;
+  /* barra inferior: cifras con barras de uso, al estilo de las barras de resultados */
+  const bar = (v, max) => `<i class="bar"><i style="width:${Math.max(0, Math.min(100, max ? v / max * 100 : 0)).toFixed(1)}%"></i></i>`;
+  const C = ordChecks(M, L), nf = C.filter(c => c[3] === "fail").length, nw = C.filter(c => c[3] === "warn").length;
+  const edif = L.n * comp, ocup = L.foot / UA.sup * 100, plz = Math.ceil(UA.plazas * L.n);
+  $("#ordkpi").innerHTML = `
+    <div class="kb"><small>Viviendas</small><b class="${L.n === UA.viv ? "st-ok" : "st-warn"}">${L.n}<span>/ ${UA.viv}</span></b>${bar(L.n, UA.viv)}</div>
+    <div class="kb"><small>Edificabilidad</small><b>${fmt(edif, 0)}<span>/ ${fmt(UA.edif, 0)} m²c</span></b>${bar(edif, UA.edif)}</div>
+    <div class="kb"><small>Ocupación</small><b>${fmt(ocup, 1)}<span>% / ${fmt(UA.ocup, 0)}%</span></b>${bar(ocup, UA.ocup)}</div>
+    <div class="kb"><small>Plazas</small><b class="${L.plazas >= plz ? "" : "st-fail"}">${L.plazas}<span>/ ${plz}</span></b>${bar(L.plazas, Math.max(plz, 1))}</div>
+    <div class="kb"><small>Viario</small><b>${fmt(L.viario, 0)}<span> m² · ${fmt(L.viario / UAG.area * 100, 0)}%</span></b></div>
+    <div class="kb"><small>Jardín medio</small><b>${fmt(L.gMed, 0)}<span> m²</span></b></div>
+    <button type="button" class="kb kstate ${nf ? "fail" : nw ? "warn" : "ok"}" data-act="gochecks"><small>Comprobaciones</small><b>${nf ? nf + " no cumple" : nw ? nw + " por revisar" : "Todo cumple"}</b></button>`;
+  /* panel izquierdo: elementos y usos */
+  const lr = $("#lroads");
+  if (lr){ const roads = o.modo === "patio" ? [] : (o.roads || []);
+    lr.innerHTML = roads.length ? roads.map((r, ri) => `<li><button type="button" data-selroad="${ri}" aria-pressed="${ri === SEL}"><i class="dot ${L.conn && L.conn[ri] === false ? "bad" : ""}"></i><b>V${ri + 1}</b><span>${fmt((L.roadLen || [])[ri] || 0, 0)} m · ${fmt(r.w, 1)} m${r.curva ? " · curvo" : ""}${r.cerrado ? " · anillo" : ""}</span><em>${({ ambos:"I · D", izq:"I", der:"D", ninguno:"—" })[r.lados || "ambos"]}</em></button></li>`).join("")
+      : `<li class="empty">${o.modo === "patio" ? "El patio común no usa viales." : "Sin viales. Dibuja uno con «Vial recto» o «Vial curvo»."}</li>`; }
+  const lw = $("#lrows");
+  if (lw) lw.innerHTML = L.rows.length ? L.rows.map(r => `<li><button type="button" data-selrow="${r.id}" aria-pressed="${SELROW === r.id}"><i class="dot use-a"></i><b>${r.id}</b><span>${r.n} viv · ${esc(r.src || "")}</span><em>${r.houses.filter(h => h.cab).length} cab.</em></button></li>`).join("") : `<li class="empty">Sin viviendas.</li>`;
+  const lu = $("#luses");
+  if (lu){ const inter = L.houses.filter(h => !h.cab).length, cab = L.houses.length - inter, fp = M.W * M.Dpb;
+    const U = [["use-a", "Vivienda intermedia", inter + " ud", inter * fp], ["use-b", "Vivienda de cabecera", cab + " ud", cab * fp], ["use-g", "Jardín privado", "", L.gardens], ["use-y", "Acceso y aparcamiento", "", L.yards], ["use-r", "Viario privado", "", L.viario], ["use-c", "Espacio común y libre", "", Math.max(0, L.comun)]];
+    lu.innerHTML = U.map(([c, t, n, a]) => `<li><i class="sw2 ${c}"></i><span>${t}${n ? ` <small>${n}</small>` : ""}</span><b>${fmt(a, 0)} m²</b><small>${fmt(a / UAG.area * 100, 0)}%</small></li>`).join(""); }
+  document.querySelectorAll("[data-act=undo]").forEach(b => { b.disabled = !HIST.u.length; });
+  document.querySelectorAll("[data-act=redo]").forEach(b => { b.disabled = !HIST.r.length; });
 }
 let ORDC = { key:"", res:null, tkey:"", thumbs:"" };
 function ordChecks(M, L){
@@ -2062,13 +2215,17 @@ function updateOrd(M, light){
     if (!R3 || !box.contains(R3.renderer.domElement)) box.innerHTML = `<p class="note" style="padding:20px">Cargando el modelo 3D…</p>`;
     loadThree().then(() => render3D(box, M, L)).catch(() => { box.innerHTML = `<p class="note" style="padding:20px">No se pudo cargar el visor 3D. El plano sigue disponible en Cubiertas o Planta.</p>`; });
   } else { $("#mapbox").innerHTML = mapSVG(M, L); bindMap(); }
-  const comp = M.Apb + M.Ap1;
-  $("#ordkpi").innerHTML = [[`${L.n}/${UA.viv}`, "viviendas", L.n === UA.viv ? "st-ok" : "st-warn"], [fmt(L.n * comp, 0), "m²c de " + fmt(UA.edif, 0), L.n * comp <= UA.edif + 0.5 ? "" : "st-fail"], [fmt(L.foot / UA.sup * 100, 1) + "%", "ocupación", ""], [String(L.plazas), "plazas", L.plazas >= 2 * L.n ? "" : "st-fail"], [fmt(L.gMed, 0) + " m²", "jardín medio", ""], [fmt(L.viario, 0) + " m²", "viario", ""]]
-    .map(([v, t, c]) => `<div><b class="${c}">${v}</b><small>${t}</small></div>`).join("");
+  wsPanels(M, L);
   const sr = $("#selroad");
   if (sr){ const r = o.modo !== "patio" && SEL >= 0 ? o.roads[SEL] : null;
     sr.hidden = !r;
-    if (r && !(document.activeElement && document.activeElement.id === "selw")) sr.innerHTML = `<h4>Vial V${SEL + 1}</h4><label class="pf"><span>Ancho</span><span class="num"><input type="number" id="selw" min="4" max="16" step="0.5" value="${r.w}"><span>m</span></span></label><div class="pf" style="display:grid;gap:4px;justify-content:stretch"><span>Parcelas en</span><span class="seg mini">${LADOS.map(([v, t]) => `<button type="button" data-sellados="${v}" aria-pressed="${(r.lados || "ambos") === v}">${t}</button>`).join("")}</span></div><p class="note">Izquierda (I) y derecha (D) según el sentido en que se dibujó el vial; están marcadas en el plano.</p><label class="chk"><input type="checkbox" id="selcurva"${r.curva ? " checked" : ""}>Trazado curvo</label><label class="chk"><input type="checkbox" id="selcerr"${r.cerrado ? " checked" : ""}>Cerrado (anillo)</label><p class="note">${fmt(L.roadLen[SEL] || 0, 1)} m de longitud · ${L.conn[SEL] ? "conectado" : "sin conexión a vía pública"}</p><button type="button" class="btn" data-act="delroad">Eliminar vial</button>`; }
+    if (r && !(document.activeElement && document.activeElement.id === "selw")) sr.innerHTML = `<h4>Propiedades · vial V${SEL + 1}</h4>
+      <label class="pf"><span>Ancho</span><span class="num"><input type="number" id="selw" min="4" max="16" step="0.5" value="${r.w}"><span>m</span></span></label>
+      <div class="pf col"><span>Parcelas en</span><span class="seg mini">${LADOS.map(([v, t]) => `<button type="button" data-sellados="${v}" aria-pressed="${(r.lados || "ambos") === v}">${t}</button>`).join("")}</span></div>
+      <label class="chk"><input type="checkbox" id="selcurva"${r.curva ? " checked" : ""}>Trazado curvo</label><label class="chk"><input type="checkbox" id="selcerr"${r.cerrado ? " checked" : ""}>Cerrado (anillo)</label>
+      <p class="note">${fmt(L.roadLen[SEL] || 0, 1)} m · ${L.conn[SEL] ? "conectado a vía pública" : "sin conexión a vía pública"} · ${r.pts.length} puntos. Arrastra un punto para moverlo; los «+» del vial añaden puntos.</p>
+      <div class="tools">${SELNODE && SELNODE[0] === SEL && r.pts.length > 2 ? `<button type="button" class="btn" data-act="delnode">Eliminar punto</button>` : ""}<button type="button" class="btn" data-act="delroad">Eliminar vial</button></div>`; }
+  const gs = $("#gensec"); if (gs) gs.classList.toggle("dim", !!(sr && !sr.hidden));
   if (light) return;
   const C = ordChecks(M, L), lbl = { ok:"Cumple", warn:"Revisar", fail:"No cumple", info:"Info" };
   const rowsT = L.rows.map(r => `<tr><td>Hilera ${r.id}${r.src ? ` <small class="note">${r.src}</small>` : ""}</td><td class="n">${r.n}</td><td>${r.houses.filter(h => h.cab).length} cab.</td><td>jardín al ${r.gardenDir}</td><td class="n">${r.n ? fmt(r.houses.reduce((a, h) => a + polyArea(h.garden), 0) / r.n, 0) : "—"} m²</td></tr>`).join("");
@@ -2132,9 +2289,14 @@ document.addEventListener("click", e => {
   }
   if (act === "fit"){ fitView(); VIEW.fit = true; if (R3 && P.ord.vista === "3d"){ const c0 = UAG.poly.reduce((a, p) => v2.add(a, v2.mul(p, 1 / UAG.poly.length)), [0, 0]); R3.camera.position.set(c0[0] - 55, 95, -c0[1] + 140); R3.controls.target.set(c0[0], 0, -c0[1]); } schedule(true); return; }
   if (act === "drawdone"){ finishDraw(); return; }
+  if (act === "undo"){ undoOrd(); return; }
+  if (act === "redo"){ redoOrd(); return; }
+  if (act === "zin" || act === "zout"){ const k = act === "zin" ? 1 / 1.3 : 1.3, cx = VIEW.x + VIEW.w / 2, cy = VIEW.y + VIEW.h / 2; VIEW = { x:cx - VIEW.w * k / 2, y:cy - VIEW.h * k / 2, w:VIEW.w * k, h:VIEW.h * k, fit:true }; redrawMap(false); return; }
+  if (act === "delnode"){ if (SELNODE && P.ord.roads[SELNODE[0]] && P.ord.roads[SELNODE[0]].pts.length > 2){ pushHist(); P.ord.roads[SELNODE[0]].pts.splice(SELNODE[1], 1); SELNODE = null; P.ord.preset = "custom"; save(); } redrawMap(true); return; }
+  if (act === "gochecks"){ const t = $("#ordtables"); if (t) t.scrollIntoView({ behavior:"smooth", block:"start" }); return; }
   if (act === "drawundo"){ if (DRAW){ DRAW.pts.pop(); if (!DRAW.pts.length) DRAW = null; } redrawMap(true); return; }
   if (act === "drawcancel"){ DRAW = null; redrawMap(true); return; }
-  if (act === "delroad"){ if (SEL >= 0){ P.ord.roads.splice(SEL, 1); SEL = -1; P.ord.preset = "custom"; } schedule(true); return; }
+  if (act === "delroad"){ if (SEL >= 0){ pushHist(); P.ord.roads.splice(SEL, 1); SEL = -1; P.ord.preset = "custom"; } schedule(true); return; }
   if (act === "applyUA"){
     const per = UA.viv ? UA.edif / UA.viv : P.edif;
     Object.assign(P, { tipo:"adosada", edif:+per.toFixed(2), modo:"ajustar", alturaMax:UA.altura < 99 ? UA.altura : P.alturaMax, ocupMax:UA.ocup, retFrente:UA.retCalle, retFondo:UA.retOtros, retLat:UA.retOtros,
@@ -2167,8 +2329,8 @@ document.addEventListener("input", e => {
   if (dp.pv){ const [i, k] = dp.pv.split(":"); P.parcela.vertices[+i][k] = k === "n" ? e.target.value : parseFloat(e.target.value); setParcela(P.parcela); P.ord.roads = null; VIEW = null; ORDC.key = ""; ORDC.tkey = ""; save(); updateParcela(); return; }
   if (dp.pl && e.target.tagName === "INPUT"){ const [i, k] = dp.pl.split(":"); P.parcela.lados[+i][k] = k === "nombre" ? e.target.value : (e.target.value === "" ? null : parseFloat(e.target.value)); setParcela(P.parcela); ORDC.key = ""; ORDC.tkey = ""; save(); updateParcela(); return; }
   if (dp.parnotas){ P.parcela.notas = e.target.value.split("\n").filter(x => x.trim()); save(); return; }
-  if ((e.target.id === "selcurva" || e.target.id === "selcerr") && SEL >= 0){ const r = P.ord.roads[SEL]; if (e.target.id === "selcurva") r.curva = e.target.checked; else r.cerrado = e.target.checked && r.pts.length >= 3; P.ord.preset = "custom"; save(); schedule(true); return; }
-  if (e.target.id === "selw" && SEL >= 0){ const v = parseFloat(e.target.value); if (!isNaN(v) && v >= 3){ P.ord.roads[SEL].w = v; P.ord.preset = "custom"; schedule(true); } return; }
+  if ((e.target.id === "selcurva" || e.target.id === "selcerr") && SEL >= 0){ pushHist(); const r = P.ord.roads[SEL]; if (e.target.id === "selcurva") r.curva = e.target.checked; else r.cerrado = e.target.checked && r.pts.length >= 3; P.ord.preset = "custom"; save(); schedule(true); return; }
+  if (e.target.id === "selw" && SEL >= 0){ const v = parseFloat(e.target.value); if (!isNaN(v) && v >= 3){ if (!WIDTHHIST){ pushHist(); WIDTHHIST = true; setTimeout(() => { WIDTHHIST = false; }, 1500); } P.ord.roads[SEL].w = v; P.ord.preset = "custom"; schedule(true); } return; }
   const ok = e.target.dataset && e.target.dataset.ord;
   if (ok){ const v = parseFloat(e.target.value); if (!isNaN(v)){ P.ord[ok] = v; schedule(true); } return; }
   const pa = e.target.dataset && e.target.dataset.pga; if (!pa) return;
