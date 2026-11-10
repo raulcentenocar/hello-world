@@ -21,6 +21,11 @@ Abrir `index.html` en el navegador (o vía GitHub Pages en `/casa-semisotano/`).
   propiedades del elemento seleccionado, tipos de implantación y generación; barra inferior de resultados con
   barras de uso. Deshacer/rehacer (Ctrl+Z / Ctrl+Y), atajos (V, L, C, S, E, O, T), puntos «+» para insertar
   vértices, eliminar punto y mapa base claro con colores por uso.
+- **Optimizar y colmatar**: búsqueda automática (sin IA) de la estructura de viario, los productos de vivienda, el
+  jardín mínimo y el ancho de los viales (un carril de 4 m en bucles y anillos, dos carriles de 7 m en fondos de
+  saco y accesos; mínimos editables) para llegar al número de viviendas objetivo sin superar la edificabilidad.
+  Muestra las mejores alternativas y, si no se llega, explica qué lo limita y qué probar.
+- **Dos productos de vivienda** (compacto y amplio, frente y m²c editables): el motor elige en cada lote el que cabe.
 - **Colmatación automática**: el botón *Colmatar automáticamente* genera viario y lotes sin dibujar nada. Prueba
   estructuras automáticas (anillo perimetral que sigue el lindero, con calles paralelas, transversales o malla) y
   las plantillas clásicas, y se queda con la que mete más viviendas. Los lotes se adaptan: lindes laterales
