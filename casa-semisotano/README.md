@@ -21,6 +21,12 @@ Abrir `index.html` en el navegador (o vía GitHub Pages en `/casa-semisotano/`).
   propiedades del elemento seleccionado, tipos de implantación y generación; barra inferior de resultados con
   barras de uso. Deshacer/rehacer (Ctrl+Z / Ctrl+Y), atajos (V, L, C, S, E, O, T), puntos «+» para insertar
   vértices, eliminar punto y mapa base claro con colores por uso.
+- **Colmatación automática**: el botón *Colmatar automáticamente* genera viario y lotes sin dibujar nada. Prueba
+  estructuras automáticas (anillo perimetral que sigue el lindero, con calles paralelas, transversales o malla) y
+  las plantillas clásicas, y se queda con la que mete más viviendas. Los lotes se adaptan: lindes laterales
+  perpendiculares al vial (abanico en curvas), lotes que se ensanchan hasta que cabe la vivienda y absorción de
+  restos para no dejar huecos. Agrupación adosada, pareada o aislada, parcela mínima y lote tipo editable
+  arrastrando (ancho de vivienda, acceso, jardín mínimo y separación lateral).
 - **Lotes hasta el fondo de manzana** (como TestFit): cada lote se extiende hasta el lindero, otro vial, una zona
   libre o la mitad entre frentes (con fondo máximo), y se recorta con la forma de la parcela. *Lote tipo* editable
   (acceso, vivienda, jardín mínimo, fondo máximo). *Zonas libres* (parques) que se dibujan, mueven y redimensionan
