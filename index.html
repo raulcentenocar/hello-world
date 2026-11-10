@@ -1,18 +1,124 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="es">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <title>my-first-website</title>
-  <LINK href="styles.css" rel="stylesheet" type="text/css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Memoria de Proyecto</title>
+  <meta name="description" content="Revisión normativa y redacción asistida de memorias de proyecto de arquitectura (CTE y normativa española).">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
 </head>
-
 <body>
+  <header class="barra">
+    <div class="marca">
+      <span class="logo" aria-hidden="true">▦</span>
+      <div>
+        <h1>Memoria de Proyecto</h1>
+        <p class="sub">Revisión normativa y redacción asistida de memorias</p>
+      </div>
+    </div>
+    <div class="acciones-barra">
+      <button id="btn-nuevo" class="sec" type="button">Nuevo</button>
+      <button id="btn-exportar-json" class="sec" type="button">Guardar proyecto</button>
+      <label class="sec boton-archivo">Abrir proyecto<input id="inp-importar" type="file" accept="application/json" hidden></label>
+      <button id="btn-ajustes" class="sec" type="button">Ajustes</button>
+    </div>
+  </header>
 
-<img src="https://octodex.github.com/images/daftpunktocat-thomas.gif" id="octocat" alt="octocat-gif" />
+  <nav class="pestanas" role="tablist">
+    <button role="tab" data-tab="proyecto" aria-selected="true">1 · Datos del proyecto</button>
+    <button role="tab" data-tab="revision">2 · Revisión normativa</button>
+    <button role="tab" data-tab="memoria">3 · Memoria</button>
+    <button role="tab" data-tab="consulta">4 · Consulta normativa</button>
+  </nav>
 
-<!-- Change this code here by copy and pasting your template on line 15 -->
-<p>Welcome to your first GitHub Pages website!</p>
+  <main>
+    <section id="tab-proyecto" class="panel" role="tabpanel">
+      <p class="ayuda">Introduzca los datos del proyecto. Cuantos más datos aporte, más precisa será la revisión y menos marcadores <code>[COMPLETAR]</code> tendrá la memoria. Los datos se guardan automáticamente en este navegador.</p>
+      <form id="form-proyecto" autocomplete="off"></form>
+      <div class="pie-panel">
+        <button id="btn-ir-revision" type="button">Revisar normativa →</button>
+      </div>
+    </section>
 
+    <section id="tab-revision" class="panel" role="tabpanel" hidden>
+      <div class="cabecera-panel">
+        <h2>Revisión normativa preliminar</h2>
+        <button id="btn-copiar-revision" class="sec" type="button">Copiar informe</button>
+      </div>
+      <div id="resumen-revision" class="resumen"></div>
+      <h3>Comprobaciones</h3>
+      <div id="lista-comprobaciones"></div>
+      <h3>Normativa aplicable</h3>
+      <div id="lista-normativa"></div>
+      <p class="aviso-legal" data-aviso></p>
+    </section>
+
+    <section id="tab-memoria" class="panel" role="tabpanel" hidden>
+      <div class="cabecera-panel">
+        <h2>Memoria del proyecto</h2>
+        <div class="grupo-botones">
+          <button id="btn-generar-sel" type="button">Generar apartados seleccionados</button>
+          <button id="btn-cancelar" class="sec" type="button" hidden>Cancelar</button>
+        </div>
+      </div>
+      <div class="opciones">
+        <label><input type="checkbox" id="chk-busqueda"> Contrastar normativa vigente con búsqueda web (BOE, codigotecnico.org)</label>
+        <label>Profundidad
+          <select id="sel-esfuerzo">
+            <option value="medium">Media (más rápida)</option>
+            <option value="high" selected>Alta (recomendada)</option>
+            <option value="xhigh">Muy alta</option>
+          </select>
+        </label>
+        <span class="seleccion-rapida">Seleccionar:
+          <button type="button" class="enlace" data-sel="todo">todo</button> ·
+          <button type="button" class="enlace" data-sel="basico">básico</button> ·
+          <button type="button" class="enlace" data-sel="nada">nada</button>
+        </span>
+      </div>
+      <div id="lista-apartados"></div>
+      <div class="pie-panel">
+        <button id="btn-md" class="sec" type="button">Descargar Markdown</button>
+        <button id="btn-doc" class="sec" type="button">Descargar Word</button>
+        <button id="btn-imprimir" class="sec" type="button">Imprimir / PDF</button>
+      </div>
+      <p class="aviso-legal" data-aviso></p>
+    </section>
+
+    <section id="tab-consulta" class="panel" role="tabpanel" hidden>
+      <h2>Consulta normativa</h2>
+      <p class="ayuda">Pregunte sobre la normativa aplicable a este proyecto. Las respuestas tienen en cuenta los datos introducidos y pueden contrastarse con fuentes oficiales.</p>
+      <div id="chat" class="chat"></div>
+      <form id="form-consulta" class="form-consulta">
+        <textarea id="txt-consulta" rows="3" placeholder="Ej.: ¿Qué anchura mínima deben tener las escaleras de evacuación y qué protección necesitan?"></textarea>
+        <div class="grupo-botones">
+          <label><input type="checkbox" id="chk-busqueda-consulta" checked> Buscar en fuentes oficiales</label>
+          <button type="submit" id="btn-consultar">Consultar</button>
+        </div>
+      </form>
+      <p class="aviso-legal" data-aviso></p>
+    </section>
+  </main>
+
+  <dialog id="dlg-ajustes">
+    <form method="dialog" class="dialogo">
+      <h2>Ajustes</h2>
+      <label>Clave de API de Anthropic
+        <input id="inp-apikey" type="password" placeholder="sk-ant-..." autocomplete="off">
+      </label>
+      <label class="fila"><input id="chk-recordar" type="checkbox" checked> Recordar en este navegador</label>
+      <p class="ayuda">La clave se usa directamente desde su navegador para llamar a la API de Claude y no se envía a ningún otro servidor. Úsela solo en equipos de confianza. Puede obtenerla en console.anthropic.com.</p>
+      <div class="grupo-botones">
+        <button value="cancel" class="sec">Cerrar</button>
+        <button id="btn-guardar-ajustes" value="ok">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
