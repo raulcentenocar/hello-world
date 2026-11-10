@@ -21,6 +21,11 @@ Abrir `index.html` en el navegador (o vía GitHub Pages en `/casa-semisotano/`).
   propiedades del elemento seleccionado, tipos de implantación y generación; barra inferior de resultados con
   barras de uso. Deshacer/rehacer (Ctrl+Z / Ctrl+Y), atajos (V, L, C, S, E, O, T), puntos «+» para insertar
   vértices, eliminar punto y mapa base claro con colores por uso.
+- **Lotes hasta el fondo de manzana** (como TestFit): cada lote se extiende hasta el lindero, otro vial, una zona
+  libre o la mitad entre frentes (con fondo máximo), y se recorta con la forma de la parcela. *Lote tipo* editable
+  (acceso, vivienda, jardín mínimo, fondo máximo). *Zonas libres* (parques) que se dibujan, mueven y redimensionan
+  con cotas, y los lotes se rehacen alrededor. Estilo *Parcelario* y tarjeta de resultados en 3D con la
+  excavación de los semisótanos.
 - **Tipos de implantación**: hileras paralelas, calle curva, peine a 90° con fondos de saco, anillo con patio
   central, plazoletas en racimo, malla ortogonal, bucle y patio común con garaje. Viales rectos o curvos (spline),
   modo 90°, anillos cerrados y fondos de saco redondos con viviendas alrededor.

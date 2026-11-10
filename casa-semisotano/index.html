@@ -13,6 +13,7 @@
 :root{
   --ws-panel:#ffffff; --ws-line:#e3e5e2; --ws-sunk:#f1f2ef; --ws-hover:#eef1ef;
   --m-site:#fbfbf8; --m-road:#ffffff; --m-roadc:#d3d6d9; --m-zv:#dcebd2; --m-neigh:#e7e7e3; --m-deck:#efe9dc; --m-garden:#d7e8cc; --m-garden-l:#b9d2aa; --m-yard:#ecebe6;
+  --m-park:#9cc489; --m-lotl:#9fb98f;
   --m-bound:#e8692a; --m-tree:#7fa86b; --m-bline:#3b4a5f; --m-lz:#6f8a62; --use-a:#a9c1ea; --use-b:#f3c08f;
   --mapbg:#eef0ec; --roof-cab:#f3ecdc;
   --site:#ece8dc; --asph:#6b7075; --lawn:#c7dbb3; --lawn-edge:#9fb98a; --pave:#e2ded4; --deck:#e4dccb; --tree:#6f9a5e; --tree-edge:#4f7a42; --roof:#fbfaf6; --roof-low:#d9d6cd;
@@ -27,6 +28,7 @@
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --ws-panel:#1b2023; --ws-line:#30373b; --ws-sunk:#252b2f; --ws-hover:#283034;
   --m-site:#22272a; --m-road:#3a4146; --m-roadc:#4b5358; --m-zv:#25332a; --m-neigh:#262a2c; --m-deck:#2d2a23; --m-garden:#2c3d2c; --m-garden-l:#3d5a3c; --m-yard:#2c2f31;
+  --m-park:#3f6a37; --m-lotl:#4d6a45;
   --m-bound:#f08a4b; --m-tree:#5f8a52; --m-bline:#dfe6ef; --m-lz:#8fb07f; --use-a:#5b78a8; --use-b:#a8774b;
   --mapbg:#1a1e20; --roof-cab:#e8dcc0;
   --site:#2a2b26; --asph:#4b4f53; --lawn:#33452c; --lawn-edge:#4c6640; --pave:#3a3934; --deck:#3a352b; --tree:#4f7a42; --tree-edge:#6f9a5e; --roof:#d9dbd6; --roof-low:#8b8d88;
@@ -37,6 +39,7 @@
 :root[data-theme="dark"]{
   --ws-panel:#1b2023; --ws-line:#30373b; --ws-sunk:#252b2f; --ws-hover:#283034;
   --m-site:#22272a; --m-road:#3a4146; --m-roadc:#4b5358; --m-zv:#25332a; --m-neigh:#262a2c; --m-deck:#2d2a23; --m-garden:#2c3d2c; --m-garden-l:#3d5a3c; --m-yard:#2c2f31;
+  --m-park:#3f6a37; --m-lotl:#4d6a45;
   --m-bound:#f08a4b; --m-tree:#5f8a52; --m-bline:#dfe6ef; --m-lz:#8fb07f; --use-a:#5b78a8; --use-b:#a8774b;
   --mapbg:#1a1e20; --roof-cab:#e8dcc0;
   --site:#2a2b26; --asph:#4b4f53; --lawn:#33452c; --lawn-edge:#4c6640; --pave:#3a3934; --deck:#3a352b; --tree:#4f7a42; --tree-edge:#6f9a5e; --roof:#d9dbd6; --roof-low:#8b8d88;
@@ -283,6 +286,28 @@ label[aria-disabled=true]{opacity:.5;pointer-events:none}
 .ws .presets{grid-template-columns:1fr 1fr}
 @media (max-width:1100px){ .ws{grid-template-columns:minmax(0,1fr);grid-template-rows:auto 62vh auto auto auto;height:auto}
   .ws-canvas{grid-row:2;min-height:62vh} .ws-right{grid-row:3;border:0;border-top:1px solid var(--ws-line)} .ws-left{grid-row:4;border:0;border-top:1px solid var(--ws-line)} .ws-bottom{grid-row:5} .kstate{margin-left:0} }
+.dot.park{background:var(--m-park)} .sw2.use-p{background:var(--m-park)}
+svg .m-lot{fill:var(--m-garden);stroke:var(--m-lotl);stroke-width:.2;stroke-dasharray:.8 .6}
+svg .m-park{fill:var(--m-park);fill-opacity:.55;stroke:var(--m-tree);stroke-width:.4} svg .m-park.sel{stroke:var(--accent);stroke-width:.8} svg .m-park.ghost{fill-opacity:.3;stroke-dasharray:1 1}
+svg .znode{fill:var(--ws-panel);stroke:var(--accent);stroke-width:2;vector-effect:non-scaling-stroke;cursor:nwse-resize}
+svg .m-dim{font-family:var(--f-mono);fill:var(--accent);font-weight:500}
+/* estilo parcelario (lotes en verde, como TestFit) */
+svg.st-parcelario .m-site{fill:#e4e9dc} svg.st-parcelario .m-lot{fill:#566f4b;stroke:#26331f;stroke-width:.25;stroke-dasharray:.9 .6}
+svg.st-parcelario .m-garden{fill:none;stroke:none} svg.st-parcelario .m-yard{fill:#cdc4a5;stroke:none}
+svg.st-parcelario .m-b.use-a,svg.st-parcelario .m-bpb.use-a{fill:#86e08c;stroke:#21321c} svg.st-parcelario .m-b.use-b,svg.st-parcelario .m-bpb.use-b{fill:#c4ec8d;stroke:#21321c}
+svg.st-parcelario .m-road,svg.st-parcelario .m-roadf{stroke:#5b6064;fill:#5b6064} svg.st-parcelario .m-roadf{stroke:none} svg.st-parcelario .m-roadc,svg.st-parcelario .m-roadcf{stroke:#3d4144;fill:#3d4144} svg.st-parcelario .m-roadcf{stroke:none}
+svg.st-parcelario .m-axis{stroke:#fff;stroke-opacity:.8} svg.st-parcelario .m-tree{fill:#1f6b1f;fill-opacity:.85;stroke:#174d17} svg.st-parcelario .m-park{fill:#2f6d2b;fill-opacity:.9}
+svg.st-parcelario .m-hid{fill:#16230f}
+.lotetipo svg{display:block;width:100%;max-width:260px;height:auto;margin:0 auto}
+.lotetipo .lt-lot{fill:var(--m-garden);stroke:var(--m-lotl);stroke-dasharray:3 2} .lotetipo .lt-yard{fill:var(--m-yard);stroke:var(--m-lotl)} .lotetipo .lt-house{fill:var(--use-a);stroke:var(--m-bline)}
+.lotetipo text{font-size:8.5px;font-family:var(--f-body);dominant-baseline:middle;fill:var(--ink)} .lotetipo .lt-t.b{font-weight:700;font-size:9px}
+.lotetipo .lt-d{stroke:var(--muted)} .lotetipo .lt-dt{font-family:var(--f-mono);fill:var(--muted);font-size:7.5px}
+.ctl-card{left:12px;top:12px;padding:10px 14px;min-width:250px;display:grid;gap:6px}
+.ctl-card small{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.ctl-card .cc{display:grid;grid-template-columns:1fr 1fr;gap:12px} .ctl-card .cc div{display:grid;font-size:11.5px;color:var(--muted)}
+.ctl-card .cc b{font-family:var(--f-display);font-stretch:85%;font-size:28px;line-height:1.05;color:var(--ink)} .ctl-card .cc div:first-child b{color:var(--accent)} .ctl-card .cc div:last-child b{color:var(--below)}
+.ctl-card i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px} .ctl-card .d1{background:var(--accent)} .ctl-card .d2{background:var(--below)}
+.ctl-card .cc2{border-top:1px solid var(--ws-line);padding-top:6px;font-size:12px;color:var(--muted)} .ctl-card .cc2 b{font-family:var(--f-mono);color:var(--ink);font-weight:500}
 /* mapa base claro */
 .mapbox svg .m-site,.pth svg .m-site{fill:var(--m-site)} svg .m-street{fill:var(--m-road);stroke:var(--m-roadc);stroke-width:.5} svg .m-curb{fill:none;stroke:var(--m-roadc);stroke-width:1}
 svg .m-zv{fill:var(--m-zv)} svg .m-neigh{fill:var(--m-neigh)} svg .m-deck{fill:var(--m-deck)}
@@ -963,11 +988,13 @@ $("#panel").addEventListener("input", e => {
 });
 document.addEventListener("click", e => {
   const pr = e.target.closest("[data-preset]"); if (pr){ const k = pr.dataset.preset; SEL = -1; DRAW = null; TOOL = "select";
-    pushHist(); if (k === "patio") P.ord.modo = "patio"; else { const q = presetRoads(LAST.M, P.ord, k); Object.assign(P.ord, { modo:"viales", preset:k, roads:q.roads, frontAv:q.frontAv, frontFl:false }); }
+    pushHist(); if (k === "patio") P.ord.modo = "patio"; else { const q = presetRoads(LAST.M, P.ord, k); Object.assign(P.ord, { modo:"viales", preset:k, roads:q.roads, frontAv:q.frontAv, frontFl:false, zonas:[] }); SELZONE = -1; }
     const cb = $('[data-ordc="frontAv"]'); if (cb) cb.checked = P.ord.frontAv; const cf = $('[data-ordc="frontFl"]'); if (cf) cf.checked = P.ord.frontFl;
     schedule(true); return; }
   const tl = e.target.closest("[data-tool]"); if (tl){ TOOL = tl.dataset.tool; DRAW = null; if (TOOL !== "select") SEL = -1; if (isDraw() && P.ord.vista === "3d") P.ord.vista = "cubiertas"; schedule(true); return; }
   const srd = e.target.closest("[data-selroad]"); if (srd){ SEL = +srd.dataset.selroad; SELNODE = null; SELROW = null; TOOL = "select"; redrawMap(true); return; }
+  const szb = e.target.closest("[data-selzone]"); if (szb){ SELZONE = +szb.dataset.selzone; SEL = -1; SELNODE = null; TOOL = "select"; redrawMap(true); return; }
+  const est = e.target.closest("[data-estilo]"); if (est){ P.ord.estilo = est.dataset.estilo; save(); redrawMap(true); return; }
   const srw = e.target.closest("[data-selrow]"); if (srw){ SELROW = SELROW === srw.dataset.selrow ? null : srw.dataset.selrow; SEL = -1; redrawMap(true); return; }
   const sl = e.target.closest("[data-sellados]"); if (sl && SEL >= 0){ pushHist(); P.ord.roads[SEL].lados = sl.dataset.sellados; P.ord.preset = "custom"; save(); redrawMap(true); return; }
   const ln = e.target.closest("[data-ladosnuevo]"); if (ln){ P.ord.ladosNuevo = ln.dataset.ladosnuevo; save(); redrawMap(true); return; }
@@ -1442,18 +1469,18 @@ const sidesOf = r => { const l = r.lados || "ambos"; return l === "izq" ? [1] : 
 const setSide = (r, sd, on) => { const L = sidesOf(r).includes(1), R = sidesOf(r).includes(-1); const nl = sd > 0 ? on : L, nr = sd < 0 ? on : R; r.lados = nl && nr ? "ambos" : nl ? "izq" : nr ? "der" : "ninguno"; };
 /* línea paralela a una polilínea, a distancia d (positiva = izquierda según el sentido de dibujo) */
 function offsetLine(Q, d){ return Q.map((p, i) => { const a = Q[Math.max(0, i - 1)], b = Q[Math.min(Q.length - 1, i + 1)], t = v2.sub(b, a), L = v2.len(t) || 1; return v2.add(p, v2.mul([-t[1] / L, t[0] / L], d)); }); }
-const ORD_DEF = { ladosNuevo:"ambos", modo:"viales", preset:"curva", rFondo:8, roads:null, frontAv:true, frontFl:false, objetivo:34, parking:"superficie", gLote:6, wCalle:7, bloque:0, pasoBloque:4, gMin:5, paseo:6, front:2, vista:"cubiertas", capas:{} };
+const ORD_DEF = { fondoMax:32, zonas:[], estilo:"claro", ladosNuevo:"ambos", modo:"viales", preset:"curva", rFondo:8, roads:null, frontAv:true, frontFl:false, objetivo:34, parking:"superficie", gLote:6, wCalle:7, bloque:0, pasoBloque:4, gMin:5, paseo:6, front:2, vista:"cubiertas", capas:{} };
 function inPoly(p, poly){ let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++){ const a = poly[i], b = poly[j]; if ((a[1] > p[1]) !== (b[1] > p[1]) && p[0] < (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; }
 function dSeg(p, a, b){ const d = v2.sub(b, a), t = Math.max(0, Math.min(1, ((p[0]-a[0])*d[0] + (p[1]-a[1])*d[1]) / (d[0]*d[0] + d[1]*d[1] || 1))); return v2.len(v2.sub(p, v2.add(a, v2.mul(d, t)))); }
 function dPolyline(p, pts, closed){ let m = Infinity; const n = pts.length; for (let i = 0; i < (closed ? n : n - 1); i++) m = Math.min(m, dSeg(p, pts[i], pts[(i + 1) % n])); return m; }
 function dEdge(p, e){ return dPolyline(p, e.pts, false); }
-function polyArea(P){ let a = 0; for (let i = 0; i < P.length; i++){ const p = P[i], q = P[(i + 1) % P.length]; a += p[0] * q[1] - q[0] * p[1]; } return Math.abs(a / 2); }
+function polyArea(P){ if (!P || P.length < 3) return 0; let a = 0; for (let i = 0; i < P.length; i++){ const p = P[i], q = P[(i + 1) % P.length]; a += p[0] * q[1] - q[0] * p[1]; } return Math.abs(a / 2); }
 /* Sutherland–Hodgman: recorta un polígono cualquiera por un polígono convexo antihorario */
 function clipConvex(subject, clip){
   let out = subject;
   for (let i = 0; i < clip.length && out.length; i++){
     const a = clip[i], b = clip[(i + 1) % clip.length], inside = p => (b[0]-a[0])*(p[1]-a[1]) - (b[1]-a[1])*(p[0]-a[0]) >= 0;
-    const inter = (p, q) => { const x1=p[0],y1=p[1],x2=q[0],y2=q[1],x3=a[0],y3=a[1],x4=b[0],y4=b[1]; const den=(x1-x2)*(y3-y4)-(y1-y2)*(x3-x4); const t=((x1-x3)*(y3-y4)-(y1-y3)*(x3-x4))/den; return [x1+t*(x2-x1), y1+t*(y2-y1)]; };
+    const inter = (p, q) => { const x1=p[0],y1=p[1],x2=q[0],y2=q[1],x3=a[0],y3=a[1],x4=b[0],y4=b[1]; const den=(x1-x2)*(y3-y4)-(y1-y2)*(x3-x4); if (Math.abs(den) < 1e-12) return [x1, y1]; const t=((x1-x3)*(y3-y4)-(y1-y3)*(x3-x4))/den; return [x1+t*(x2-x1), y1+t*(y2-y1)]; };
     const inp = out; out = [];
     for (let j = 0; j < inp.length; j++){ const p = inp[j], q = inp[(j + 1) % inp.length];
       if (inside(q)){ if (!inside(p)) out.push(inter(p, q)); out.push(q); } else if (inside(p)) out.push(inter(p, q)); }
@@ -1626,7 +1653,7 @@ function render3D(box, M, L){
   sun.castShadow = true; sun.shadow.bias = -0.0005; sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left:-150, right:150, top:150, bottom:-150, near:1, far:500 });
   scene.add(sun); scene.add(sun.target);
   const mat = c => new T.MeshLambertMaterial({ color:c });
-  const M_ = { ground:mat(0xeae8e1), lawn:mat(0xc9deb9), zv:mat(0xb7d3a5), asph:mat(0xffffff), pave:mat(0xdedbd3), deck:mat(0xd8cfbd), white:mat(0xf4f2ec), useA:mat(0xa9c1ea), useB:mat(0xf3c08f), plinth:mat(0x9c9486), glass:mat(0x4a5d6b), trunk:mat(0x6b5440), leaf:mat(0x5f8f55), ramp:mat(0x8c7a5c) };
+  const M_ = { ground:mat(0xeae8e1), lawn:mat(0xc9deb9), zv:mat(0xb7d3a5), asph:mat(0x8e9397), pave:mat(0xdedbd3), deck:mat(0xd8cfbd), white:mat(0xf4f2ec), useA:mat(0xa9c1ea), useB:mat(0xf3c08f), plinth:mat(0x9c9486), glass:mat(0x4a5d6b), trunk:mat(0x6b5440), leaf:mat(0x5f8f55), ramp:mat(0x8c7a5c) };
   const flat = (Q, m, y) => { if (!Q || Q.length < 3) return; const sh = new T.Shape(Q.map(p => new T.Vector2(p[0], p[1]))); const g = new T.ShapeGeometry(sh); g.rotateX(-Math.PI / 2); const me = new T.Mesh(g, m); me.position.y = y; me.receiveShadow = true; scene.add(me); };
   const slab = (Q, m, h0, h) => { const sh = new T.Shape(Q.map(p => new T.Vector2(p[0], p[1]))); const g = new T.ExtrudeGeometry(sh, { depth:h, bevelEnabled:false }); g.rotateX(-Math.PI / 2); const me = new T.Mesh(g, m); me.position.y = h0; me.castShadow = me.receiveShadow = true; scene.add(me); };
   /* entorno */
@@ -1641,12 +1668,13 @@ function render3D(box, M, L){
   (L.roadsD || []).forEach(r => { for (let i = 1; i < r.pts.length; i++){ const a = r.pts[i - 1], b = r.pts[i], Ls = v2.len(v2.sub(b, a)); if (Ls < 0.01) continue; const u = v2.mul(v2.sub(b, a), 1 / Ls); flat(rectPts(a, u, [-u[1], u[0]], 0, Ls, -r.w / 2, r.w / 2), M_.asph, 0.05); if (i < r.pts.length - 1) disc(b, r.w / 2, 0.049); } });
   (L.bulbs || []).forEach(b => disc(b.c, b.r, 0.048));
   const onDeck = Q => L.garagePoly && Q.length > 2 && inPoly(Q.reduce((a, p) => v2.add(a, v2.mul(p, 1 / Q.length)), [0, 0]), L.garagePoly) ? M.ssTop : 0;
-  L.houses.forEach(hh => { flat(hh.garden, M_.lawn, onDeck(hh.garden) + 0.06); flat(hh.yard, M_.pave, onDeck(hh.yard) + 0.07); });
-  if (L.garagePoly) slab(L.garagePoly, M_.deck, 0, M.ssTop);
-  if (L.ramp) flat(L.ramp, M_.ramp, 0.08);
   /* árboles */
   const trunkG = new T.CylinderGeometry(0.18, 0.25, 2.4, 6), leafG = new T.IcosahedronGeometry(1.9, 1);
   const treeAt = (p, y0 = 0, sc = 1) => { const tr = new T.Mesh(trunkG, M_.trunk); tr.position.set(p[0], y0 + 1.2 * sc, -p[1]); tr.scale.setScalar(sc); const lf = new T.Mesh(leafG, M_.leaf); lf.position.set(p[0], y0 + 3.4 * sc, -p[1]); lf.scale.setScalar(sc); lf.castShadow = true; scene.add(tr); scene.add(lf); };
+  (L.zones || []).forEach(Z => { const Zc = clipConvex(UAG.poly, Z); flat(Zc, M_.zv, 0.065); const c = Zc.reduce((a, p) => v2.add(a, v2.mul(p, 1 / Zc.length)), [0, 0]); for (let a = -40; a <= 40; a += 4.5) for (let b = -40; b <= 40; b += 4.5){ const q = v2.add(c, [a + (Math.abs(b) % 9 ? 2.2 : 0), b]); if (inPoly(q, Zc)) treeAt(q, 0, 1.1); } });
+  L.houses.forEach(hh => { if (hh.lot) flat(hh.lot, M_.lawn, 0.055); flat(hh.garden, M_.lawn, onDeck(hh.garden) + 0.06); flat(hh.yard, M_.pave, onDeck(hh.yard) + 0.07); });
+  if (L.garagePoly) slab(L.garagePoly, M_.deck, 0, M.ssTop);
+  if (L.ramp) flat(L.ramp, M_.ramp, 0.08);
   UAG.edges.forEach(e => { if (e.t !== "zona verde") return; for (let q = 4; q < e.L; q += 8) treeAt(v2.add(v2.add(e.A, v2.mul(e.u, q)), v2.mul(e.nIn, -6)), 0, 1.2); });
   L.houses.forEach(hh => { if (polyArea(hh.garden) > 25){ const c = hh.garden.reduce((a, p) => v2.add(a, v2.mul(p, 1 / hh.garden.length)), [0, 0]); treeAt(v2.add(c, v2.mul(hh.ey, 1.5)), 0, 0.9); } });
   if (L.garagePoly){ const G = L.garagePoly; for (let x = -20; x < 95; x += 9) for (let y = 0; y < 100; y += 9){ const p = [x + (y % 18 ? 4.5 : 0), y]; if (inPoly(p, G) && !L.houses.some(hh => dRect(p, hh.rect) < 3 || inPoly(p, hh.garden) || inPoly(p, hh.yard)) && !(L.ramp && dRect(p, L.ramp) < 3)) treeAt(p, M.ssTop, 1); } }
@@ -1799,11 +1827,16 @@ function roadInfo(roads, rbDef){
 }
 /* Motor de encaje: recorre cada frente (vial, plazoleta o vía pública) por longitud de arco y coloca parcelas
    perpendiculares a la cuerda local. En curvas, las parcelas se escalonan solas. */
+/* zonas libres (parques) en el marco del lado base: {s0,t0,s1,t1} */
+function zonePts(z){ const e = UAG.edges[IDX.base]; return ccw([[z.s0, z.t0], [z.s1, z.t0], [z.s1, z.t1], [z.s0, z.t1]].map(([a, b]) => P_(e.A, e.u, e.nIn, a, b))); }
 function genViales(M, o, roads){
   const W = M.W, D = M.Dpb, f = fFront(M, o), g = o.gLote;
   const { segs, dens, bulbs, conn } = roadInfo(roads, o.rFondo || 8);
   const inCorr = p => { for (const sg of segs) if (dSeg(p, sg.a, sg.b) < sg.w / 2 - 0.03) return true; for (const bl of bulbs) if (v2.len(v2.sub(p, bl.c)) < bl.r - 0.03) return true; return false; };
-  const placed = [];
+  const placed = [], zones = (o.zonas || []).map(zonePts);
+  const inZone = p => zones.some(Z => inPoly(p, Z));
+  const pubAct = [o.frontAv ? UAG.edges[IDX.base] : null, o.frontFl && IDX.acc !== IDX.base ? UAG.edges[IDX.acc] : null].filter(Boolean);
+  const nearOther = p => { let d = Infinity; for (const sg of segs) d = Math.min(d, dSeg(p, sg.a, sg.b) - sg.w / 2); for (const bl of bulbs) d = Math.min(d, v2.len(v2.sub(p, bl.c)) - bl.r); for (const e of pubAct) d = Math.min(d, dEdge(p, e)); return d; };
   const samp = (R, step) => { const out = []; for (let i = 0; i < R.length; i++){ const p = R[i], q = R[(i + 1) % R.length], L = v2.len(v2.sub(q, p)), n = Math.max(1, Math.ceil(L / step)); for (let k = 0; k < n; k++) out.push(v2.add(p, v2.mul(v2.sub(q, p), k / n))); } return out; };
   const fronts = [];
   const pub = e => ({ src:e.n, pub:true, pts:e.pts, t0:0.05, sides:[1] });
@@ -1830,11 +1863,22 @@ function genViales(M, o, roads){
         let ok = plot.every(p => inPoly(p, UAG.poly));
         if (ok) ok = samp(house, 3).every(p => UAG.edges.every(ed => dEdge(p, ed) >= reqOf(ed) - 1e-6));
         if (ok) ok = !samp(plot, 1.5).some(inCorr) && !inCorr(v2.mul(plot.reduce((a, p) => v2.add(a, p), [0, 0]), 0.25));
+        if (ok) ok = !samp(plot, 2).some(inZone) && !zones.some(Z => satOverlap(plot, Z));
         if (ok) ok = !placed.some(q => satOverlap(plot, q));
+        let lot = plot, T = h1 + g;
         if (ok){
-          placed.push(plot);
+          /* el lote llega hasta el fondo de manzana: lindero, otro vial, zona libre o la mitad entre frentes */
+          let Tm = T;
+          for (const x of [0.3, W / 2, W - 0.3]) for (let t = h1 + g + 1; t <= t0 + o.fondoMax + 1e-9; t += 1){
+            const q = v2.add(v2.add(A, v2.mul(u, x)), v2.mul(vn, t));
+            if (!inPoly(q, UAG.poly) || inCorr(q) || inZone(q) || nearOther(q) < (t - t0) - 0.5) break; Tm = Math.max(Tm, t); }
+          const big = clipConvex(UAG.poly, ccw(rectPts(A, u, vn, 0, W, t0 + 0.02, Tm)));
+          if (big.length > 2 && !placed.some(q => satOverlap(big, q)) && !zones.some(Z => satOverlap(big, Z))){ lot = big; T = Tm; }
+        }
+        if (ok){
+          placed.push(lot);
           if (!run || Math.abs(s - run.end) > 1e-6){ run = { src:fr.src, pub:!!fr.pub, h:[] }; runs.push(run); }
-          run.h.push({ A, u, vn, t0, h0, h1 }); run.end = s + W; s += W;
+          run.h.push({ A, u, vn, t0, h0, h1, T, lot }); run.end = s + W; s += W;
         } else s += 0.5;
       }
     });
@@ -1848,7 +1892,8 @@ function genViales(M, o, roads){
       const org = v2.dot2(ex, x.u) > 0 ? P0(0, x.h0) : P0(W, x.h0);
       return { i, cabL:i === 0, cabR:i === r.h.length - 1, cab:i === 0 || i === r.h.length - 1, org, ex, ey,
         rect:rectPts(x.A, x.u, x.vn, 0, W, x.h0, x.h1),
-        garden:clipConvex(UAG.poly, rectPts(x.A, x.u, x.vn, 0, W, x.h1, x.h1 + g)),
+        lot:x.lot, depth:x.T - x.t0,
+        garden:clipConvex(x.lot, ccw(rectPts(x.A, x.u, x.vn, 0, W, x.h1, x.T + 1))),
         yard:clipConvex(UAG.poly, rectPts(x.A, x.u, x.vn, 0, W, r.pub ? -30 : x.t0, x.h0)) };
     });
     return { id, src:r.src, pub:r.pub, f, houses, n:houses.length, fit:houses.length, gardenDir:compass(r.h[0].vn), frontDir:compass(v2.mul(r.h[0].vn, -1)) };
@@ -1863,8 +1908,9 @@ function genViales(M, o, roads){
   const plazas = o.parking === "superficie" ? (W >= 6.0 ? 2 : 1) * n : n * Math.max(1, Math.floor((W - M.Ws - P.tP - 0.6) / 2.5));
   const roadLen = dens.map(d => { let L = 0; for (let i = 1; i < d.length; i++) if (inPoly(v2.mul(v2.add(d[i], d[i - 1]), 0.5), UAG.poly)) L += v2.len(v2.sub(d[i], d[i - 1])); return L; });
   const roadsD = dens.map((d, ri) => ({ ri, pts:d, w:roads[ri].w }));
-  return { k:"viales", parking:o.parking, fP:f, rows, streets:[], roadsD, bulbs, gaps:[], ramp:null, garagePoly:null, garageA:0, houses, n, foot, gardens, yards, viario,
-    comun:UAG.area - foot - gardens - yards - viario, minD, plazas, gMed:n ? gardens / n : 0, W, D, conn, roadLen, segs };
+  const zonasA = zones.reduce((a, Z) => a + polyArea(clipConvex(UAG.poly, Z)), 0), lotsA = houses.reduce((a, h) => a + polyArea(h.lot), 0);
+  return { k:"viales", parking:o.parking, fP:f, rows, streets:[], roadsD, bulbs, gaps:[], ramp:null, garagePoly:null, garageA:0, houses, n, foot, gardens, yards, viario, zones, zonasA, lotsA,
+    comun:UAG.area - foot - gardens - yards - viario - zonasA, minD, plazas, gMed:n ? gardens / n : 0, W, D, conn, roadLen, segs };
 }
 function layoutFor(M, o, k, roads){
   if (k === "patio"){ const L = layoutScheme(M, "patio", Object.assign({}, o, { gMin:o.gMin })); L.rows.forEach(r => { r.f = r.f || o.front; }); return L; }
@@ -1892,7 +1938,7 @@ function mapSVG(M, L, opt = {}){
   const tree = (p, r) => `<circle cx="${p[0].toFixed(2)}" cy="${(-p[1]).toFixed(2)}" r="${r}" class="m-tree"/>`;
   const ang = u => { let a = -Math.atan2(u[1], u[0]) * 180 / Math.PI; if (a > 90) a -= 180; if (a < -90) a += 180; return a; };
   const id = "m" + (++uid);
-  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb.x.toFixed(2)} ${vb.y.toFixed(2)} ${vb.w.toFixed(2)} ${vb.h.toFixed(2)}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Plano de ordenación UA-03-01">
+  let s = `<svg class="st-${P.ord.estilo || "claro"}" xmlns="http://www.w3.org/2000/svg" viewBox="${vb.x.toFixed(2)} ${vb.y.toFixed(2)} ${vb.w.toFixed(2)} ${vb.h.toFixed(2)}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Plano de ordenación UA-03-01">
     <defs><clipPath id="${id}"><polygon points="${pts(UAG.poly)}"/></clipPath>
     <filter id="${id}s" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0.9" dy="-1.6" stdDeviation="0.7" flood-color="#1b2024" flood-opacity=".22"/></filter></defs>`;
   s += `<rect x="${vb.x - 400}" y="${vb.y - 400}" width="${vb.w + 800}" height="${vb.h + 800}" class="mapbg"/>`;
@@ -1905,7 +1951,9 @@ function mapSVG(M, L, opt = {}){
   s += poly(UAG.poly, "m-site");
   if (L.garagePoly) s += poly(L.garagePoly, "m-deck");
   /* parcelas privadas */
-  L.houses.forEach(h => { s += poly(h.garden, "m-garden") + poly(h.yard, "m-yard"); });
+  L.houses.forEach(h => { s += poly(h.lot, "m-lot") + poly(h.garden, "m-garden") + poly(h.yard, "m-yard"); });
+  (L.zones || []).forEach((Z, zi) => { const Zc = clipConvex(UAG.poly, Z); s += poly(Zc, "m-park" + (zi === SELZONE && !thumb ? " sel" : ""));
+    if (!thumb){ const xs2 = [], c = Zc.reduce((a, p) => v2.add(a, v2.mul(p, 1 / Zc.length)), [0, 0]); for (let a = -40; a <= 40; a += 3.2) for (let b = -40; b <= 40; b += 3.2){ const q = v2.add(c, [a + (Math.abs(b) % 6.4 ? 1.6 : 0), b]); if (inPoly(q, Zc)) s += tree(q, 1.7); } } });
   /* viario */
   L.streets.forEach(st => { s += poly(st.poly, "m-street"); });
   (L.roadsD || []).forEach(r => { s += `<polyline points="${pts(r.pts)}" class="m-roadc" stroke-width="${r.w + 0.8}" stroke-linejoin="round" stroke-linecap="butt"/>`; });
@@ -1945,6 +1993,11 @@ function mapSVG(M, L, opt = {}){
   }));
   s += `<polygon points="${pts(UAG.poly)}" class="m-bound" vector-effect="non-scaling-stroke"/>`;
   if (thumb) return s + "</svg>";
+  /* cotas de las zonas libres y asas de edición */
+  (P.ord.modo !== "patio" ? (P.ord.zonas || []) : []).forEach((z, zi) => { const e = UAG.edges[IDX.base], Pz = (a, b) => P_(e.A, e.u, e.nIn, a, b), ang0 = ang(e.u), ang1 = ang(e.nIn);
+    s += txt(Pz((z.s0 + z.s1) / 2, Math.max(z.t0, z.t1) + 1.6), fmt(Math.abs(z.s1 - z.s0), 1) + " m", "m-dim", 1.5, ang0) + txt(Pz(Math.min(z.s0, z.s1) - 1.6, (z.t0 + z.t1) / 2), fmt(Math.abs(z.t1 - z.t0), 1) + " m", "m-dim", 1.5, ang1);
+    if (zi === SELZONE && TOOL === "select") [[z.s0, z.t0], [z.s1, z.t0], [z.s1, z.t1], [z.s0, z.t1]].forEach(([a, b], k) => { const q = Pz(a, b); s += `<rect x="${(q[0] - VIEW.w / 220).toFixed(2)}" y="${(-q[1] - VIEW.w / 220).toFixed(2)}" width="${(VIEW.w / 110).toFixed(2)}" height="${(VIEW.w / 110).toFixed(2)}" class="znode" data-znode="${zi}:${k}"/>`; }); });
+  if (DRAG && DRAG.type === "zonenew" && DRAG.p1){ const e = UAG.edges[IDX.base], z = { s0:DRAG.s0, t0:DRAG.t0, s1:DRAG.s1, t1:DRAG.t1 }; s += poly(zonePts(z), "m-park ghost"); }
   /* rótulos */
   const seen = {};
   UAG.edges.slice().map((e, k) => [e, k]).sort((x, y) => y[0].L - x[0].L).forEach(([e]) => { if (seen[e.n] || e.L < 12) return; seen[e.n] = 1;
@@ -2021,6 +2074,11 @@ function bindMap(){
         const a = d0[bi], b = d0[bi + 1], cr = (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0]), sd = cr >= 0 ? 1 : -1;
         setSide(r, sd, !sidesOf(r).includes(sd)); SEL = ri; P.ord.preset = "custom"; save(); redrawMap(true); } return; }
     if (TOOL === "erase" && P.ord.modo !== "patio"){ const ri = nearestRoad(p); if (ri >= 0){ pushHist(); P.ord.roads.splice(ri, 1); P.ord.preset = "custom"; SEL = -1; save(); redrawMap(true); } return; }
+    const zn = e.target.closest && e.target.closest("[data-znode]");
+    const eB = UAG.edges[IDX.base], toST = q => [v2.dot2(v2.sub(q, eB.A), eB.u), v2.dot2(v2.sub(q, eB.A), eB.nIn)];
+    if (TOOL === "zone" && P.ord.modo !== "patio"){ const [a, b] = toST(p); try { box.setPointerCapture(e.pointerId); } catch(_) {} DRAG = { type:"zonenew", s0:a, t0:b, s1:a, t1:b }; return; }
+    if (zn){ const [zi, k] = zn.dataset.znode.split(":").map(Number); pushHist(); DRAG = { type:"znode", zi, k }; SELZONE = zi; return; }
+    if (TOOL === "select" && P.ord.modo !== "patio"){ const zi = (P.ord.zonas || []).findIndex(z => inPoly(p, zonePts(z))); if (zi >= 0 && nearestRoad(p) < 0){ pushHist(); const [a, b] = toST(p); DRAG = { type:"zmove", zi, a, b, z0:Object.assign({}, P.ord.zonas[zi]) }; SELZONE = zi; SEL = -1; SELNODE = null; redrawMap(true); return; } }
     const mid = e.target.closest && e.target.closest("[data-mid]");
     if (mid){ const [ri, i] = mid.dataset.mid.split(":").map(Number); pushHist(); const r = P.ord.roads[ri], cp = r.cerrado ? [...r.pts, r.pts[0]] : r.pts; r.pts.splice(i + 1, 0, v2.mul(v2.add(cp[i], cp[i + 1]), 0.5)); DRAG = { type:"node", ri, pi:i + 1 }; SEL = ri; SELNODE = [ri, i + 1]; return; }
     if (node){ const [ri, pi] = node.dataset.node.split(":").map(Number); pushHist(); DRAG = { type:"node", ri, pi, moved:false }; SEL = ri; SELNODE = [ri, pi]; return; }
@@ -2029,12 +2087,20 @@ function bindMap(){
     DRAG = { type:"pan", c0:[e.clientX, e.clientY], v0:Object.assign({}, VIEW), moved:false };
   });
   box.addEventListener("pointermove", e => {
+    if (DRAG && (DRAG.type === "zonenew" || DRAG.type === "znode" || DRAG.type === "zmove")){
+      const q = sitePt(e), eB = UAG.edges[IDX.base], a = Math.round(v2.dot2(v2.sub(q, eB.A), eB.u) * 2) / 2, b = Math.round(v2.dot2(v2.sub(q, eB.A), eB.nIn) * 2) / 2;
+      if (DRAG.type === "zonenew"){ DRAG.s1 = a; DRAG.t1 = b; DRAG.p1 = true; }
+      else if (DRAG.type === "znode"){ const z = P.ord.zonas[DRAG.zi]; if (DRAG.k === 0 || DRAG.k === 3) z.s0 = a; else z.s1 = a; if (DRAG.k < 2) z.t0 = b; else z.t1 = b; P.ord.preset = "custom"; }
+      else { const z = P.ord.zonas[DRAG.zi], da = a - DRAG.a, db = b - DRAG.b; Object.assign(z, { s0:DRAG.z0.s0 + da, s1:DRAG.z0.s1 + da, t0:DRAG.z0.t0 + db, t1:DRAG.z0.t1 + db }); DRAG.moved = true; P.ord.preset = "custom"; }
+      redrawMap(false); return; }
     if (DRAG && DRAG.type === "node"){ DRAG.moved = true; const sn = snapPt(sitePt(e), [DRAG.ri, DRAG.pi]); P.ord.roads[DRAG.ri].pts[DRAG.pi] = sn.p; P.ord.preset = "custom"; redrawMap(false); return; }
     if (DRAG && DRAG.type === "pan"){ const svg = $("#mapbox svg"); const r = svg.getBoundingClientRect(), k = Math.max(VIEW.w / r.width, VIEW.h / r.height);
       VIEW = Object.assign({}, DRAG.v0, { fit:true, x:DRAG.v0.x - (e.clientX - DRAG.c0[0]) * k, y:DRAG.v0.y - (e.clientY - DRAG.c0[1]) * k }); DRAG.moved = true; redrawMap(false); return; }
     if (isDraw() && DRAW){ const sn = drawPoint(sitePt(e)); DRAW.cursor = sn.p; DRAW.snap = sn.snap; redrawMap(false); }
   });
-  box.addEventListener("pointerup", () => { const was = DRAG; DRAG = null; if (was && was.type === "node"){ if (was.moved === false){ HIST.u.pop(); } save(); redrawMap(true); } else if (was && was.type === "pan" && !was.moved && (SEL >= 0 || SELROW)){ SEL = -1; SELNODE = null; SELROW = null; redrawMap(true); } });
+  box.addEventListener("pointerup", () => { const was = DRAG; DRAG = null;
+    if (was && was.type === "zonenew"){ if (Math.abs(was.s1 - was.s0) > 4 && Math.abs(was.t1 - was.t0) > 4){ pushHist(); P.ord.zonas = (P.ord.zonas || []).concat([{ s0:Math.min(was.s0, was.s1), s1:Math.max(was.s0, was.s1), t0:Math.min(was.t0, was.t1), t1:Math.max(was.t0, was.t1) }]); SELZONE = P.ord.zonas.length - 1; P.ord.preset = "custom"; TOOL = "select"; save(); } redrawMap(true); return; }
+    if (was && (was.type === "znode" || was.type === "zmove")){ const z = P.ord.zonas[was.zi]; Object.assign(z, { s0:Math.min(z.s0, z.s1), s1:Math.max(z.s0, z.s1), t0:Math.min(z.t0, z.t1), t1:Math.max(z.t0, z.t1) }); if (was.type === "zmove" && !was.moved) HIST.u.pop(); save(); redrawMap(true); return; } if (was && was.type === "node"){ if (was.moved === false){ HIST.u.pop(); } save(); redrawMap(true); } else if (was && was.type === "pan" && !was.moved && (SEL >= 0 || SELROW || SELZONE >= 0)){ SEL = -1; SELNODE = null; SELROW = null; SELZONE = -1; redrawMap(true); } });
 }
 function nearestRoad(p, tol){ let best = -1, bd = Infinity; (P.ord.roads || []).forEach((r, ri) => { const d0 = denseRoad(r); for (let i = 0; i + 1 < d0.length; i++){ const d = dSeg(p, d0[i], d0[i + 1]); if (d < bd){ bd = d; best = ri; } } }); return bd <= (tol || Math.max(4, ((P.ord.roads[best] || {}).w || 7) / 2 + 1)) ? best : -1; }
 function finishDraw(){
@@ -2053,9 +2119,10 @@ window.addEventListener("keydown", e => {
   if ((e.key === "Delete" || e.key === "Backspace") && P.ord.modo !== "patio" && !DRAW){
     if (SELNODE && P.ord.roads[SELNODE[0]] && P.ord.roads[SELNODE[0]].pts.length > 2){ pushHist(); P.ord.roads[SELNODE[0]].pts.splice(SELNODE[1], 1); SELNODE = null; }
     else if (SEL >= 0){ pushHist(); P.ord.roads.splice(SEL, 1); SEL = -1; SELNODE = null; }
+    else if (SELZONE >= 0){ pushHist(); P.ord.zonas.splice(SELZONE, 1); SELZONE = -1; }
     P.ord.preset = "custom"; save(); redrawMap(true); return; }
   if (e.ctrlKey || e.metaKey || e.altKey) return;
-  const map = { v:"select", l:"line", c:"curve", s:"sides", e:"erase" };
+  const map = { v:"select", l:"line", c:"curve", s:"sides", e:"erase", z:"zone" };
   if (map[k]){ TOOL = map[k]; DRAW = null; redrawMap(true); }
   if (k === "o"){ ORTHO = !ORTHO; redrawMap(true); }
   if (k === "t"){ P.ord.vista = P.ord.vista === "3d" ? "cubiertas" : "3d"; schedule(true); }
@@ -2069,16 +2136,17 @@ const ICONS = {
   fit:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>', plus:'<path d="M12 5v14M5 12h14"/>', minus:'<path d="M5 12h14"/>',
   roof:'<path d="M3 11l9-6 9 6v8H3z"/>', plan:'<rect x="4" y="4" width="16" height="16"/><path d="M4 12h8V4M12 16h8"/>', cube:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>',
   road:'<path d="M8 3L5 21M16 3l3 18M12 5v2M12 11v2M12 17v2"/>', rows:'<rect x="3" y="6" width="18" height="5"/><rect x="3" y="14" width="18" height="5"/><path d="M9 6v5M15 6v5M9 14v5M15 14v5"/>',
+  park:'<circle cx="8" cy="9" r="4"/><circle cx="16" cy="9" r="4"/><path d="M8 13v7M16 13v7M4 20h16"/>', map:'<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>', lots:'<rect x="3" y="3" width="18" height="18"/><path d="M3 12h18M9 3v9M15 12v9"/>',
   eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>', check:'<path d="M5 12l5 5L20 7"/>'
 };
 const IC = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n] || ""}</svg>`;
 /* ---------- historial para deshacer y rehacer */
 const HIST = { u:[], r:[] };
-const snapOrd = () => JSON.stringify({ roads:P.ord.roads, frontAv:P.ord.frontAv, frontFl:P.ord.frontFl, modo:P.ord.modo, preset:P.ord.preset });
+const snapOrd = () => JSON.stringify({ zonas:P.ord.zonas || [], roads:P.ord.roads, frontAv:P.ord.frontAv, frontFl:P.ord.frontFl, modo:P.ord.modo, preset:P.ord.preset });
 function pushHist(){ HIST.u.push(snapOrd()); if (HIST.u.length > 60) HIST.u.shift(); HIST.r = []; }
 function undoOrd(){ if (!HIST.u.length) return; HIST.r.push(snapOrd()); Object.assign(P.ord, JSON.parse(HIST.u.pop())); SEL = -1; SELNODE = null; DRAW = null; save(); redrawMap(true); }
 function redoOrd(){ if (!HIST.r.length) return; HIST.u.push(snapOrd()); Object.assign(P.ord, JSON.parse(HIST.r.pop())); SEL = -1; SELNODE = null; save(); redrawMap(true); }
-let SELNODE = null, SELROW = null, WIDTHHIST = false;
+let SELNODE = null, SELROW = null, WIDTHHIST = false, SELZONE = -1;
 
 /* ---------- pestaña: espacio de trabajo */
 function viewOrd(M){
@@ -2094,32 +2162,38 @@ function viewOrd(M){
       ${tb('data-tool="curve"', "curve", "Vial curvo", "Vial curvo (C): los puntos son de control")}
       ${tb('data-ortho="1"', "ortho", "90°", "Ángulos rectos (O)")}
       ${tb('data-tool="sides"', "sides", "Lados", "Poner o quitar parcelas a un lado del vial (S)")}
+      ${tb('data-tool="zone"', "park", "Zona libre", "Zona libre o parque (Z): arrastra para dibujar un rectángulo")}
       ${tb('data-tool="erase"', "erase", "Borrar", "Borrar vial (E)")}
     </div>
     <div class="tgroup">${tb('data-act="undo"', "undo", "", "Deshacer (Ctrl+Z)")}${tb('data-act="redo"', "redo", "", "Rehacer (Ctrl+Y)")}</div>
+    <div class="tgroup" role="group" aria-label="Estilo del plano">${tb('data-estilo="claro"', "map", "Claro", "Mapa claro con colores por uso")}${tb('data-estilo="parcelario"', "lots", "Parcelario", "Lotes en verde con lindes, al estilo de TestFit")}</div>
     <div class="tgroup seg2" role="group" aria-label="Vista">
       ${tb('data-ordv="cubiertas"', "roof", "Cubiertas", "Vista de cubiertas")}${tb('data-ordv="planta"', "plan", "Planta", "Planta baja de cada vivienda")}${tb('data-ordv="3d"', "cube", "3D", "Vista 3D (T)")}
     </div>
   </div>
   <aside class="ws-left" id="wsleft">
     <section><h4>${IC("road")}Viales <button type="button" class="lnk" data-tool="line">+ Añadir</button></h4><ul class="elist" id="lroads"></ul></section>
+    <section><h4>${IC("park")}Zonas libres <button type="button" class="lnk" data-tool="zone">+ Añadir</button></h4><ul class="elist" id="lzones"></ul></section>
     <section><h4>${IC("rows")}Hileras</h4><ul class="elist" id="lrows"></ul></section>
     <section><h4>Usos del suelo</h4><ul class="uses" id="luses"></ul></section>
     <section><h4>${IC("eye")}Capas</h4>${[["retr","Retranqueos"],["arbol","Arbolado"],["cotas","Rótulos de viviendas"],["lados","Lados con parcelas"]].map(([k, t]) => `<label class="chk"><input type="checkbox" data-capa="${k}"${(o.capas || {})[k] !== false ? " checked" : ""}>${t}</label>`).join("")}</section>
   </aside>
   <div class="ws-canvas">
     <div class="mapbox" id="mapbox"></div><div id="ord3d" class="box3d" hidden></div>
+    <div class="ctl ctl-card" id="card3d" hidden></div>
     <div class="ctl ctl-zoom"><button type="button" data-act="zin" title="Acercar">${IC("plus")}</button><button type="button" data-act="zout" title="Alejar">${IC("minus")}</button><button type="button" data-act="fit" title="Encajar la parcela">${IC("fit")}</button></div>
     <div class="ctl ctl-hint" id="maphint"></div>
     <div class="ctl ctl-draw" id="drawbar" hidden><span class="seg mini" title="Lados con parcelas en el vial que estás dibujando">${LADOS.map(([v, t]) => `<button type="button" data-ladosnuevo="${v}" aria-pressed="${(o.ladosNuevo || "ambos") === v}">${t}</button>`).join("")}</span><button type="button" class="btn pri" data-act="drawdone">Terminar vial</button><button type="button" class="btn" data-act="drawundo">Deshacer punto</button><button type="button" class="btn" data-act="drawcancel">Cancelar</button></div>
   </div>
   <aside class="ws-right">
     <section id="selroad" class="props"></section>
+    <section><h4>Lote tipo</h4><div id="lotetipo" class="lotetipo"></div>
+      ${num("gLote", "Jardín mínimo", "m", 3, 20, 0.5)}${num("fondoMax", "Fondo máximo de lote", "m", 15, 60, 1)}
+      <p class="note">Cada lote llega hasta el fondo de la manzana, el lindero o la zona libre, con este máximo.</p></section>
     <section><h4>Tipo de implantación</h4><div class="presets" id="ordpresets"></div></section>
     <section id="gensec"><h4>Generación</h4>
       ${num("objetivo", "Viviendas objetivo", "ud", 1, UA.viv || 200, 1)}
       <div class="pf"><span>Aparcamiento</span><span class="seg mini">${[["superficie","2 en frente"],["rampa","Rampa"]].map(([v, t]) => `<button type="button" data-ordset="parking" data-v="${v}">${t}</button>`).join("")}</span></div>
-      ${num("gLote", "Fondo de jardín", "m", 3, 20, 0.5)}
       ${num("wCalle", "Ancho de vial nuevo", "m", 5, 14, 0.5)}
       ${num("rFondo", "Radio de fondo de saco", "m", 6, 16, 0.5)}
       ${num("bloque", "Viviendas por bloque", "ud", 0, 20, 1)}
@@ -2148,17 +2222,31 @@ function wsPanels(M, L){
     <div class="kb"><small>Plazas</small><b class="${L.plazas >= plz ? "" : "st-fail"}">${L.plazas}<span>/ ${plz}</span></b>${bar(L.plazas, Math.max(plz, 1))}</div>
     <div class="kb"><small>Viario</small><b>${fmt(L.viario, 0)}<span> m² · ${fmt(L.viario / UAG.area * 100, 0)}%</span></b></div>
     <div class="kb"><small>Jardín medio</small><b>${fmt(L.gMed, 0)}<span> m²</span></b></div>
+    <div class="kb"><small>Excavación semisótanos</small><b>${fmt(L.n * M.W * M.Dpb * (Math.max(0, -M.ssFloor) + 0.35), 0)}<span> m³</span></b></div>
     <button type="button" class="kb kstate ${nf ? "fail" : nw ? "warn" : "ok"}" data-act="gochecks"><small>Comprobaciones</small><b>${nf ? nf + " no cumple" : nw ? nw + " por revisar" : "Todo cumple"}</b></button>`;
   /* panel izquierdo: elementos y usos */
   const lr = $("#lroads");
   if (lr){ const roads = o.modo === "patio" ? [] : (o.roads || []);
     lr.innerHTML = roads.length ? roads.map((r, ri) => `<li><button type="button" data-selroad="${ri}" aria-pressed="${ri === SEL}"><i class="dot ${L.conn && L.conn[ri] === false ? "bad" : ""}"></i><b>V${ri + 1}</b><span>${fmt((L.roadLen || [])[ri] || 0, 0)} m · ${fmt(r.w, 1)} m${r.curva ? " · curvo" : ""}${r.cerrado ? " · anillo" : ""}</span><em>${({ ambos:"I · D", izq:"I", der:"D", ninguno:"—" })[r.lados || "ambos"]}</em></button></li>`).join("")
       : `<li class="empty">${o.modo === "patio" ? "El patio común no usa viales." : "Sin viales. Dibuja uno con «Vial recto» o «Vial curvo»."}</li>`; }
+  const lz = $("#lzones");
+  if (lz){ const zs = o.modo === "patio" ? [] : (o.zonas || []); lz.innerHTML = zs.length ? zs.map((z, zi) => `<li><button type="button" data-selzone="${zi}" aria-pressed="${zi === SELZONE}"><i class="dot park"></i><b>Z${zi + 1}</b><span>${fmt(Math.abs(z.s1 - z.s0), 0)} × ${fmt(Math.abs(z.t1 - z.t0), 0)} m</span><em>${fmt(L.zones && L.zones[zi] ? polyArea(clipConvex(UAG.poly, L.zones[zi])) : 0, 0)} m²</em></button></li>`).join("") : `<li class="empty">Sin zonas. Dibuja un parque con «Zona libre».</li>`; }
+  const lt = $("#lotetipo");
+  if (lt){ const f = L.fP || fFront(M, o), D = M.Dpb, g = o.gLote, Wd = M.W, T = Math.max(f + D + g, Math.min(o.fondoMax, Math.max(0, ...(L.houses || []).map(h => h.depth || 0)))), sc = 4.2;
+    const Y = v => +(v * sc).toFixed(1), Wp = +(Wd * sc).toFixed(1), xl = Wp + 10;
+    const lab = (y, t1, t2) => `<line x1="${Wp}" y1="${y}" x2="${xl - 2}" y2="${y}" class="lt-d"/><text x="${xl}" y="${y - 4}" class="lt-t b">${t1}</text><text x="${xl}" y="${y + 7}" class="lt-dt">${t2}</text>`;
+    lt.innerHTML = `<svg viewBox="-30 -6 ${(Wp + 150).toFixed(0)} ${(Y(T) + 22).toFixed(0)}" role="img" aria-label="Lote tipo">
+      <rect x="0" y="0" width="${Wp}" height="${Y(T)}" class="lt-lot"/><rect x="0" y="0" width="${Wp}" height="${Y(f)}" class="lt-yard"/><rect x="0" y="${Y(f)}" width="${Wp}" height="${Y(D)}" class="lt-house"/>
+      ${lab(Y(f / 2), "Acceso", o.parking === "rampa" ? "rampa a garaje" : "2 plazas en superficie")}
+      ${lab(Y(f + D / 2), "Vivienda", fmt(M.Apb + M.Ap1, 0) + " m²c · " + fmt(Wd, 2) + " × " + fmt(D, 2))}
+      ${lab(Y(f + D + (T - f - D) / 2), "Jardín", "mín. " + fmt(g, 1) + " m · hasta " + fmt(o.fondoMax, 0) + " m")}
+      ${[[0, f], [f, f + D], [f + D, T]].map(([a, b]) => `<line x1="-6" y1="${Y(a)}" x2="-6" y2="${Y(b)}" class="lt-d"/><line x1="-9" y1="${Y(a)}" x2="-3" y2="${Y(a)}" class="lt-d"/><text x="-9" y="${Y((a + b) / 2)}" class="lt-dt" text-anchor="end">${fmt(b - a, 1)}</text>`).join("")}
+      <text x="${Wp / 2}" y="${Y(T) + 12}" class="lt-dt" text-anchor="middle">calle</text></svg>`; }
   const lw = $("#lrows");
   if (lw) lw.innerHTML = L.rows.length ? L.rows.map(r => `<li><button type="button" data-selrow="${r.id}" aria-pressed="${SELROW === r.id}"><i class="dot use-a"></i><b>${r.id}</b><span>${r.n} viv · ${esc(r.src || "")}</span><em>${r.houses.filter(h => h.cab).length} cab.</em></button></li>`).join("") : `<li class="empty">Sin viviendas.</li>`;
   const lu = $("#luses");
   if (lu){ const inter = L.houses.filter(h => !h.cab).length, cab = L.houses.length - inter, fp = M.W * M.Dpb;
-    const U = [["use-a", "Vivienda intermedia", inter + " ud", inter * fp], ["use-b", "Vivienda de cabecera", cab + " ud", cab * fp], ["use-g", "Jardín privado", "", L.gardens], ["use-y", "Acceso y aparcamiento", "", L.yards], ["use-r", "Viario privado", "", L.viario], ["use-c", "Espacio común y libre", "", Math.max(0, L.comun)]];
+    const U = [["use-a", "Vivienda intermedia", inter + " ud", inter * fp], ["use-b", "Vivienda de cabecera", cab + " ud", cab * fp], ["use-g", "Jardín privado", "", L.gardens], ["use-y", "Acceso y aparcamiento", "", L.yards], ["use-r", "Viario privado", "", L.viario], ["use-p", "Zonas libres (parque)", "", L.zonasA || 0], ["use-c", "Resto sin asignar", "", Math.max(0, L.comun)]];
     lu.innerHTML = U.map(([c, t, n, a]) => `<li><i class="sw2 ${c}"></i><span>${t}${n ? ` <small>${n}</small>` : ""}</span><b>${fmt(a, 0)} m²</b><small>${fmt(a / UAG.area * 100, 0)}%</small></li>`).join(""); }
   document.querySelectorAll("[data-act=undo]").forEach(b => { b.disabled = !HIST.u.length; });
   document.querySelectorAll("[data-act=redo]").forEach(b => { b.disabled = !HIST.r.length; });
@@ -2197,6 +2285,7 @@ function updateOrd(M, light){
   const pz = $("#ordpresets"); if (pz && pz.dataset.k !== tkey){ pz.innerHTML = ORDC.thumbs; pz.dataset.k = tkey; }
   document.querySelectorAll("[data-preset]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.preset === (o.modo === "patio" ? "patio" : o.preset))));
   document.querySelectorAll("[data-tool]").forEach(b => { b.setAttribute("aria-pressed", String(b.dataset.tool === TOOL)); b.disabled = o.modo === "patio" && b.dataset.tool !== "select"; });
+  document.querySelectorAll("[data-estilo]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.estilo === (o.estilo || "claro"))));
   document.querySelectorAll("[data-ladosnuevo]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.ladosnuevo === (o.ladosNuevo || "ambos"))));
   document.querySelectorAll("[data-ortho]").forEach(b => { b.setAttribute("aria-pressed", String(ORTHO)); b.disabled = o.modo === "patio"; });
   const db = $("#drawbar"); if (db){ db.hidden = !isDraw() || o.modo === "patio"; db.querySelectorAll("[data-act]").forEach(x => { x.disabled = !(DRAW && DRAW.pts.length) || (x.dataset.act === "drawdone" && DRAW.pts.length < 2); }); }
@@ -2205,10 +2294,13 @@ function updateOrd(M, light){
   const po = document.querySelector(".patioonly"); if (po) po.hidden = o.modo !== "patio";
   const hint = $("#maphint");
   if (hint) hint.textContent = o.modo === "patio" ? "Patio común: sin viales en superficie. Elige otra plantilla para trabajar con calles." :
+    TOOL === "zone" ? "Arrastra sobre el plano para dibujar una zona libre (parque). Los lotes se ajustan alrededor." :
     TOOL === "sides" ? "Haz clic a un lado de un vial para poner o quitar parcelas en ese lado. Verde: con parcelas; rojo: sin parcelas." :
     isDraw() ? (DRAW && DRAW.pts.length ? "Añade puntos con clic. Termina al llegar a otro vial o calle, pulsando otra vez el último punto o con «Terminar vial». Clic en el primer punto: anillo cerrado." : (TOOL === "curve" ? "Vial curvo: " : "Vial recto: ") + "haz clic en " + UAG.edges[IDX.acc].n + " o sobre otro vial para empezar" + (ORTHO ? " · 90° activado" : "")) :
     TOOL === "erase" ? "Clic sobre un vial para borrarlo" : "Arrastra los nodos para mover un vial · rueda para acercar · arrastra el fondo para desplazar";
   const is3d = o.vista === "3d";
+  const c3 = $("#card3d"); if (c3){ c3.hidden = !is3d; const exc = L.n * M.W * M.Dpb * (Math.max(0, -M.ssFloor) + 0.35);
+    c3.innerHTML = `<small>Resultado</small><div class="cc"><div><i class="d1"></i>Viviendas<b>${L.n}</b><span>de ${UA.viv}</span></div><div><i class="d2"></i>Excavación<b>${fmt(exc, 0)}</b><span>m³ de semisótanos</span></div></div><div class="cc2">Edificabilidad <b>${fmt(L.n * (M.Apb + M.Ap1), 0)} / ${fmt(UA.edif, 0)} m²c</b></div>`; }
   $("#mapbox").hidden = is3d; $("#ord3d").hidden = !is3d;
   if (is3d){
     const box = $("#ord3d");
@@ -2225,6 +2317,8 @@ function updateOrd(M, light){
       <label class="chk"><input type="checkbox" id="selcurva"${r.curva ? " checked" : ""}>Trazado curvo</label><label class="chk"><input type="checkbox" id="selcerr"${r.cerrado ? " checked" : ""}>Cerrado (anillo)</label>
       <p class="note">${fmt(L.roadLen[SEL] || 0, 1)} m · ${L.conn[SEL] ? "conectado a vía pública" : "sin conexión a vía pública"} · ${r.pts.length} puntos. Arrastra un punto para moverlo; los «+» del vial añaden puntos.</p>
       <div class="tools">${SELNODE && SELNODE[0] === SEL && r.pts.length > 2 ? `<button type="button" class="btn" data-act="delnode">Eliminar punto</button>` : ""}<button type="button" class="btn" data-act="delroad">Eliminar vial</button></div>`; }
+  if (sr && !(o.modo !== "patio" && SEL >= 0 && o.roads[SEL]) && SELZONE >= 0 && (o.zonas || [])[SELZONE]){ const z = o.zonas[SELZONE]; sr.hidden = false;
+    sr.innerHTML = `<h4>Propiedades · zona libre Z${SELZONE + 1}</h4><p class="note">${fmt(Math.abs(z.s1 - z.s0), 1)} × ${fmt(Math.abs(z.t1 - z.t0), 1)} m · ${fmt(L.zones && L.zones[SELZONE] ? polyArea(clipConvex(UAG.poly, L.zones[SELZONE])) : 0, 0)} m². Arrastra la zona para moverla o sus esquinas para cambiar el tamaño: los lotes se rehacen alrededor.</p><div class="tools"><button type="button" class="btn" data-act="delzone">Eliminar zona</button></div>`; }
   const gs = $("#gensec"); if (gs) gs.classList.toggle("dim", !!(sr && !sr.hidden));
   if (light) return;
   const C = ordChecks(M, L), lbl = { ok:"Cumple", warn:"Revisar", fail:"No cumple", info:"Info" };
@@ -2289,6 +2383,7 @@ document.addEventListener("click", e => {
   }
   if (act === "fit"){ fitView(); VIEW.fit = true; if (R3 && P.ord.vista === "3d"){ const c0 = UAG.poly.reduce((a, p) => v2.add(a, v2.mul(p, 1 / UAG.poly.length)), [0, 0]); R3.camera.position.set(c0[0] - 55, 95, -c0[1] + 140); R3.controls.target.set(c0[0], 0, -c0[1]); } schedule(true); return; }
   if (act === "drawdone"){ finishDraw(); return; }
+  if (act === "delzone"){ if (SELZONE >= 0){ pushHist(); P.ord.zonas.splice(SELZONE, 1); SELZONE = -1; P.ord.preset = "custom"; save(); } redrawMap(true); return; }
   if (act === "undo"){ undoOrd(); return; }
   if (act === "redo"){ redoOrd(); return; }
   if (act === "zin" || act === "zout"){ const k = act === "zin" ? 1 / 1.3 : 1.3, cx = VIEW.x + VIEW.w / 2, cy = VIEW.y + VIEW.h / 2; VIEW = { x:cx - VIEW.w * k / 2, y:cy - VIEW.h * k / 2, w:VIEW.w * k, h:VIEW.h * k, fit:true }; redrawMap(false); return; }
