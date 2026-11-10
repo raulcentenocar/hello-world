@@ -1,0 +1,50 @@
+name: Alerta pisos Sevilla
+
+on:
+  schedule:
+    # 3 veces al día (horas UTC → 8:17, 14:17 y 20:17 en invierno en Madrid).
+    # Unas 90 consultas al mes: dentro del límite del plan gratuito de la API de idealista.
+    - cron: "17 7,13,19 * * *"
+  workflow_dispatch: {}   # botón "Run workflow" para lanzarlo a mano
+
+permissions:
+  contents: write         # para guardar data/vistos.json en el repositorio
+
+concurrency:
+  group: alerta-pisos
+  cancel-in-progress: false
+
+jobs:
+  buscar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Tests
+        working-directory: pisos-sevilla
+        run: python -m unittest -q
+
+      - name: Buscar pisos y avisar
+        working-directory: pisos-sevilla
+        env:
+          IDEALISTA_API_KEY: ${{ secrets.IDEALISTA_API_KEY }}
+          IDEALISTA_API_SECRET: ${{ secrets.IDEALISTA_API_SECRET }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+        run: python alerta_pisos.py
+
+      - name: Guardar anuncios vistos
+        run: |
+          git config user.name "alerta-pisos[bot]"
+          git config user.email "alerta-pisos@users.noreply.github.com"
+          git add pisos-sevilla/data/vistos.json || true
+          git diff --cached --quiet || git commit -m "Actualiza anuncios vistos"
+          git push
