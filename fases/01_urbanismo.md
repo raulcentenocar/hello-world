@@ -180,6 +180,6 @@ Otros datos que faltan:
 10. Definición de **"testero"** y tratamiento del **lindero con la ZV-02** (¿alineación exterior?) — FALTA DATO.
 11. Confirmar la **superficie y geometría** de la parcela: la longitud del lindero este (71,30 m en la cédula frente a 72,76 m por coordenadas) y la superficie por coordenadas (≈9.020 m², cálculo aproximado) frente a 8.839 m²s — pedir levantamiento topográfico.
 12. Si las **68 plazas** pueden ir todas en el semisótano privativo de cada vivienda (2 por vivienda) o si alguna puede ir en superficie dentro de la parcela — FALTA DATO.
-13. **Ejecutar el script** de §3.1 y adjuntar la salida (el agente no tiene terminal en esta sesión).
+13. ~~Ejecutar el script de §3.1~~ — Hecho por el coordinador; la salida está en §3.2.
 
 PENDIENTE DE VALIDAR POR EL ARQUITECTO
