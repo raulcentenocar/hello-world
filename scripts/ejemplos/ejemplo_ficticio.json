@@ -1,0 +1,23 @@
+{
+  "nombre": "EJEMPLO FICTICIO - no es una parcela real",
+  "_comentario": "Valores inventados SOLO para probar el script. Para un encargo real, copie este archivo a datos/ y rellene 'urbanismo' con la ficha. Deje fuera (o a null) lo que no figure en la ficha: se marcará FALTA DATO.",
+  "parcela": {
+    "coordenadas": [[0, 0], [60, 0], [64, 45], [0, 40]]
+  },
+  "fachadas": [0],
+  "urbanismo": {
+    "edificabilidad_m2m2": 1.8,
+    "ocupacion_pct": 60,
+    "plantas_max": 5,
+    "altura_max_m": 16.0,
+    "retranqueo_fachada_m": 0,
+    "retranqueo_linderos_m": 4,
+    "fondo_edificable_m": 15,
+    "separacion_edificios_m": 12,
+    "longitud_max_bloque_m": null
+  },
+  "hipotesis": {
+    "sup_construida_vivienda_m2": 100
+  },
+  "tipologias": ["entre_medianeras", "manzana_cerrada", "bloque_abierto", "torre", "unifamiliar_aislada", "unifamiliar_adosada"]
+}
