@@ -291,6 +291,19 @@ svg .m-lot{fill:var(--m-garden);stroke:var(--m-lotl);stroke-width:.2;stroke-dash
 svg .m-park{fill:var(--m-park);fill-opacity:.55;stroke:var(--m-tree);stroke-width:.4} svg .m-park.sel{stroke:var(--accent);stroke-width:.8} svg .m-park.ghost{fill-opacity:.3;stroke-dasharray:1 1}
 svg .znode{fill:var(--ws-panel);stroke:var(--accent);stroke-width:2;vector-effect:non-scaling-stroke;cursor:nwse-resize}
 svg .m-dim{font-family:var(--f-mono);fill:var(--accent);font-weight:500}
+/* estilo realista (cubiertas, coches, césped, piscina) */
+.mapbox svg.st-realista .m-site,.pth svg.st-realista .m-site{fill:#9cc47c} svg.st-realista .m-lot{fill:#86b862;stroke:#f4f4ef;stroke-width:.35;stroke-dasharray:none}
+svg.st-realista .m-garden{fill:none;stroke:none} svg.st-realista .m-yard{fill:#cfcac0;stroke:#bdb7aa;stroke-width:.15}
+svg.st-realista .m-b.use-a,svg.st-realista .m-b.use-b,svg.st-realista .m-b.use-l,svg.st-realista .m-bpb{fill:#4c5059;stroke:#2c2f35}
+svg.st-realista .m-slope1{fill:#555a63} svg.st-realista .m-slope2{fill:#43474f} svg.st-realista .m-ridge{stroke:#2a2d33;stroke-width:1.2} svg.st-realista .m-chim{fill:#e9e6df;stroke:#8d8a83;stroke-width:.08}
+svg .m-slope1{fill:#ffffff;fill-opacity:.12} svg .m-slope2{fill:#000;fill-opacity:.08} svg .m-ridge{stroke:var(--m-bline);stroke-width:1} svg .m-chim{fill:#fff;stroke:var(--m-bline);stroke-width:.08}
+svg.st-realista .m-road,svg.st-realista .m-roadf{stroke:#4d5157;fill:#4d5157} svg.st-realista .m-roadf{stroke:none} svg.st-realista .m-roadc,svg.st-realista .m-roadcf{stroke:#d9d6cf;fill:#d9d6cf} svg.st-realista .m-roadcf{stroke:none}
+svg.st-realista .m-axis{stroke:#fff;stroke-opacity:.85} svg.st-realista .m-tree{fill:#3f7f35;fill-opacity:.9;stroke:#2d5f26}
+svg.st-realista .m-bound{stroke:#fbfbf7;stroke-dasharray:none;stroke-width:3} svg.st-realista .m-retr{stroke-opacity:0}
+svg.st-realista .m-sky,svg.st-realista .m-parapet{display:none} svg.st-realista .m-hid{fill:#fff}
+svg .carp.c0,svg .carp.c1,svg .carp.c2,svg .carp.c3,svg .carp.c4{fill:none}
+svg.st-realista .carp{stroke:#222;stroke-width:.06} svg.st-realista .carp.c0{fill:#e8e8e8} svg.st-realista .carp.c1{fill:#2f5aa8} svg.st-realista .carp.c2{fill:#1d1f24} svg.st-realista .carp.c3{fill:#c9cdd2} svg.st-realista .carp.c4{fill:#b8322e}
+svg .m-plaza{fill:#e3dccd;stroke:#c8bfac;stroke-width:.2} svg .m-pool{fill:#4fb4d8;stroke:#e9f6fb;stroke-width:.5} svg .m-play{fill:#d9884a;stroke:#b86a32;stroke-width:.2}
 /* estilo parcelario (lotes en verde, como TestFit) */
 svg.st-parcelario .m-site{fill:#e4e9dc} svg.st-parcelario .m-lot{fill:#566f4b;stroke:#26331f;stroke-width:.25;stroke-dasharray:.9 .6}
 svg.st-parcelario .m-garden{fill:none;stroke:none} svg.st-parcelario .m-yard{fill:#cdc4a5;stroke:none}
@@ -298,8 +311,8 @@ svg.st-parcelario .m-b.use-a,svg.st-parcelario .m-bpb.use-a{fill:#86e08c;stroke:
 svg.st-parcelario .m-road,svg.st-parcelario .m-roadf{stroke:#5b6064;fill:#5b6064} svg.st-parcelario .m-roadf{stroke:none} svg.st-parcelario .m-roadc,svg.st-parcelario .m-roadcf{stroke:#3d4144;fill:#3d4144} svg.st-parcelario .m-roadcf{stroke:none}
 svg.st-parcelario .m-axis{stroke:#fff;stroke-opacity:.8} svg.st-parcelario .m-tree{fill:#1f6b1f;fill-opacity:.85;stroke:#174d17} svg.st-parcelario .m-park{fill:#2f6d2b;fill-opacity:.9}
 svg.st-parcelario .m-hid{fill:#16230f}
-.prods{display:grid;gap:6px} .prod{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:6px;align-items:center;font-size:12.5px}
-.prod label{display:grid;font-size:10.5px;color:var(--muted)} .prod input{width:62px;border:1px solid var(--rule);background:var(--paper);border-radius:3px;padding:3px 5px;font-family:var(--f-mono);font-size:12px}
+.prods{display:grid;gap:6px} .prod{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto auto;gap:6px;align-items:center;font-size:12.5px}
+.prod label{display:grid;font-size:10.5px;color:var(--muted)} .prod input{width:54px;border:1px solid var(--rule);background:var(--paper);border-radius:3px;padding:3px 5px;font-family:var(--f-mono);font-size:12px}
 .optdiag{font-size:12px;line-height:1.45;color:var(--ink)} .optdiag b{font-weight:600}
 .lotetipo .lt-h{fill:var(--accent);stroke:var(--ws-panel);stroke-width:1.5;touch-action:none} .lotetipo .lt-h:hover{fill:var(--warn)}
 .lotetipo .lt-min{stroke:var(--accent);stroke-dasharray:4 3;stroke-width:1}
@@ -1002,7 +1015,9 @@ document.addEventListener("click", e => {
   const szb = e.target.closest("[data-selzone]"); if (szb){ SELZONE = +szb.dataset.selzone; SEL = -1; SELNODE = null; TOOL = "select"; redrawMap(true); return; }
   const op = e.target.closest("[data-optpick]"); if (op){ const x = OPT.res[+op.dataset.optpick]; if (x){ pushHist(); Object.assign(P.ord, { modo:"viales", roads:x.roads.map(r => Object.assign({}, r, { pts:r.pts.map(p => p.slice()) })), frontAv:x.frontAv, frontFl:false, preset:x.k, usarProd:x.pu, gLote:x.g }); SEL = -1; OPT.diag = diagnostico(LAST.M, x, P.ord.objetivo); save(); schedule(true); } return; }
   const up = e.target.closest("[data-usarprod]"); if (up){ pushHist(); P.ord.usarProd = up.dataset.usarprod; save(); schedule(true); return; }
+  const rm = e.target.closest("[data-remate]"); if (rm && SEL >= 0){ pushHist(); P.ord.roads[SEL].remate = rm.dataset.remate; P.ord.preset = "custom"; save(); redrawMap(true); return; }
   const cr = e.target.closest("[data-carr]"); if (cr && SEL >= 0){ pushHist(); const r = P.ord.roads[SEL]; r.carriles = +cr.dataset.carr; r.w = r.carriles === 1 ? (P.ord.w1 || 4) : (P.ord.w2 || 7); P.ord.preset = "custom"; save(); redrawMap(true); return; }
+  const cu = e.target.closest("[data-cubierta]"); if (cu){ P.ord.cubierta = cu.dataset.cubierta; document.querySelectorAll("[data-cubierta]").forEach(x => x.setAttribute("aria-pressed", String(x === cu))); save(); redrawMap(true); return; }
   const ag = e.target.closest("[data-agrup]"); if (ag){ pushHist(); P.ord.agrup = ag.dataset.agrup; save(); schedule(true); return; }
   const est = e.target.closest("[data-estilo]"); if (est){ P.ord.estilo = est.dataset.estilo; save(); redrawMap(true); return; }
   const srw = e.target.closest("[data-selrow]"); if (srw){ SELROW = SELROW === srw.dataset.selrow ? null : srw.dataset.selrow; SEL = -1; redrawMap(true); return; }
@@ -1479,7 +1494,7 @@ const sidesOf = r => { const l = r.lados || "ambos"; return l === "izq" ? [1] : 
 const setSide = (r, sd, on) => { const L = sidesOf(r).includes(1), R = sidesOf(r).includes(-1); const nl = sd > 0 ? on : L, nr = sd < 0 ? on : R; r.lados = nl && nr ? "ambos" : nl ? "izq" : nr ? "der" : "ninguno"; };
 /* línea paralela a una polilínea, a distancia d (positiva = izquierda según el sentido de dibujo) */
 function offsetLine(Q, d){ return Q.map((p, i) => { const a = Q[Math.max(0, i - 1)], b = Q[Math.min(Q.length - 1, i + 1)], t = v2.sub(b, a), L = v2.len(t) || 1; return v2.add(p, v2.mul([-t[1] / L, t[0] / L], d)); }); }
-const ORD_DEF = { w1:4, w2:7, usarProd:"modelo", prods:[{ n:"Compacto", W:6.5, m2:130 }, { n:"Amplio", W:8, m2:170 }], agrup:"adosada", sepLat:3, fAcc:5.5, parcMin:0, fondoMax:32, zonas:[], estilo:"claro", ladosNuevo:"ambos", modo:"viales", preset:"auto", rFondo:8, roads:null, frontAv:true, frontFl:false, objetivo:34, parking:"superficie", gLote:6, wCalle:7, bloque:0, pasoBloque:4, gMin:5, paseo:6, front:2, vista:"cubiertas", capas:{} };
+const ORD_DEF = { comunMin:0, cubierta:"plana", w1:4, w2:7, usarProd:"modelo", prods:[{ n:"Compacto", W:6.5, m2:130 }, { n:"Amplio", W:8, m2:170 }], agrup:"adosada", sepLat:3, fAcc:5.5, parcMin:0, fondoMax:32, zonas:[], estilo:"claro", ladosNuevo:"ambos", modo:"viales", preset:"auto", rFondo:8, roads:null, frontAv:true, frontFl:false, objetivo:34, parking:"superficie", gLote:6, wCalle:7, bloque:0, pasoBloque:4, gMin:5, paseo:6, front:2, vista:"cubiertas", capas:{} };
 function inPoly(p, poly){ let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++){ const a = poly[i], b = poly[j]; if ((a[1] > p[1]) !== (b[1] > p[1]) && p[0] < (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; }
 function dSeg(p, a, b){ const d = v2.sub(b, a), t = Math.max(0, Math.min(1, ((p[0]-a[0])*d[0] + (p[1]-a[1])*d[1]) / (d[0]*d[0] + d[1]*d[1] || 1))); return v2.len(v2.sub(p, v2.add(a, v2.mul(d, t)))); }
 function dPolyline(p, pts, closed){ let m = Infinity; const n = pts.length; for (let i = 0; i < (closed ? n : n - 1); i++) m = Math.min(m, dSeg(p, pts[i], pts[(i + 1) % n])); return m; }
@@ -1663,7 +1678,7 @@ function render3D(box, M, L){
   sun.castShadow = true; sun.shadow.bias = -0.0005; sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left:-150, right:150, top:150, bottom:-150, near:1, far:500 });
   scene.add(sun); scene.add(sun.target);
   const mat = c => new T.MeshLambertMaterial({ color:c });
-  const M_ = { ground:mat(0xeae8e1), lawn:mat(0xc9deb9), zv:mat(0xb7d3a5), asph:mat(0x8e9397), pave:mat(0xdedbd3), deck:mat(0xd8cfbd), white:mat(0xf4f2ec), useA:mat(0xa9c1ea), useB:mat(0xf3c08f), useL:mat(0xb9a3e3), plinth:mat(0x9c9486), glass:mat(0x4a5d6b), trunk:mat(0x6b5440), leaf:mat(0x5f8f55), ramp:mat(0x8c7a5c) };
+  const M_ = { ground:mat(0xeae8e1), lawn:mat(0xc9deb9), zv:mat(0xb7d3a5), asph:mat(0x8e9397), pave:mat(0xdedbd3), deck:mat(0xd8cfbd), white:mat(0xf4f2ec), roofT:mat(0x4a4f58), facade:mat(0xefe9dd), useA:mat(0xa9c1ea), useB:mat(0xf3c08f), useL:mat(0xb9a3e3), plinth:mat(0x9c9486), glass:mat(0x4a5d6b), trunk:mat(0x6b5440), leaf:mat(0x5f8f55), ramp:mat(0x8c7a5c) };
   const flat = (Q, m, y) => { if (!Q || Q.length < 3) return; const sh = new T.Shape(Q.map(p => new T.Vector2(p[0], p[1]))); const g = new T.ShapeGeometry(sh); g.rotateX(-Math.PI / 2); const me = new T.Mesh(g, m); me.position.y = y; me.receiveShadow = true; scene.add(me); };
   const slab = (Q, m, h0, h) => { const sh = new T.Shape(Q.map(p => new T.Vector2(p[0], p[1]))); const g = new T.ExtrudeGeometry(sh, { depth:h, bevelEnabled:false }); g.rotateX(-Math.PI / 2); const me = new T.Mesh(g, m); me.position.y = h0; me.castShadow = me.receiveShadow = true; scene.add(me); };
   /* entorno */
@@ -1671,7 +1686,7 @@ function render3D(box, M, L){
   flat(big, mat(0xeceee9), -0.06);
   UAG.edges.forEach(e => { if (e.t === "zona verde"){ const out = v2.mul(e.nIn, -30), ext = v2.mul(e.u, 10); flat([...e.pts, v2.add(v2.add(e.pts[e.pts.length - 1], ext), out), v2.add(v2.sub(e.pts[0], ext), out)], M_.zv, -0.04); } });
   UAG.edges.forEach((e, k) => { if (e.t !== "calle") return; const out = v2.mul(e.nIn, -16), ext = v2.mul(e.u, 25); flat([...e.pts, v2.add(v2.add(e.pts[e.pts.length - 1], ext), out), v2.add(v2.sub(e.pts[0], ext), out)], M_.asph, 0.0); });
-  flat(UAG.poly, M_.ground, 0.02);
+  flat(UAG.poly, P.ord.estilo === "realista" ? mat(0x9cc47c) : M_.ground, 0.02);
   { const g = new T.BufferGeometry().setFromPoints([...UAG.poly, UAG.poly[0]].map(p => new T.Vector3(p[0], 0.12, -p[1]))); scene.add(new T.Line(g, new T.LineBasicMaterial({ color:0xe8692a }))); }
   L.streets.forEach(st => { flat(st.poly, M_.asph, 0.05); flat(st.head, M_.asph, 0.05); });
   const disc = (c, r, y) => { const g = new T.CircleGeometry(r, 32); g.rotateX(-Math.PI / 2); const me = new T.Mesh(g, M_.asph); me.position.set(c[0], y, -c[1]); me.receiveShadow = true; scene.add(me); };
@@ -1682,7 +1697,7 @@ function render3D(box, M, L){
   const trunkG = new T.CylinderGeometry(0.18, 0.25, 2.4, 6), leafG = new T.IcosahedronGeometry(1.9, 1);
   const treeAt = (p, y0 = 0, sc = 1) => { const tr = new T.Mesh(trunkG, M_.trunk); tr.position.set(p[0], y0 + 1.2 * sc, -p[1]); tr.scale.setScalar(sc); const lf = new T.Mesh(leafG, M_.leaf); lf.position.set(p[0], y0 + 3.4 * sc, -p[1]); lf.scale.setScalar(sc); lf.castShadow = true; scene.add(tr); scene.add(lf); };
   (L.zones || []).forEach(Z => { const Zc = clipConvex(UAG.poly, Z); flat(Zc, M_.zv, 0.065); const c = Zc.reduce((a, p) => v2.add(a, v2.mul(p, 1 / Zc.length)), [0, 0]); for (let a = -40; a <= 40; a += 4.5) for (let b = -40; b <= 40; b += 4.5){ const q = v2.add(c, [a + (Math.abs(b) % 9 ? 2.2 : 0), b]); if (inPoly(q, Zc)) treeAt(q, 0, 1.1); } });
-  L.houses.forEach(hh => { if (hh.lot) flat(hh.lot, M_.lawn, 0.055); flat(hh.garden, M_.lawn, onDeck(hh.garden) + 0.06); flat(hh.yard, M_.pave, onDeck(hh.yard) + 0.07); });
+  L.houses.forEach(hh => { if (hh.lot) flat(hh.lot, P.ord.estilo === "realista" ? mat(0x86b862) : M_.lawn, 0.055); flat(hh.garden, M_.lawn, onDeck(hh.garden) + 0.06); flat(hh.yard, M_.pave, onDeck(hh.yard) + 0.07); });
   if (L.garagePoly) slab(L.garagePoly, M_.deck, 0, M.ssTop);
   if (L.ramp) flat(L.ramp, M_.ramp, 0.08);
   UAG.edges.forEach(e => { if (e.t !== "zona verde") return; for (let q = 4; q < e.L; q += 8) treeAt(v2.add(v2.add(e.A, v2.mul(e.u, q)), v2.mul(e.nIn, -6)), 0, 1.2); });
@@ -1700,9 +1715,17 @@ function render3D(box, M, L){
   const Wd = L.W, Dpb = M.Dpb, Dp1 = M.Dp1, f = P.forj;
   L.houses.forEach(hh => { const Wd = hh.W || L.W, Dpb = hh.D || M.Dpb, Dp1 = hh.main === false ? Dpb : M.Dp1;
     boxAt(hh, 0, Wd, 0, Dpb, 0, M.ssTop, M_.plinth);
-    const mu = (hh.m2 && hh.m2 > 155) ? M_.useL : hh.cab ? M_.useB : M_.useA;
+    const mu = P.ord.estilo === "realista" ? M_.facade : (hh.m2 && hh.m2 > 155) ? M_.useL : hh.cab ? M_.useB : M_.useA;
     boxAt(hh, 0.02, Wd - 0.02, 0, Dpb, M.ssTop, M.zP1, mu);
-    boxAt(hh, 0.02, Wd - 0.02, 0, Dp1, M.zP1, M.zRoof + 0.6, mu);
+    if (P.ord.cubierta === "inclinada" || P.ord.estilo === "realista"){
+      boxAt(hh, 0.02, Wd - 0.02, 0, Dp1, M.zP1, M.zRoof, mu);
+      const sh = new T.Shape([new T.Vector2(0, 0), new T.Vector2(Dp1, 0), new T.Vector2(Dp1 / 2, 2.2)]), rg = new T.ExtrudeGeometry(sh, { depth:Wd - 0.04, bevelEnabled:false });
+      const rm = new T.Mesh(rg, M_.roofT); rm.castShadow = rm.receiveShadow = true;
+      /* la forma va en (fondo, altura) y se extruye a lo largo del frente */
+      const m4 = new T.Matrix4(), ex = hh.ex, ey = hh.ey, o0 = v2.add(hh.org, v2.mul(ex, 0.02));
+      m4.set(ey[0], 0, ex[0], o0[0], 0, 1, 0, M.zRoof, -ey[1], 0, -ex[1], -o0[1], 0, 0, 0, 1);
+      rm.applyMatrix4(m4); scene.add(rm);
+    } else boxAt(hh, 0.02, Wd - 0.02, 0, Dp1, M.zP1, M.zRoof + 0.6, mu);
     [[M.ssTop + 0.9, M.ssTop + 2.3], [M.zP1 + 0.9, M.zP1 + 2.2]].forEach(([z0, z1], fl) => {
       boxAt(hh, Wd * 0.18, Wd * 0.82, -0.04, 0.02, z0 + (fl === 0 ? -0.9 : 0), z1, M_.glass, false);
       const yr = fl === 0 ? Dpb : Dp1; boxAt(hh, Wd * 0.12, Wd * 0.88, yr - 0.02, yr + 0.04, fl === 0 ? z0 - 0.9 : z0, z1, M_.glass, false);
@@ -1828,7 +1851,7 @@ function roadInfo(roads, rbDef){
   const onStreet = p => UAG.edges.some(e => e.t === "calle" && dEdge(p, e) < 2.5);
   const onOther = (p, ri) => segs.some(sg => sg.ri !== ri && dSeg(p, sg.a, sg.b) < sg.w / 2 + 0.6);
   const bulbs = [];
-  roads.forEach((r, ri) => { if (r.cerrado || r.pts.length < 2) return; [0, r.pts.length - 1].forEach(pi => { const p = r.pts[pi]; if (onStreet(p) || onOther(p, ri)) return; bulbs.push({ ri, c:p, r:Math.max(r.rFondo || rbDef, r.w / 2 + 1) }); }); });
+  roads.forEach((r, ri) => { if (r.cerrado || r.pts.length < 2 || r.remate === "ninguno") return; [0, r.pts.length - 1].forEach(pi => { const p = r.pts[pi]; if (onStreet(p) || onOther(p, ri)) return; bulbs.push({ ri, c:p, r:Math.max(r.rFondo || rbDef, r.w / 2 + 1) }); }); });
   const conn = roads.map(r => r.pts.some(p => onStreet(p)));
   const cross = (a, b, c, d) => { const o = (p, q, r) => Math.sign((q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0])); return o(a, b, c) !== o(a, b, d) && o(c, d, a) !== o(c, d, b); };
   const segD = (x, y) => cross(x.a, x.b, y.a, y.b) ? 0 : Math.min(dSeg(x.a, y.a, y.b), dSeg(x.b, y.a, y.b), dSeg(y.a, x.a, x.b), dSeg(y.b, x.a, x.b));
@@ -1846,7 +1869,8 @@ function prodList(M, o){
   const mk = (n, W, m2, main) => ({ n, W, m2, D:(m2 / Math.max(1, UA.plantas || 2)) / W, main });
   const use = o.usarProd || "modelo", pr = o.prods || [];
   if (use === "modelo" || pr.length < 2) return [Object.assign(mk("Modelo", M.W, M.Apb + M.Ap1, true), { D:M.Dpb })];
-  const A = mk(pr[0].n || "Compacto", pr[0].W, pr[0].m2), B = mk(pr[1].n || "Amplio", pr[1].W, pr[1].m2);
+  const fx = (q, x) => x.fondo > 0 ? Object.assign(q, { D:+x.fondo }) : q;
+  const A = fx(mk(pr[0].n || "Compacto", pr[0].W, pr[0].m2), pr[0]), B = fx(mk(pr[1].n || "Amplio", pr[1].W, pr[1].m2), pr[1]);
   return use === "A" ? [A] : use === "B" ? [B] : [B, A];
 }
 /* ---------- generador automático de viario (colmatación) */
@@ -1869,7 +1893,42 @@ function simplifyClosed(Q, eps){
 }
 function lineHits(p0, u, Q){ const hs = []; for (let i = 0; i < Q.length; i++){ const a = Q[i], d = v2.sub(Q[(i + 1) % Q.length], a), den = u[0] * d[1] - u[1] * d[0]; if (Math.abs(den) < 1e-12) continue; const w = v2.sub(a, p0), s = (w[0] * d[1] - d[0] * w[1]) / den, k = (w[0] * u[1] - u[0] * w[1]) / den; if (k >= -1e-9 && k <= 1 + 1e-9) hs.push(s); } return hs.sort((x, y) => x - y); }
 function closestOnPoly(p, Q, closed){ let best = null, bd = Infinity; const n = Q.length; for (let i = 0; i < (closed ? n : n - 1); i++){ const a = Q[i], b = Q[(i + 1) % n], d = v2.sub(b, a), L2 = d[0] * d[0] + d[1] * d[1]; if (!L2) continue; const t = Math.max(0, Math.min(1, ((p[0] - a[0]) * d[0] + (p[1] - a[1]) * d[1]) / L2)), q = v2.add(a, v2.mul(d, t)), dd = v2.len(v2.sub(p, q)); if (dd < bd){ bd = dd; best = q; } } return best; }
+/* «U» perimetral: viales paralelos a cada lindero (salvo el lado base), lotes hacia fuera, espacio común en el centro.
+   Reproduce la estructura habitual de promociones de adosados: calle paralela a cada lindero a un fondo de lote,
+   ramales sin plazoleta junto a la calle principal y acceso por la calle de acceso. */
+function autoU(M, o, variant){
+  const f = fFront(M, o), D = M.Dpb, g = o.gLote, w = o.wCalle, d = f + D + g + 0.3, ed = UAG.edges;
+  const sel = ed.map((e, i) => i).filter(i => i !== IDX.base && ed[i].L >= 35);
+  if (sel.length < 2) return null;
+  /* orden antihorario empezando después del lado base */
+  const n = ed.length, order = []; for (let k = 1; k < n; k++){ const i = (IDX.base + k) % n; if (sel.includes(i)) order.push(i); }
+  const line = i => { const e = ed[i], off = d + w / 2 + (e.conc ? e.sag : 0); return { p:v2.add(e.A, v2.mul(e.nIn, off)), u:e.u }; };
+  const cross = (L1, L2) => { const den = L1.u[0] * L2.u[1] - L1.u[1] * L2.u[0]; if (Math.abs(den) < 1e-6) return null; const w0 = v2.sub(L2.p, L1.p), t = (w0[0] * L2.u[1] - w0[1] * L2.u[0]) / den; return v2.add(L1.p, v2.mul(L1.u, t)); };
+  const eb = ed[IDX.base], baseL = { p:v2.add(eb.A, v2.mul(eb.nIn, UA.retCalle + 0.5 + (eb.conc ? eb.sag : 0))), u:eb.u };
+  const Ls = order.map(line);
+  /* calle principal: la del lindero más alejado del lado base; recorre la parcela de lado a lado */
+  const mi = order.reduce((m, i) => dEdge(ed[i].pts[Math.floor(ed[i].pts.length / 2)], eb) > dEdge(ed[m].pts[Math.floor(ed[m].pts.length / 2)], eb) ? i : m, order[0]);
+  const ML = line(mi), inner = insetDense(UA.ret + 0.5 + w / 2), hs = lineHits(ML.p, ML.u, inner);
+  if (hs.length < 2) return null;
+  const mA = v2.add(ML.p, v2.mul(ML.u, hs[0])), mB = v2.add(ML.p, v2.mul(ML.u, hs[hs.length - 1]));
+  const roads = [{ pts:[mA, mB], w, lados:"der", remate:"ninguno", main:true }];
+  /* ramales: desde la calle principal hasta la franja junto al lado base */
+  order.filter(i => i !== mi).forEach(i => { const L = line(i), a = cross(L, ML), b = cross(L, baseL);
+    if (!a || !b || !inPoly(a, UAG.poly) || !inPoly(b, UAG.poly) || v2.len(v2.sub(a, b)) < 15) return;
+    const ua = v2.mul(v2.sub(b, a), 1 / v2.len(v2.sub(b, a)));
+    let A = v2.add(a, v2.mul(ua, -0.3)), dir = v2.sub(b, a), lados = (dir[0] * ed[i].u[0] + dir[1] * ed[i].u[1]) > 0 ? "der" : "izq";
+    roads.push({ pts:[A, b], w, lados, remate:"ninguno" }); });
+  if (roads.length < 2) return null;
+  /* acceso: de la calle de acceso al extremo más próximo de la calle principal */
+  const ea = ed[IDX.acc], target = dEdge(mA, ea) <= dEdge(mB, ea) ? mA : mB, foot = closestOnPoly(target, ea.pts, false);
+  if (foot && v2.len(v2.sub(foot, target)) > 0.5) roads.push({ pts:[v2.add(foot, v2.mul(v2.sub(foot, target), 1 / v2.len(v2.sub(foot, target)))), target], w, lados:"ninguno" });
+  /* qué tramos llevan lotes por dentro */
+  if (variant === "lleno") roads.forEach(r => { if (r.lados !== "ninguno") r.lados = "ambos"; });
+  if (variant === "patio"){ let far = -1, fd = -1; roads.forEach((r, k) => { if (r.main || r.lados === "ninguno") return; const m = v2.mul(v2.add(r.pts[0], r.pts[1]), 0.5), dd = dEdge(m, ea); if (dd > fd){ fd = dd; far = k; } }); if (far >= 0) roads[far].lados = "ambos"; }
+  return { roads, frontAv:false };
+}
 function autoRoads(M, o, kind){
+  if (kind.startsWith("u-")) return autoU(M, o, kind.slice(2));
   const f = fFront(M, o), D = M.Dpb, g = o.gLote, w = o.wCalle, d = f + D + g + 0.5;
   let ring = simplifyClosed(insetDense(d + w / 2), 0.35);
   if (ring.length < 3 || polyArea(ring) < 250) return null;
@@ -1889,6 +1948,9 @@ function autoRoads(M, o, kind){
   return { roads, frontAv:false };
 }
 const AUTO = [
+  { k:"auto-u-patio", name:"U perimetral + patio común", desc:"Calles paralelas a los linderos con lotes hacia fuera, un ramal con lotes a ambos lados y espacio común en el centro." },
+  { k:"auto-u-lleno", name:"U perimetral completa", desc:"Calles paralelas a los linderos con lotes a ambos lados." },
+  { k:"auto-u-ext", name:"U perimetral exterior", desc:"Calles paralelas a los linderos con lotes solo hacia fuera; todo el interior es espacio común." },
   { k:"auto-par",  name:"Anillo + calles paralelas", desc:"Vial perimetral que sigue el lindero y calles interiores paralelas al lado base." },
   { k:"auto-perp", name:"Anillo + calles transversales", desc:"Vial perimetral y calles interiores perpendiculares al lado base." },
   { k:"auto-malla", name:"Anillo + malla", desc:"Vial perimetral, calles paralelas y un eje transversal." },
@@ -1896,9 +1958,9 @@ const AUTO = [
 ];
 const PCACHE = { key:"", m:{} };
 function presetLayout(M, o, k){
-  const key = JSON.stringify([o.objetivo, o.parking, o.gLote, o.wCalle, o.rFondo, o.bloque, o.pasoBloque, o.agrup, o.sepLat, o.fAcc, o.parcMin, o.fondoMax, o.zonas, M.W, M.Dpb, UA.id, UAG.area]);
+  const key = JSON.stringify([o.objetivo, o.parking, o.gLote, o.wCalle, o.rFondo, o.bloque, o.pasoBloque, o.agrup, o.sepLat, o.fAcc, o.parcMin, o.fondoMax, o.zonas, o.usarProd, o.prods, M.W, M.Dpb, UA.id, UAG.area]);
   if (PCACHE.key !== key){ PCACHE.key = key; PCACHE.m = {}; }
-  if (!(k in PCACHE.m)){ const q = k.startsWith("auto-") ? autoRoads(M, o, k.slice(5)) : presetRoads(M, o, k); PCACHE.m[k] = q ? { q, L:genViales(M, Object.assign({}, o, { frontAv:!!q.frontAv, frontFl:false }), q.roads) } : null; }
+  if (!(k in PCACHE.m)){ const Mx = Object.assign({}, M, { Dpb:Math.max(...prodList(M, o).map(p => p.D)) }); const q = k.startsWith("auto-") ? autoRoads(Mx, o, k.slice(5)) : presetRoads(Mx, o, k); PCACHE.m[k] = q ? { q, L:genViales(M, Object.assign({}, o, { frontAv:!!q.frontAv, frontFl:false }), q.roads) } : null; }
   return PCACHE.m[k];
 }
 function autoBest(M, o){
@@ -2041,8 +2103,10 @@ function evalCfg(M, o, k, wmode){
   const roads = applyWidths(q.roads, o, wmode);
   return { q, roads, L:genViales(M, Object.assign({}, o, { frontAv:!!q.frontAv, frontFl:false }), roads) };
 }
+const cminG = o => (o.comunMin || 0) > 0;
 let OPT = { running:false, res:[], msg:"", diag:"", ctl:0 };
 const PRODTXT = { modelo:"modelo actual", A:"solo compacto", B:"solo amplio", AB:"compacto + amplio" };
+const prodTxt = k => { const pr = P.ord.prods || []; return k === "A" && pr[0] ? "solo «" + pr[0].n + "»" : k === "B" && pr[1] ? "solo «" + pr[1].n + "»" : k === "AB" && pr[1] ? "«" + pr[0].n + "» + «" + pr[1].n + "»" : PRODTXT[k]; };
 async function optimizar(){
   if (OPT.running) return;
   OPT = { running:true, res:[], msg:"Analizando estructuras…", diag:"", ctl:OPT.ctl + 1 }; const my = OPT.ctl;
@@ -2050,22 +2114,23 @@ async function optimizar(){
   const tick = () => new Promise(r => setTimeout(r, 0));
   const M = LAST.M, o0 = clone(P.ord), obj = o0.objetivo;
   const structs = [...AUTO, ...PRESETS_MAN.filter(x => x.k !== "patio")].map(x => x.k);
-  const gMin = Math.max(3, UA.retOtros || 3), gOpts = [...new Set([gMin, Math.max(gMin, Math.min(o0.gLote, 6))])];
-  const prodOpts = ["modelo", "AB", "A"], wOpts = ["dos", "min"];
+  const gMin = Math.max(3, UA.retOtros || 3), gOpts = [...new Set([gMin, Math.max(gMin, o0.gLote)])];
+  const prodOpts = o0.fijarProd ? [o0.usarProd || "modelo"] : [...new Set(["modelo", "AB", "A", o0.usarProd || "modelo"])], wOpts = ["dos", "min"];
   /* fase 1: estructuras con valores por defecto */
   const s1 = [];
   for (const k of structs){ const R = evalCfg(M, Object.assign({}, o0, { usarProd:"modelo" }), k, "min"); if (R) s1.push({ k, n:R.L.n }); OPT.msg = "Estructuras: " + s1.length + " / " + structs.length; redrawMap(false); await tick(); if (OPT.ctl !== my) return; }
-  const top = s1.sort((a, b) => b.n - a.n).slice(0, 4).map(x => x.k);
+  const top = [...new Set([...s1.sort((a, b) => b.n - a.n).slice(0, 4).map(x => x.k), ...(cminG(o0) ? ["auto-u-patio", "auto-u-ext"] : [])])];
   /* fase 2: combinaciones */
   const all = [], tot = top.length * prodOpts.length * gOpts.length * wOpts.length; let i = 0;
   for (const k of top) for (const pu of prodOpts) for (const g of gOpts) for (const wm of wOpts){
     const o = Object.assign({}, o0, { usarProd:pu, gLote:g });
     const R = evalCfg(M, o, k, wm); i++;
-    if (R){ const L = R.L; all.push({ k, pu, g, wm, n:L.n, edif:L.edif, gMed:L.gMed, viario:L.viario, roads:R.roads, frontAv:!!R.q.frontAv, L }); }
+    if (R){ const L = R.L; all.push({ k, pu, g, wm, n:L.n, edif:L.edif, gMed:L.gMed, viario:L.viario, comun:Math.max(0, L.comun + (L.zonasA || 0)), roads:R.roads, frontAv:!!R.q.frontAv, L }); }
     OPT.msg = "Combinaciones: " + i + " / " + tot; if (i % 2 === 0){ redrawMap(false); await tick(); if (OPT.ctl !== my) return; }
   }
-  const ok = x => x.n >= obj && x.edif <= UA.edif + 0.5;
-  all.sort((a, b) => (ok(b) - ok(a)) || (ok(a) ? (b.edif - a.edif) || (b.gMed - a.gMed) || (a.viario - b.viario) : (b.n - a.n) || (b.gMed - a.gMed)));
+  const cmin = o0.comunMin || 0;
+  const ok = x => x.n >= obj && x.edif <= UA.edif + 0.5 && x.comun >= cmin - 0.5;
+  all.sort((a, b) => (ok(b) - ok(a)) || (ok(a) ? (b.edif - a.edif) || (cmin ? b.comun - a.comun : 0) || (b.gMed - a.gMed) || (a.viario - b.viario) : (b.n - a.n) || (b.comun - a.comun)));
   const seen = new Set(); OPT.res = all.filter(x => { const key = x.k + x.pu + x.wm; if (seen.has(key)) return false; seen.add(key); return true; }).slice(0, 6);
   const best = OPT.res[0];
   if (best){ pushHist(); Object.assign(P.ord, { modo:"viales", roads:best.roads, frontAv:best.frontAv, frontFl:false, preset:best.k, usarProd:best.pu, gLote:best.g }); save(); }
@@ -2077,8 +2142,9 @@ async function optimizar(){
 }
 function diagnostico(M, b, obj){
   const L = b.L, nm = (PRESETS.find(x => x.k === b.k) || {}).name || b.k, out = [];
-  out.push(`Mejor opción: <b>${esc(nm)}</b>, ${PRODTXT[b.pu]}, jardín mínimo ${fmt(b.g, 1)} m, viales ${b.wm === "min" ? "de un carril (" + fmt(P.ord.w1, 1) + " m) donde se puede" : "de dos carriles (" + fmt(P.ord.w2, 1) + " m)"}.`);
-  if (b.n >= obj){ out.push(`Llega a ${b.n} viviendas con ${fmt(L.edif, 0)} de ${fmt(UA.edif, 0)} m²c y jardines de ${fmt(L.gMed, 0)} m² de media.`); return out.join("<br>"); }
+  out.push(`Mejor opción: <b>${esc(nm)}</b>, ${prodTxt(b.pu)}, jardín mínimo ${fmt(b.g, 1)} m, viales ${b.wm === "min" ? "de un carril (" + fmt(P.ord.w1, 1) + " m) donde se puede" : "de dos carriles (" + fmt(P.ord.w2, 1) + " m)"}.`);
+  if (b.n >= obj && b.comun >= (P.ord.comunMin || 0) - 0.5){ out.push(`Llega a ${b.n} viviendas con ${fmt(L.edif, 0)} de ${fmt(UA.edif, 0)} m²c, jardines de ${fmt(L.gMed, 0)} m² de media y ${fmt(b.comun, 0)} m² de espacio común.`); return out.join("<br>"); }
+  if (b.n >= obj) out.push(`<b>Llega a ${b.n} viviendas, pero el espacio común (${fmt(b.comun, 0)} m²) no alcanza el mínimo pedido (${fmt(P.ord.comunMin, 0)} m²).</b>`);
   const Wmin = Math.min(...L.PR.map(p => p.W)), f = L.fP, Dm = Math.min(...L.PR.map(p => p.D));
   out.push(`<b>Por qué no llega a ${obj}:</b>`);
   out.push(`· Frente de lotes disponible: unos ${fmt(L.frenteTot, 0)} m a lo largo de viales y calles; con lotes de ${fmt(Wmin, 1)} m caben como mucho ${Math.floor(L.frenteTot / Wmin)} en teoría, y las intersecciones y curvas se comen parte.`);
@@ -2154,7 +2220,7 @@ function mapSVG(M, L, opt = {}){
     let gg = "";
     if (!thumb){
       const f = r.f || L.fP || 2;
-      if (L.parking === "superficie" && f >= 5){ [0.3, 2.85].forEach(x0 => { gg += `<rect x="${x0}" y="${-f + 0.4}" width="2.3" height="4.5" rx="0.6" class="carp"/>`; }); }
+      if (L.parking === "superficie" && f >= 5){ [0.3, 2.85].forEach((x0, k) => { gg += `<rect x="${x0}" y="${-f + 0.4}" width="2.3" height="4.5" rx="0.6" class="carp c${(i * 2 + k + r.id.charCodeAt(0)) % 5}"/>`; }); }
       if (L.parking === "rampa"){ const x0 = (h.W || L.W) - 3.3; gg += `<rect x="${x0}" y="${-f}" width="3" height="${f}" class="rampp"/>`; }
     }
     const HW = h.W || L.W, HD = h.D || L.D, HD1 = h.main === false ? HD : M.Dp1;
@@ -2166,9 +2232,16 @@ function mapSVG(M, L, opt = {}){
       gg += `<g${thumb ? "" : ` filter="url(#${id}s)"`}><rect x="0" y="0" width="${HW}" height="${HD}" class="m-bpb ${h.prod === "Amplio" || (h.m2 && h.m2 > 155) ? "use-l" : h.cab ? "use-b" : "use-a"}"/><rect x="0" y="0" width="${HW}" height="${HD1}" class="m-b ${h.prod === "Amplio" || (h.m2 && h.m2 > 155) ? "use-l" : h.cab ? "use-b" : "use-a"}${SELROW === r.id && !thumb ? " sel" : ""}"/></g>`;
       if (!thumb) gg += `<rect x="0.3" y="0.3" width="${HW - 0.6}" height="${HD1 - 0.6}" class="m-parapet" vector-effect="non-scaling-stroke"/><rect x="${(mir ? HW - M.X.x0 - M.Ws : M.X.x0).toFixed(2)}" y="${(M.front + P.tE + P.tP).toFixed(2)}" width="${M.Ws.toFixed(2)}" height="${M.Ls.toFixed(2)}" class="m-sky"/>`;
     }
+    if (!thumb && vista !== "planta" && (P.ord.cubierta === "inclinada" || P.ord.estilo === "realista")){
+      gg += `<rect x="0" y="0" width="${HW}" height="${HD1 / 2}" class="m-slope1"/><rect x="0" y="${HD1 / 2}" width="${HW}" height="${HD1 / 2}" class="m-slope2"/><line x1="0" y1="${HD1 / 2}" x2="${HW}" y2="${HD1 / 2}" class="m-ridge" vector-effect="non-scaling-stroke"/>`;
+      gg += `<rect x="${(HW / 2 - 0.4).toFixed(2)}" y="${(HD1 / 2 + 1.2).toFixed(2)}" width="0.8" height="0.8" class="m-chim"/>`; }
     s += `<g transform="${tf}">${gg}</g>`;
     if (!thumb && cap.cotas !== false){ const c0 = v2.add(v2.add(h.org, v2.mul(h.ex, (h.W || L.W) / 2)), v2.mul(h.ey, (h.main === false ? h.D : M.Dp1) / 2)); s += txt(c0, r.id + (i + 1), "m-hid", 1.2); }
   }));
+  if (!thumb && P.ord.estilo === "realista" && L.k === "viales"){ const am = amenidades(L); if (am){ const e = UAG.edges[IDX.base], u = e.u, v = e.nIn, Q = (a, b) => v2.add(v2.add(am.c, v2.mul(u, a)), v2.mul(v, b)), R = (a0, b0, a1, b1) => [Q(a0, b0), Q(a1, b0), Q(a1, b1), Q(a0, b1)];
+    s += poly(R(-am.w / 2, -am.h / 2, am.w / 2, am.h / 2), "m-plaza") + poly(R(-am.pw / 2, 0.5, am.pw / 2, am.h / 2 - 1.2), "m-pool");
+    if (am.h > 13) s += `<circle cx="${Q(-am.w / 4, -am.h / 4)[0].toFixed(2)}" cy="${(-Q(-am.w / 4, -am.h / 4)[1]).toFixed(2)}" r="${Math.min(3.2, am.w / 6).toFixed(2)}" class="m-play"/>`;
+    s += txt(Q(0, -am.h / 2 + 1.4), "ZONA COMÚN", "m-lzone", 1.6); } }
   s += `<polygon points="${pts(UAG.poly)}" class="m-bound" vector-effect="non-scaling-stroke"/>`;
   if (thumb) return s + "</svg>";
   /* cotas de las zonas libres y asas de edición */
@@ -2201,6 +2274,22 @@ function mapSVG(M, L, opt = {}){
   return s + "</svg>";
 }
 
+/* hueco libre más amplio del espacio común: centro y tamaño de una piscina con su solado */
+function amenidades(L){
+  const e = UAG.edges[IDX.base], obst = L.houses.map(h => h.lot), xs = UAG.poly.map(p => p[0]), ys = UAG.poly.map(p => p[1]);
+  let best = null;
+  for (let x = Math.min(...xs); x < Math.max(...xs); x += 2) for (let y = Math.min(...ys); y < Math.max(...ys); y += 2){
+    const p = [x, y]; if (!inPoly(p, UAG.poly)) continue;
+    let d = Math.min(...UAG.edges.map(ed => dEdge(p, ed))) - 1;
+    for (const sg of L.segs || []) d = Math.min(d, dSeg(p, sg.a, sg.b) - sg.w / 2 - 1);
+    for (const b of L.bulbs || []) d = Math.min(d, v2.len(v2.sub(p, b.c)) - b.r - 1);
+    for (const Z of obst){ if (inPoly(p, Z)){ d = -1; break; } d = Math.min(d, dPolyline(p, Z, true) - 1); }
+    if (d > 4 && (!best || d > best.d)) best = { c:p, d };
+  }
+  if (!best) return null;
+  const hw = best.d * 1.35, w = Math.min(28, hw * 1.3), h = Math.min(26, hw * 1.3);
+  return { c:best.c, w, h, pw:Math.min(12, w * 0.55) };
+}
 /* ---------- interacción con el mapa */
 let ORTHO = false;
 function snapPt(p, exclude){
@@ -2344,7 +2433,7 @@ function viewOrd(M){
       ${tb('data-tool="erase"', "erase", "Borrar", "Borrar vial (E)")}
     </div>
     <div class="tgroup">${tb('data-act="undo"', "undo", "", "Deshacer (Ctrl+Z)")}${tb('data-act="redo"', "redo", "", "Rehacer (Ctrl+Y)")}</div>
-    <div class="tgroup" role="group" aria-label="Estilo del plano">${tb('data-estilo="claro"', "map", "Claro", "Mapa claro con colores por uso")}${tb('data-estilo="parcelario"', "lots", "Parcelario", "Lotes en verde con lindes, al estilo de TestFit")}</div>
+    <div class="tgroup" role="group" aria-label="Estilo del plano">${tb('data-estilo="claro"', "map", "Claro", "Mapa claro con colores por uso")}${tb('data-estilo="parcelario"', "lots", "Parcelario", "Lotes en verde con lindes, al estilo de TestFit")}${tb('data-estilo="realista"', "park", "Realista", "Cubiertas inclinadas, coches, césped y zona común con piscina")}</div>
     <div class="tgroup seg2" role="group" aria-label="Vista">
       ${tb('data-ordv="cubiertas"', "roof", "Cubiertas", "Vista de cubiertas")}${tb('data-ordv="planta"', "plan", "Planta", "Planta baja de cada vivienda")}${tb('data-ordv="3d"', "cube", "3D", "Vista 3D (T)")}
     </div>
@@ -2372,10 +2461,12 @@ function viewOrd(M){
     <section><h4>Productos de vivienda</h4>
       <div class="pf col"><span>Usar</span><span class="seg mini">${[["modelo","Modelo"],["A","Compacto"],["B","Amplio"],["AB","Mezcla"]].map(([v, t]) => `<button type="button" data-usarprod="${v}" aria-pressed="${(o.usarProd || "modelo") === v}">${t}</button>`).join("")}</span></div>
       <div class="prods">${(o.prods || []).map((pr, k) => `<div class="prod"><i class="sw2 ${k ? "use-l" : "use-a"}"></i><b>${esc(pr.n)}</b>
-        <label>frente<input type="number" step="0.1" min="4.5" max="14" data-prod="${k}:W" value="${pr.W}"></label><label>m²c<input type="number" step="5" min="60" max="400" data-prod="${k}:m2" value="${pr.m2}"></label></div>`).join("")}</div>
+        <label>frente<input type="number" step="0.1" min="4.5" max="14" data-prod="${k}:W" value="${pr.W}"></label><label>m²c<input type="number" step="5" min="60" max="400" data-prod="${k}:m2" value="${pr.m2}"></label><label>fondo<input type="number" step="0.1" min="0" max="25" data-prod="${k}:fondo" value="${pr.fondo || ""}" placeholder="auto"></label></div>`).join("")}</div>
+      <label class="chk"><input type="checkbox" data-ordc2="fijarProd"${o.fijarProd ? " checked" : ""}>Mantener este producto al optimizar</label>
       <p class="note">El motor elige en cada lote el producto que cabe: el amplio donde hay fondo y el compacto donde no. «Modelo» usa la vivienda diseñada (${fmt(M.W)} m, ${fmt(M.Apb + M.Ap1, 0)} m²c).</p></section>
     <section><h4>Lote tipo <small class="note" style="text-transform:none;letter-spacing:0">arrastra los bordes</small></h4>
       <div class="pf col"><span>Agrupación</span><span class="seg mini">${[["adosada","Adosadas"],["pareada","Pareadas"],["aislada","Aisladas"]].map(([v, t]) => `<button type="button" data-agrup="${v}" aria-pressed="${(o.agrup || "adosada") === v}">${t}</button>`).join("")}</span></div>
+      <div class="pf col"><span>Cubierta</span><span class="seg mini">${[["plana","Plana"],["inclinada","Inclinada"]].map(([v, t]) => `<button type="button" data-cubierta="${v}" aria-pressed="${(o.cubierta || "plana") === v}">${t}</button>`).join("")}</span></div>
       <div id="lotetipo" class="lotetipo"></div>
       ${num("fAcc", "Acceso desde el vial", "m", 2, 15, 0.5)}${num("gLote", "Jardín mínimo", "m", 3, 20, 0.5)}
       <div class="sepf">${num("sepLat", "Separación lateral", "m", 0, 10, 0.5)}</div>
@@ -2385,6 +2476,7 @@ function viewOrd(M){
     <section id="gensec"><h4>Generación</h4>
       ${num("objetivo", "Viviendas objetivo", "ud", 1, UA.viv || 200, 1)}
       <div class="pf"><span>Aparcamiento</span><span class="seg mini">${[["superficie","2 en frente"],["rampa","Rampa"]].map(([v, t]) => `<button type="button" data-ordset="parking" data-v="${v}">${t}</button>`).join("")}</span></div>
+      ${num("comunMin", "Espacio común mínimo", "m²", 0, 4000, 50)}
       ${num("w1", "Vial de un carril (mín.)", "m", 3, 6, 0.5)}${num("w2", "Vial de dos carriles (mín.)", "m", 5, 12, 0.5)}
       ${num("wCalle", "Ancho de vial nuevo", "m", 3, 14, 0.5)}
       ${num("rFondo", "Radio de fondo de saco", "m", 6, 16, 0.5)}
@@ -2448,7 +2540,7 @@ function wsPanels(M, L){
   document.querySelectorAll("[data-agrup]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.agrup === (o.agrup || "adosada"))));
   const om = $("#optmsg"); if (om) om.textContent = OPT.msg || "";
   const od = $("#optdiag"); if (od) od.innerHTML = OPT.diag || "";
-  const orl = $("#optres"); if (orl) orl.innerHTML = OPT.res.length ? OPT.res.map((x, i) => `<li><button type="button" data-optpick="${i}" aria-pressed="${P.ord.preset === x.k && P.ord.usarProd === x.pu && P.ord.gLote === x.g && JSON.stringify(P.ord.roads) === JSON.stringify(x.roads)}"><i class="dot ${x.n >= P.ord.objetivo ? "" : "bad"}"></i><b>${x.n}</b><span>${esc((PRESETS.find(p => p.k === x.k) || {}).name || x.k)} · ${PRODTXT[x.pu]} · ${x.wm === "min" ? "1 carril" : "2 carriles"} · jardín ${fmt(x.g, 1)}</span><em>${fmt(x.gMed, 0)} m²</em></button></li>`).join("") : "";
+  const orl = $("#optres"); if (orl) orl.innerHTML = OPT.res.length ? OPT.res.map((x, i) => `<li><button type="button" data-optpick="${i}" aria-pressed="${P.ord.preset === x.k && P.ord.usarProd === x.pu && P.ord.gLote === x.g && JSON.stringify(P.ord.roads) === JSON.stringify(x.roads)}"><i class="dot ${x.n >= P.ord.objetivo ? "" : "bad"}"></i><b>${x.n}</b><span>${esc((PRESETS.find(p => p.k === x.k) || {}).name || x.k)} · ${prodTxt(x.pu)} · ${x.wm === "min" ? "1 carril" : "2 carriles"} · jardín ${fmt(x.g, 1)}</span><em>${fmt(x.gMed, 0)} m²</em></button></li>`).join("") : "";
   document.querySelectorAll("[data-usarprod]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.usarprod === (o.usarProd || "modelo"))));
   const lw = $("#lrows");
   if (lw) lw.innerHTML = L.rows.length ? L.rows.map(r => `<li><button type="button" data-selrow="${r.id}" aria-pressed="${SELROW === r.id}"><i class="dot use-a"></i><b>${r.id}</b><span>${r.n} viv · ${esc(r.src || "")}</span><em>${r.houses.filter(h => h.adapt).length ? r.houses.filter(h => h.adapt).length + " adapt." : r.houses.filter(h => h.cab).length + " cab."}</em></button></li>`).join("") : `<li class="empty">Sin viviendas.</li>`;
@@ -2490,7 +2582,7 @@ function updateOrd(M, light){
   if (ORDC.key !== key){ ORDC.key = key; ORDC.res = layoutFor(M, o, o.modo === "patio" ? "patio" : "viales", o.roads || []); }
   const L = ORDC.res; LAST.O = L;
   /* miniaturas de plantillas */
-  const tkey = JSON.stringify([o.objetivo, o.parking, o.gLote, o.wCalle, o.rFondo, o.bloque, o.pasoBloque, o.gMin, o.paseo, o.agrup, o.sepLat, o.fAcc, o.parcMin, o.fondoMax, M.W, M.Dpb, UA.id, UAG.area]);
+  const tkey = JSON.stringify([o.objetivo, o.parking, o.gLote, o.wCalle, o.rFondo, o.bloque, o.pasoBloque, o.gMin, o.paseo, o.agrup, o.sepLat, o.fAcc, o.parcMin, o.fondoMax, o.usarProd, o.prods, M.W, M.Dpb, UA.id, UAG.area]);
   if (ORDC.tkey !== tkey){ ORDC.tkey = tkey;
     ORDC.thumbs = PRESETS.map(pr => { const X = pr.k === "patio" ? layoutFor(M, o, "patio") : (presetLayout(M, o, pr.k) || {}).L; if (!X) return "";
       return `<button type="button" class="pre" data-preset="${pr.k}" title="${esc(pr.desc)}"><span class="pth">${mapSVG(M, X, { thumb:true })}</span><b>${pr.name}</b><small class="${X.n === UA.viv ? "st-ok" : "st-warn"}">${X.n} viv · jardín ${fmt(X.gMed, 0)} m²</small></button>`; }).join(""); }
@@ -2527,6 +2619,7 @@ function updateOrd(M, light){
       <div class="pf col"><span>Carriles</span><span class="seg mini"><button type="button" data-carr="1" aria-pressed="${r.w <= (o.w1 || 4) + 0.01}">1 carril · ${fmt(o.w1 || 4, 1)} m</button><button type="button" data-carr="2" aria-pressed="${Math.abs(r.w - (o.w2 || 7)) < 0.01}">2 carriles · ${fmt(o.w2 || 7, 1)} m</button></span></div>
       <label class="pf"><span>Ancho</span><span class="num"><input type="number" id="selw" min="3" max="16" step="0.5" value="${r.w}"><span>m</span></span></label>
       <div class="pf col"><span>Parcelas en</span><span class="seg mini">${LADOS.map(([v, t]) => `<button type="button" data-sellados="${v}" aria-pressed="${(r.lados || "ambos") === v}">${t}</button>`).join("")}</span></div>
+      <div class="pf col"><span>Final sin salida</span><span class="seg mini"><button type="button" data-remate="plazoleta" aria-pressed="${r.remate !== "ninguno"}">Plazoleta de giro</button><button type="button" data-remate="ninguno" aria-pressed="${r.remate === "ninguno"}">Sin remate</button></span></div>
       <label class="chk"><input type="checkbox" id="selcurva"${r.curva ? " checked" : ""}>Trazado curvo</label><label class="chk"><input type="checkbox" id="selcerr"${r.cerrado ? " checked" : ""}>Cerrado (anillo)</label>
       <p class="note">${fmt(L.roadLen[SEL] || 0, 1)} m · ${L.conn[SEL] ? "conectado a vía pública" : "sin conexión a vía pública"} · ${r.pts.length} puntos. Arrastra un punto para moverlo; los «+» del vial añaden puntos.</p>
       <div class="tools">${SELNODE && SELNODE[0] === SEL && r.pts.length > 2 ? `<button type="button" class="btn" data-act="delnode">Eliminar punto</button>` : ""}<button type="button" class="btn" data-act="delroad">Eliminar vial</button></div>`; }
@@ -2670,6 +2763,7 @@ document.addEventListener("change", e => {
   if (dq.plr){ const k = dq.plr, i = +e.target.value; P.parcela.lados.forEach((l, j) => { l[k] = j === i; }); setParcela(P.parcela); P.ord.roads = null; VIEW = null; ORDC.key = ""; ORDC.tkey = ""; save(); render(); return; }
   if (e.target.dataset && e.target.dataset.ords){ P.ord[e.target.dataset.ords] = e.target.value; schedule(true); return; }
   if (e.target.dataset && e.target.dataset.ordc){ P.ord[e.target.dataset.ordc] = e.target.checked; P.ord.preset = "custom"; schedule(true); return; }
+  if (e.target.dataset && e.target.dataset.ordc2){ P.ord[e.target.dataset.ordc2] = e.target.checked; save(); return; }
   if (e.target.dataset && e.target.dataset.capa){ P.ord.capas = Object.assign({}, P.ord.capas, { [e.target.dataset.capa]:e.target.checked }); schedule(true); return; }
   const pg = e.target.dataset && e.target.dataset.pg;
   if (pg){ const [lv, z, i] = pg.split("."); const q = P.prog[lv][z][+i]; q.t = e.target.value;
