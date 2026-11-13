@@ -11,6 +11,9 @@ Es un cálculo con reglas fijas y reproducible: la misma entrada da siempre el m
    ```
 2. **Entrada.** Copia `scripts/ejemplos/ejemplo_ficticio.json` a `datos/volumetria.json`:
    - `parcela`: `{"gml": "<ref>.gml"}` o `{"coordenadas": [[x, y], ...]}`.
+     Añade `"superficie_oficial_m2"` si la ficha da una superficie distinta de la del polígono: los
+     parámetros se calculan sobre la oficial y la geometría sobre el polígono. Los lados se numeran en el
+     orden de los vértices de la entrada (lado i = vértice i → i+1).
    - `urbanismo`: **solo** los valores de la ficha urbanística / norma zonal del PGOUM.
      Lo que no figure en la ficha se deja fuera o en `null`: el script marca `FALTA DATO`.
    - `hipotesis`: parámetros de diseño (fondo de bloque, altura de planta, m² por vivienda…).

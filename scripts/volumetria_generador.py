@@ -128,13 +128,20 @@ def cargar(ruta: Path) -> dict:
     poly = Polygon(pts)
     if not poly.is_valid or poly.area <= 0:
         raise ValueError("La geometría de la parcela no es un polígono válido.")
-    # Orientación antihoraria para que los índices de lado sean estables.
-    if not poly.exterior.is_ccw:
-        pts = pts[::-1]
-        poly = Polygon(pts)
-        cfg["_aviso_orden"] = "Vértices reordenados a sentido antihorario: revise los índices de fachada con --lados."
+    # Se respeta el orden de vértices de la entrada (lado i = vértice i → i+1),
+    # sea horario o antihorario, para que los índices coincidan con la ficha.
     cfg["_pts"] = pts
     cfg["_poly"] = poly
+    cfg["_ccw"] = poly.exterior.is_ccw
+    # Superficie de cálculo: la oficial de la ficha si existe; si no, la del polígono.
+    oficial = par.get("superficie_oficial_m2")
+    cfg["_sup"] = float(oficial) if oficial else poly.area
+    if oficial:
+        dif = 100 * (poly.area - oficial) / oficial
+        if abs(dif) > 1:
+            cfg["_aviso_sup"] = (f"El polígono mide {poly.area:.2f} m² y la superficie oficial {oficial:.2f} m² "
+                                 f"({dif:+.1f} %). Los parámetros se calculan sobre la oficial; la geometría, "
+                                 f"sobre el polígono.")
     hip = dict(HIPOTESIS_DEFECTO)
     hip.update(cfg.get("hipotesis") or {})
     cfg["_hip"] = hip
@@ -142,14 +149,14 @@ def cargar(ruta: Path) -> dict:
     return cfg
 
 
-def lados(pts: list) -> list:
+def lados(pts: list, ccw: bool = True) -> list:
     out = []
     n = len(pts)
     for i in range(n):
         a, b = pts[i], pts[(i + 1) % n]
         dx, dy = b[0] - a[0], b[1] - a[1]
-        # Normal exterior (polígono antihorario): (dy, -dx)
-        nx, ny = dy, -dx
+        # Normal exterior: (dy, -dx) si el polígono es antihorario; opuesta si es horario.
+        nx, ny = (dy, -dx) if ccw else (-dy, dx)
         rumbo = (math.degrees(math.atan2(nx, ny)) + 360) % 360  # 0 = norte, 90 = este
         out.append({
             "indice": i,
@@ -331,7 +338,7 @@ def generar(tip, cfg, ls):
     if faltan:
         return {"tipologia": tip, "estado": FALTA, "faltan": faltan}
 
-    sup = poly.area
+    sup = cfg["_sup"]
     base = calcular(sup, urb["edificabilidad_m2m2"], urb["ocupacion_pct"], int(urb["plantas_max"]))["resultado"]
     huella_max = base["huella_maxima_m2"]
     techo_max = base["techo_por_edificabilidad_m2"]
@@ -595,9 +602,10 @@ def publico(r):
 
 def imprimir(cfg, resultados, hip_usadas):
     print("GENERADOR DE VOLUMETRÍAS (reglas fijas, sin IA)")
-    print(f"  Parcela: {cfg.get('nombre', '')} — superficie {cfg['_poly'].area:.2f} m²")
-    if cfg.get("_aviso_orden"):
-        print(f"  AVISO: {cfg['_aviso_orden']}")
+    print(f"  Parcela: {cfg.get('nombre', '')} — superficie de cálculo {cfg['_sup']:.2f} m² "
+          f"(polígono {cfg['_poly'].area:.2f} m²)")
+    if cfg.get("_aviso_sup"):
+        print(f"  AVISO: {cfg['_aviso_sup']}")
     print()
     cab = (f"  {'Tipología':<22}{'Estado':<12}{'Huella m²':>11}{'Ocup.%':>8}{'Pl.':>5}{'Ático m²':>10}"
            f"{'Constr. m²':>12}{'Comput. m²':>12}{'Aprov.%':>9}{'Viv.':>6}")
@@ -644,12 +652,12 @@ def main(argv=None) -> int:
     except (ValueError, OSError, json.JSONDecodeError) as e:
         print(f"Error: {e}", file=sys.stderr)
         return 1
-    ls = lados(cfg["_pts"])
+    ls = lados(cfg["_pts"], cfg["_ccw"])
 
     if args.lados:
         print(f"Lados de la parcela (superficie {cfg['_poly'].area:.2f} m²):")
-        if cfg.get("_aviso_orden"):
-            print(f"  AVISO: {cfg['_aviso_orden']}")
+        if cfg.get("_aviso_sup"):
+            print(f"  AVISO: {cfg['_aviso_sup']}")
         for l in ls:
             print(f"  lado {l['indice']:>2}: {l['longitud_m']:>8.2f} m, mira a {l['mira_a']:<2} "
                   f"({l['rumbo_normal_grados']}°)")
@@ -668,7 +676,8 @@ def main(argv=None) -> int:
 
     if args.json:
         print(json.dumps({
-            "parcela": {"nombre": cfg.get("nombre"), "superficie_m2": round(cfg["_poly"].area, 2)},
+            "parcela": {"nombre": cfg.get("nombre"), "superficie_calculo_m2": round(cfg["_sup"], 2),
+                        "superficie_poligono_m2": round(cfg["_poly"].area, 2)},
             "lados": [{k: v for k, v in l.items() if not k.startswith("_")} for l in ls],
             "hipotesis": cfg["_hip"],
             "resultados": [publico(r) for r in resultados],
