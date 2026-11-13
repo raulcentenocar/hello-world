@@ -24,7 +24,7 @@ Abrir `index.html` en el navegador (o vía GitHub Pages en `/casa-semisotano/`).
 - **U perimetral** (como las promociones reales): calle principal paralela al lindero más alejado de la vía de
   acceso, de lado a lado; ramales paralelos a los demás linderos sin plazoleta; lotes hacia fuera y patio común en el
   centro. Productos con fondo fijo, espacio común mínimo, remate de fondo de saco (plazoleta o sin remate),
-  cubierta inclinada y estilo *Realista* con coches, césped y piscina en el mayor hueco común.
+  y estilo *Realista* con coches, césped y piscina en el mayor hueco común.
 - **Optimizar y colmatar**: búsqueda automática (sin IA) de la estructura de viario, los productos de vivienda, el
   jardín mínimo y el ancho de los viales (un carril de 4 m en bucles y anillos, dos carriles de 7 m en fondos de
   saco y accesos; mínimos editables) para llegar al número de viviendas objetivo sin superar la edificabilidad.

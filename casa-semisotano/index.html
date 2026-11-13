@@ -294,13 +294,13 @@ svg .m-dim{font-family:var(--f-mono);fill:var(--accent);font-weight:500}
 /* estilo realista (cubiertas, coches, césped, piscina) */
 .mapbox svg.st-realista .m-site,.pth svg.st-realista .m-site{fill:#9cc47c} svg.st-realista .m-lot{fill:#86b862;stroke:#f4f4ef;stroke-width:.35;stroke-dasharray:none}
 svg.st-realista .m-garden{fill:none;stroke:none} svg.st-realista .m-yard{fill:#cfcac0;stroke:#bdb7aa;stroke-width:.15}
-svg.st-realista .m-b.use-a,svg.st-realista .m-b.use-b,svg.st-realista .m-b.use-l,svg.st-realista .m-bpb{fill:#4c5059;stroke:#2c2f35}
+svg.st-realista .m-b.use-a,svg.st-realista .m-b.use-b,svg.st-realista .m-b.use-l,svg.st-realista .m-bpb{fill:#5a5f68;stroke:#2c2f35}
 svg.st-realista .m-slope1{fill:#555a63} svg.st-realista .m-slope2{fill:#43474f} svg.st-realista .m-ridge{stroke:#2a2d33;stroke-width:1.2} svg.st-realista .m-chim{fill:#e9e6df;stroke:#8d8a83;stroke-width:.08}
 svg .m-slope1{fill:#ffffff;fill-opacity:.12} svg .m-slope2{fill:#000;fill-opacity:.08} svg .m-ridge{stroke:var(--m-bline);stroke-width:1} svg .m-chim{fill:#fff;stroke:var(--m-bline);stroke-width:.08}
 svg.st-realista .m-road,svg.st-realista .m-roadf{stroke:#4d5157;fill:#4d5157} svg.st-realista .m-roadf{stroke:none} svg.st-realista .m-roadc,svg.st-realista .m-roadcf{stroke:#d9d6cf;fill:#d9d6cf} svg.st-realista .m-roadcf{stroke:none}
 svg.st-realista .m-axis{stroke:#fff;stroke-opacity:.85} svg.st-realista .m-tree{fill:#3f7f35;fill-opacity:.9;stroke:#2d5f26}
 svg.st-realista .m-bound{stroke:#fbfbf7;stroke-dasharray:none;stroke-width:3} svg.st-realista .m-retr{stroke-opacity:0}
-svg.st-realista .m-sky,svg.st-realista .m-parapet{display:none} svg.st-realista .m-hid{fill:#fff}
+svg.st-realista .m-sky{display:none} svg.st-realista .m-parapet{stroke:#8d929a;stroke-opacity:.9} svg.st-realista .m-hid{fill:#fff}
 svg .carp.c0,svg .carp.c1,svg .carp.c2,svg .carp.c3,svg .carp.c4{fill:none}
 svg.st-realista .carp{stroke:#222;stroke-width:.06} svg.st-realista .carp.c0{fill:#e8e8e8} svg.st-realista .carp.c1{fill:#2f5aa8} svg.st-realista .carp.c2{fill:#1d1f24} svg.st-realista .carp.c3{fill:#c9cdd2} svg.st-realista .carp.c4{fill:#b8322e}
 svg .m-plaza{fill:#e3dccd;stroke:#c8bfac;stroke-width:.2} svg .m-pool{fill:#4fb4d8;stroke:#e9f6fb;stroke-width:.5} svg .m-play{fill:#d9884a;stroke:#b86a32;stroke-width:.2}
@@ -1494,7 +1494,7 @@ const sidesOf = r => { const l = r.lados || "ambos"; return l === "izq" ? [1] : 
 const setSide = (r, sd, on) => { const L = sidesOf(r).includes(1), R = sidesOf(r).includes(-1); const nl = sd > 0 ? on : L, nr = sd < 0 ? on : R; r.lados = nl && nr ? "ambos" : nl ? "izq" : nr ? "der" : "ninguno"; };
 /* línea paralela a una polilínea, a distancia d (positiva = izquierda según el sentido de dibujo) */
 function offsetLine(Q, d){ return Q.map((p, i) => { const a = Q[Math.max(0, i - 1)], b = Q[Math.min(Q.length - 1, i + 1)], t = v2.sub(b, a), L = v2.len(t) || 1; return v2.add(p, v2.mul([-t[1] / L, t[0] / L], d)); }); }
-const ORD_DEF = { comunMin:0, cubierta:"plana", w1:4, w2:7, usarProd:"modelo", prods:[{ n:"Compacto", W:6.5, m2:130 }, { n:"Amplio", W:8, m2:170 }], agrup:"adosada", sepLat:3, fAcc:5.5, parcMin:0, fondoMax:32, zonas:[], estilo:"claro", ladosNuevo:"ambos", modo:"viales", preset:"auto", rFondo:8, roads:null, frontAv:true, frontFl:false, objetivo:34, parking:"superficie", gLote:6, wCalle:7, bloque:0, pasoBloque:4, gMin:5, paseo:6, front:2, vista:"cubiertas", capas:{} };
+const ORD_DEF = { comunMin:0, w1:4, w2:7, usarProd:"modelo", prods:[{ n:"Compacto", W:6.5, m2:130 }, { n:"Amplio", W:8, m2:170 }], agrup:"adosada", sepLat:3, fAcc:5.5, parcMin:0, fondoMax:32, zonas:[], estilo:"claro", ladosNuevo:"ambos", modo:"viales", preset:"auto", rFondo:8, roads:null, frontAv:true, frontFl:false, objetivo:34, parking:"superficie", gLote:6, wCalle:7, bloque:0, pasoBloque:4, gMin:5, paseo:6, front:2, vista:"cubiertas", capas:{} };
 function inPoly(p, poly){ let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++){ const a = poly[i], b = poly[j]; if ((a[1] > p[1]) !== (b[1] > p[1]) && p[0] < (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; }
 function dSeg(p, a, b){ const d = v2.sub(b, a), t = Math.max(0, Math.min(1, ((p[0]-a[0])*d[0] + (p[1]-a[1])*d[1]) / (d[0]*d[0] + d[1]*d[1] || 1))); return v2.len(v2.sub(p, v2.add(a, v2.mul(d, t)))); }
 function dPolyline(p, pts, closed){ let m = Infinity; const n = pts.length; for (let i = 0; i < (closed ? n : n - 1); i++) m = Math.min(m, dSeg(p, pts[i], pts[(i + 1) % n])); return m; }
@@ -1717,15 +1717,7 @@ function render3D(box, M, L){
     boxAt(hh, 0, Wd, 0, Dpb, 0, M.ssTop, M_.plinth);
     const mu = P.ord.estilo === "realista" ? M_.facade : (hh.m2 && hh.m2 > 155) ? M_.useL : hh.cab ? M_.useB : M_.useA;
     boxAt(hh, 0.02, Wd - 0.02, 0, Dpb, M.ssTop, M.zP1, mu);
-    if (P.ord.cubierta === "inclinada" || P.ord.estilo === "realista"){
-      boxAt(hh, 0.02, Wd - 0.02, 0, Dp1, M.zP1, M.zRoof, mu);
-      const sh = new T.Shape([new T.Vector2(0, 0), new T.Vector2(Dp1, 0), new T.Vector2(Dp1 / 2, 2.2)]), rg = new T.ExtrudeGeometry(sh, { depth:Wd - 0.04, bevelEnabled:false });
-      const rm = new T.Mesh(rg, M_.roofT); rm.castShadow = rm.receiveShadow = true;
-      /* la forma va en (fondo, altura) y se extruye a lo largo del frente */
-      const m4 = new T.Matrix4(), ex = hh.ex, ey = hh.ey, o0 = v2.add(hh.org, v2.mul(ex, 0.02));
-      m4.set(ey[0], 0, ex[0], o0[0], 0, 1, 0, M.zRoof, -ey[1], 0, -ex[1], -o0[1], 0, 0, 0, 1);
-      rm.applyMatrix4(m4); scene.add(rm);
-    } else boxAt(hh, 0.02, Wd - 0.02, 0, Dp1, M.zP1, M.zRoof + 0.6, mu);
+    boxAt(hh, 0.02, Wd - 0.02, 0, Dp1, M.zP1, M.zRoof + 0.6, mu);
     [[M.ssTop + 0.9, M.ssTop + 2.3], [M.zP1 + 0.9, M.zP1 + 2.2]].forEach(([z0, z1], fl) => {
       boxAt(hh, Wd * 0.18, Wd * 0.82, -0.04, 0.02, z0 + (fl === 0 ? -0.9 : 0), z1, M_.glass, false);
       const yr = fl === 0 ? Dpb : Dp1; boxAt(hh, Wd * 0.12, Wd * 0.88, yr - 0.02, yr + 0.04, fl === 0 ? z0 - 0.9 : z0, z1, M_.glass, false);
@@ -2232,9 +2224,6 @@ function mapSVG(M, L, opt = {}){
       gg += `<g${thumb ? "" : ` filter="url(#${id}s)"`}><rect x="0" y="0" width="${HW}" height="${HD}" class="m-bpb ${h.prod === "Amplio" || (h.m2 && h.m2 > 155) ? "use-l" : h.cab ? "use-b" : "use-a"}"/><rect x="0" y="0" width="${HW}" height="${HD1}" class="m-b ${h.prod === "Amplio" || (h.m2 && h.m2 > 155) ? "use-l" : h.cab ? "use-b" : "use-a"}${SELROW === r.id && !thumb ? " sel" : ""}"/></g>`;
       if (!thumb) gg += `<rect x="0.3" y="0.3" width="${HW - 0.6}" height="${HD1 - 0.6}" class="m-parapet" vector-effect="non-scaling-stroke"/><rect x="${(mir ? HW - M.X.x0 - M.Ws : M.X.x0).toFixed(2)}" y="${(M.front + P.tE + P.tP).toFixed(2)}" width="${M.Ws.toFixed(2)}" height="${M.Ls.toFixed(2)}" class="m-sky"/>`;
     }
-    if (!thumb && vista !== "planta" && (P.ord.cubierta === "inclinada" || P.ord.estilo === "realista")){
-      gg += `<rect x="0" y="0" width="${HW}" height="${HD1 / 2}" class="m-slope1"/><rect x="0" y="${HD1 / 2}" width="${HW}" height="${HD1 / 2}" class="m-slope2"/><line x1="0" y1="${HD1 / 2}" x2="${HW}" y2="${HD1 / 2}" class="m-ridge" vector-effect="non-scaling-stroke"/>`;
-      gg += `<rect x="${(HW / 2 - 0.4).toFixed(2)}" y="${(HD1 / 2 + 1.2).toFixed(2)}" width="0.8" height="0.8" class="m-chim"/>`; }
     s += `<g transform="${tf}">${gg}</g>`;
     if (!thumb && cap.cotas !== false){ const c0 = v2.add(v2.add(h.org, v2.mul(h.ex, (h.W || L.W) / 2)), v2.mul(h.ey, (h.main === false ? h.D : M.Dp1) / 2)); s += txt(c0, r.id + (i + 1), "m-hid", 1.2); }
   }));
@@ -2433,7 +2422,7 @@ function viewOrd(M){
       ${tb('data-tool="erase"', "erase", "Borrar", "Borrar vial (E)")}
     </div>
     <div class="tgroup">${tb('data-act="undo"', "undo", "", "Deshacer (Ctrl+Z)")}${tb('data-act="redo"', "redo", "", "Rehacer (Ctrl+Y)")}</div>
-    <div class="tgroup" role="group" aria-label="Estilo del plano">${tb('data-estilo="claro"', "map", "Claro", "Mapa claro con colores por uso")}${tb('data-estilo="parcelario"', "lots", "Parcelario", "Lotes en verde con lindes, al estilo de TestFit")}${tb('data-estilo="realista"', "park", "Realista", "Cubiertas inclinadas, coches, césped y zona común con piscina")}</div>
+    <div class="tgroup" role="group" aria-label="Estilo del plano">${tb('data-estilo="claro"', "map", "Claro", "Mapa claro con colores por uso")}${tb('data-estilo="parcelario"', "lots", "Parcelario", "Lotes en verde con lindes, al estilo de TestFit")}${tb('data-estilo="realista"', "park", "Realista", "Coches, césped y zona común con piscina")}</div>
     <div class="tgroup seg2" role="group" aria-label="Vista">
       ${tb('data-ordv="cubiertas"', "roof", "Cubiertas", "Vista de cubiertas")}${tb('data-ordv="planta"', "plan", "Planta", "Planta baja de cada vivienda")}${tb('data-ordv="3d"', "cube", "3D", "Vista 3D (T)")}
     </div>
@@ -2466,7 +2455,6 @@ function viewOrd(M){
       <p class="note">El motor elige en cada lote el producto que cabe: el amplio donde hay fondo y el compacto donde no. «Modelo» usa la vivienda diseñada (${fmt(M.W)} m, ${fmt(M.Apb + M.Ap1, 0)} m²c).</p></section>
     <section><h4>Lote tipo <small class="note" style="text-transform:none;letter-spacing:0">arrastra los bordes</small></h4>
       <div class="pf col"><span>Agrupación</span><span class="seg mini">${[["adosada","Adosadas"],["pareada","Pareadas"],["aislada","Aisladas"]].map(([v, t]) => `<button type="button" data-agrup="${v}" aria-pressed="${(o.agrup || "adosada") === v}">${t}</button>`).join("")}</span></div>
-      <div class="pf col"><span>Cubierta</span><span class="seg mini">${[["plana","Plana"],["inclinada","Inclinada"]].map(([v, t]) => `<button type="button" data-cubierta="${v}" aria-pressed="${(o.cubierta || "plana") === v}">${t}</button>`).join("")}</span></div>
       <div id="lotetipo" class="lotetipo"></div>
       ${num("fAcc", "Acceso desde el vial", "m", 2, 15, 0.5)}${num("gLote", "Jardín mínimo", "m", 3, 20, 0.5)}
       <div class="sepf">${num("sepLat", "Separación lateral", "m", 0, 10, 0.5)}</div>
