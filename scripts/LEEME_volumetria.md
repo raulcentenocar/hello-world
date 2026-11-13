@@ -46,14 +46,36 @@ La altura máxima en metros es opcional. Si está, limita el número de plantas 
 - **Edificabilidad**: el techo materializable es el menor entre huella × plantas y parcela × edificabilidad. El cálculo base reutiliza `scripts/urbanismo_calculo.py`.
 - **Viviendas**: techo ÷ m² construidos por vivienda (hipótesis). En adosadas, longitud de la hilera ÷ ancho de la vivienda.
 
+## Superficies computables, ático y nº de viviendas (opcional)
+
+Las reglas de cómputo cambian según el planeamiento (PGOUM, plan parcial, normas subsidiarias…), así que **no hay valores por defecto**: salen de la ficha o de la normativa del ámbito.
+
+```json
+"urbanismo": {
+  "viviendas_max": 34,
+  "atico":   {"permitido": true, "retranqueo_m": 3, "computa": true},
+  "computo": {"terrazas_cubiertas": 0.5, "porches_planta_baja": 0.0}
+},
+"hipotesis": {
+  "no_computables": {"terrazas_cubiertas": 8, "porches_planta_baja": 3}
+}
+```
+*(Valores solo de ejemplo de formato.)*
+
+- **`atico`** (de la ficha). Planta adicional sobre la última, retranqueada `retranqueo_m` desde la fachada a vía pública (medianeras y manzana) o desde todo el perímetro (resto de tipologías). Si no figura, no se genera. Si falta algún campo, sale `FALTA DATO`.
+- **`computo`** (de la normativa). Coeficiente de cómputo de cada concepto: 0 = no computa, 0,5 = computa la mitad, 1 = computa entero.
+- **`no_computables`** (hipótesis de diseño). Qué porcentaje de la superficie construida sobre rasante ocupa cada concepto.
+- **Cálculo.** Factor de cómputo = 1 − Σ % × (1 − coeficiente). La superficie computable (la que consume edificabilidad) es la construida × factor. Si un concepto no tiene coeficiente en `computo`, se computa al 100 %, que es lo conservador, y se avisa con `FALTA DATO`.
+- **`viviendas_max`** (de la ficha). Limita las viviendas estimadas.
+
 ## Salidas
 
-DXF por tipología en `planos/volumetrias/` con las capas `PARCELA`, `ZONA_EDIFICABLE`, `HUELLA`, `VOLUMEN_3D` (polilíneas con espesor igual a la altura, visibles en 3D en AutoCAD o BricsCAD) y `TEXTO`.
+DXF por tipología en `planos/volumetrias/` con las capas `PARCELA`, `ZONA_EDIFICABLE`, `HUELLA`, `ATICO`, `VOLUMEN_3D` (polilíneas con espesor igual a la altura, visibles en 3D en AutoCAD o BricsCAD) y `TEXTO`.
 
 ## Qué NO hace todavía
 
 - No lee el PGOUM ni las normas zonales: los parámetros se meten a mano desde la ficha.
-- No calcula superficies no computables, áticos, retranqueos de planta, vuelos ni patios interiores mínimos.
+- No calcula vuelos, retranqueos de planta distintos del ático ni patios interiores mínimos.
 - No calcula el soleamiento ni usa la topografía.
 - No comprueba el CTE ni el Decreto de habitabilidad de la Comunidad de Madrid.
 

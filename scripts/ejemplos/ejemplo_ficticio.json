@@ -2,9 +2,28 @@
   "nombre": "EJEMPLO FICTICIO - no es una parcela real",
   "_comentario": "Valores inventados SOLO para probar el script. Para un encargo real, copie este archivo a datos/ y rellene 'urbanismo' con la ficha. Deje fuera (o a null) lo que no figure en la ficha: se marcará FALTA DATO.",
   "parcela": {
-    "coordenadas": [[0, 0], [60, 0], [64, 45], [0, 40]]
+    "coordenadas": [
+      [
+        0,
+        0
+      ],
+      [
+        60,
+        0
+      ],
+      [
+        64,
+        45
+      ],
+      [
+        0,
+        40
+      ]
+    ]
   },
-  "fachadas": [0],
+  "fachadas": [
+    0
+  ],
   "urbanismo": {
     "edificabilidad_m2m2": 1.8,
     "ocupacion_pct": 60,
@@ -14,10 +33,32 @@
     "retranqueo_linderos_m": 4,
     "fondo_edificable_m": 15,
     "separacion_edificios_m": 12,
-    "longitud_max_bloque_m": null
+    "longitud_max_bloque_m": null,
+    "viviendas_max": 40,
+    "atico": {
+      "permitido": true,
+      "retranqueo_m": 3,
+      "computa": true
+    },
+    "computo": {
+      "terrazas_cubiertas": 0.5,
+      "porches_planta_baja": 0.0
+    }
   },
   "hipotesis": {
-    "sup_construida_vivienda_m2": 100
+    "sup_construida_vivienda_m2": 100,
+    "no_computables": {
+      "terrazas_cubiertas": 8,
+      "porches_planta_baja": 3,
+      "tendederos": 1
+    }
   },
-  "tipologias": ["entre_medianeras", "manzana_cerrada", "bloque_abierto", "torre", "unifamiliar_aislada", "unifamiliar_adosada"]
+  "tipologias": [
+    "entre_medianeras",
+    "manzana_cerrada",
+    "bloque_abierto",
+    "torre",
+    "unifamiliar_aislada",
+    "unifamiliar_adosada"
+  ]
 }

@@ -32,6 +32,12 @@ Uso:
   --lados    Lista los lados de la parcela (índice, longitud, orientación) para
              decidir cuáles son fachada.
 
+Superficies computables y ático (opcional, ver LEEME_volumetria.md):
+  urbanismo.atico          {"permitido", "retranqueo_m", "computa"}   (de la ficha)
+  urbanismo.computo        {"concepto": coeficiente 0..1}             (de la normativa)
+  urbanismo.viviendas_max  nº máximo de viviendas                      (de la ficha)
+  hipotesis.no_computables {"concepto": % de la sup. construida}      (de diseño)
+
 Formato de entrada (JSON): ver scripts/ejemplos/ejemplo_ficticio.json.
 Dependencias: shapely, ezdxf (ver scripts/requirements.txt).
 """
@@ -401,40 +407,126 @@ def generar(tip, cfg, ls):
             extra["viviendas"] = sum(int(_largo(p) // ancho) for p in piezas)
 
     huella = sum(p.area for p in piezas)
-    techo_geo = huella * plantas
-    techo = min(techo_geo, techo_max)
     if huella <= 0:
         return {"tipologia": tip, "estado": "NO CABE",
                 "motivo": "Con estos parámetros no cabe ningún edificio de esta tipología.",
                 "_zona": zona_ref, "_piezas": []}
-    if techo_geo > techo_max + 0.01:
-        plantas_nec = max(1, math.ceil(techo_max / huella))
-        notas.append(f"El volumen geométrico ({techo_geo:.0f} m²) supera la edificabilidad: "
-                     f"bastan {plantas_nec} plantas sobre esta huella.")
+
+    # --- Ático (solo si la ficha lo regula) ------------------------------- #
+    fach_atico = (fachadas if tip == "entre_medianeras"
+                  else {l["indice"] for l in ls} if tip == "manzana_cerrada" else None)
+    at = atico(piezas, ls, fach_atico, urb, plantas, hip, notas)
+    sup_atico = sum(p.area for p in at["piezas"])
+
+    # --- Cómputo de superficies ------------------------------------------ #
+    sup_plantas = huella * plantas
+    construida_geo = sup_plantas + sup_atico
+    factor, desglose = factor_computo(urb, hip, notas)
+    computable_geo = sup_plantas * factor + (sup_atico * factor if at["computa"] else 0.0)
+    # Si lo computable supera la edificabilidad, se reduce la construida en proporción.
+    escala = min(1.0, techo_max / computable_geo) if computable_geo > 0 else 0.0
+    construida = construida_geo * escala
+    computable = computable_geo * escala
+    if escala < 1.0 - 1e-6:
+        sobra = construida_geo - construida
+        notas.append(f"La superficie computable geométrica ({computable_geo:.0f} m²) supera la "
+                     f"edificabilidad ({techo_max:.0f} m²): sobran {sobra:.0f} m² construidos "
+                     f"(reducir ático, plantas o fondo).")
+
+    # --- Viviendas -------------------------------------------------------- #
     viviendas = extra.pop("viviendas", None)
     if viviendas is None:
-        viviendas = int(techo // hip["sup_construida_vivienda_m2"])
-        criterio = f"techo / {hip['sup_construida_vivienda_m2']} m² construidos por vivienda (hipótesis)"
+        viviendas = int(construida // hip["sup_construida_vivienda_m2"])
+        criterio = (f"sup. construida / {hip['sup_construida_vivienda_m2']} m² construidos "
+                    f"por vivienda (hipótesis)")
     else:
         criterio = "por unidades de parcela" if tip == "unifamiliar_aislada" else \
             f"longitud de hilera / {hip['ancho_adosada_m']} m (hipótesis)"
+    if "viviendas_max" in urb and viviendas > urb["viviendas_max"]:
+        notas.append(f"Viviendas limitadas por la ficha: {viviendas} → {int(urb['viviendas_max'])}.")
+        viviendas = int(urb["viviendas_max"])
+
     return {
         "tipologia": tip,
         "estado": "OK",
         "huella_m2": round(huella, 2),
         "ocupacion_pct": round(100 * huella / sup, 2),
         "plantas": plantas,
-        "techo_geometrico_m2": round(techo_geo, 2),
-        "techo_materializable_m2": round(techo, 2),
-        "aprovechamiento_pct": round(100 * techo / techo_max, 1) if techo_max else 0,
+        "atico_m2": round(sup_atico, 2),
+        "sup_construida_geometrica_m2": round(construida_geo, 2),
+        "sup_construida_materializable_m2": round(construida, 2),
+        "sup_computable_m2": round(computable, 2),
+        "sup_no_computable_m2": round(construida - computable, 2),
+        "factor_computo": round(factor, 4),
+        "desglose_no_computables": desglose,
+        # Compatibilidad: 'techo' = superficie computable (la que consume edificabilidad).
+        "techo_materializable_m2": round(computable, 2),
+        "aprovechamiento_pct": round(100 * computable / techo_max, 1) if techo_max else 0,
         "viviendas_estimadas": viviendas,
         "criterio_viviendas": criterio,
         **extra,
         "notas": notas,
         "_zona": zona_ref,
         "_piezas": piezas,
+        "_atico": at["piezas"],
         "_altura_m": plantas * hip["altura_planta_m"],
     }
+
+
+def atico(piezas, ls, fachadas, urb, plantas, hip, notas):
+    """Planta ático retranqueada sobre la última planta, si la ficha la regula.
+
+    urbanismo.atico = {"permitido": bool, "retranqueo_m": float, "computa": bool}
+    Retranqueo desde las fachadas a vía pública (medianeras / manzana) o desde
+    todo el perímetro del edificio (resto de tipologías).
+    """
+    cfg = urb.get("atico")
+    if cfg is None:
+        notas.append("Ático: no regulado en la entrada (no se genera). Si la ficha lo permite, añada 'atico'.")
+        return {"piezas": [], "computa": True}
+    if not cfg.get("permitido", False):
+        return {"piezas": [], "computa": True}
+    faltan = [k for k in ("retranqueo_m", "computa") if cfg.get(k) is None]
+    if faltan:
+        notas.append(f"Ático: {FALTA} ({', '.join('atico.' + k for k in faltan)}); no se genera.")
+        return {"piezas": [], "computa": True}
+    r = float(cfg["retranqueo_m"])
+    if "altura_max_m" in urb and (plantas + 1) * hip["altura_planta_m"] > urb["altura_max_m"] + 1e-9:
+        notas.append("Ático: con la hipótesis de altura de planta supera la altura máxima en metros; "
+                     "compruebe cómo mide la ficha la altura del ático.")
+    res = []
+    for p in piezas:
+        if fachadas is not None:
+            rf = urb.get("retranqueo_fachada_m", 0) or 0
+            corte = unary_union([l["_seg"].buffer(rf + r) for l in ls if l["indice"] in fachadas])
+            g = _limpia(p.difference(corte))
+        else:
+            g = _limpia(p.buffer(-r, join_style="mitre"))
+        res += _polys(g)
+    return {"piezas": res, "computa": bool(cfg["computa"])}
+
+
+def factor_computo(urb, hip, notas):
+    """Fracción computable de la superficie construida sobre rasante.
+
+    hipotesis.no_computables = {"concepto": % de la sup. construida}   (diseño)
+    urbanismo.computo        = {"concepto": coeficiente 0..1}         (normativa)
+    factor = 1 - Σ %_i · (1 - coef_i). Un concepto sin coeficiente en la
+    normativa se computa al 100 % (del lado de la seguridad) y se marca FALTA DATO.
+    """
+    elementos = hip.get("no_computables") or {}
+    coefs = urb.get("computo") or {}
+    factor, desglose = 1.0, []
+    for nombre, pct in elementos.items():
+        c = coefs.get(nombre)
+        if c is None:
+            notas.append(f"Cómputo de '{nombre}': {FALTA} (coeficiente de la normativa); se computa al 100 %.")
+            c = 1.0
+        factor -= (pct / 100.0) * (1.0 - c)
+        desglose.append({"concepto": nombre, "pct_sup_construida": pct, "coef_computo": c})
+    if factor <= 0:
+        raise ValueError("El factor de cómputo resulta <= 0: revise 'no_computables' y 'computo'.")
+    return factor, desglose
 
 
 def _largo(p):
@@ -454,7 +546,7 @@ def exportar_dxf(cfg, res, carpeta: Path):
     ruta = carpeta / f"{nombre}_{res['tipologia']}.dxf"
     doc = ezdxf.new("R2010", setup=True)
     doc.units = ezdxf.units.M
-    for capa, color in [("PARCELA", 7), ("ZONA_EDIFICABLE", 3), ("HUELLA", 1), ("VOLUMEN_3D", 5), ("TEXTO", 2)]:
+    for capa, color in [("PARCELA", 7), ("ZONA_EDIFICABLE", 3), ("HUELLA", 1), ("ATICO", 6), ("VOLUMEN_3D", 5), ("TEXTO", 2)]:
         doc.layers.add(capa, color=color)
     msp = doc.modelspace()
     msp.add_lwpolyline(cfg["_pts"], close=True, dxfattribs={"layer": "PARCELA"})
@@ -469,11 +561,17 @@ def exportar_dxf(cfg, res, carpeta: Path):
             for hueco in p.interiors:
                 msp.add_lwpolyline(list(hueco.coords), close=True, dxfattribs={"layer": "HUELLA"})
                 msp.add_lwpolyline(list(hueco.coords), close=True, dxfattribs={"layer": "VOLUMEN_3D", "thickness": h})
+    hp = cfg["_hip"]["altura_planta_m"]
+    for p in res.get("_atico", []):
+        coords = list(p.exterior.coords)
+        msp.add_lwpolyline(coords, close=True, dxfattribs={"layer": "ATICO", "elevation": h})
+        msp.add_lwpolyline(coords, close=True, dxfattribs={"layer": "VOLUMEN_3D", "elevation": h, "thickness": hp})
     minx, miny, maxx, maxy = cfg["_poly"].bounds
     lineas = [
         f"{cfg.get('nombre', '')} - {res['tipologia']}",
         f"Huella {res['huella_m2']} m2 ({res['ocupacion_pct']} %) - {res['plantas']} plantas",
-        f"Techo materializable {res['techo_materializable_m2']} m2 - {res['viviendas_estimadas']} viv. (estimadas)",
+        f"Atico {res['atico_m2']} m2 - Construida {res['sup_construida_materializable_m2']} m2 - "
+        f"Computable {res['sup_computable_m2']} m2 - {res['viviendas_estimadas']} viv. (estimadas)",
         "Generado con reglas fijas (sin IA). PENDIENTE DE VALIDAR POR EL ARQUITECTO",
     ]
     alto = max(0.5, (maxx - minx) / 60)
@@ -501,13 +599,15 @@ def imprimir(cfg, resultados, hip_usadas):
     if cfg.get("_aviso_orden"):
         print(f"  AVISO: {cfg['_aviso_orden']}")
     print()
-    cab = f"  {'Tipología':<22}{'Estado':<12}{'Huella m²':>11}{'Ocup.%':>8}{'Pl.':>5}{'Techo m²':>11}{'Aprov.%':>9}{'Viv.':>6}"
+    cab = (f"  {'Tipología':<22}{'Estado':<12}{'Huella m²':>11}{'Ocup.%':>8}{'Pl.':>5}{'Ático m²':>10}"
+           f"{'Constr. m²':>12}{'Comput. m²':>12}{'Aprov.%':>9}{'Viv.':>6}")
     print(cab)
     print("  " + "-" * (len(cab) - 2))
     for r in resultados:
         if r["estado"] == "OK":
             print(f"  {r['tipologia']:<22}{'OK':<12}{r['huella_m2']:>11.1f}{r['ocupacion_pct']:>8.1f}"
-                  f"{r['plantas']:>5d}{r['techo_materializable_m2']:>11.1f}{r['aprovechamiento_pct']:>9.1f}"
+                  f"{r['plantas']:>5d}{r['atico_m2']:>10.1f}{r['sup_construida_materializable_m2']:>12.1f}"
+                  f"{r['sup_computable_m2']:>12.1f}{r['aprovechamiento_pct']:>9.1f}"
                   f"{r['viviendas_estimadas']:>6d}")
         else:
             print(f"  {r['tipologia']:<22}{r['estado']:<12}")
