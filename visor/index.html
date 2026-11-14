@@ -1,0 +1,663 @@
+<title>Tanteo de parcelas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: mesa de trabajo de tres columnas (parámetros · planta · cifras) con el banco de variantes debajo. */
+:root {
+  --bg: #eef1ef; --panel: #ffffff; --ink: #1c2427; --muted: #5a676b; --line: #d3dad8; --soft: #f5f7f6;
+  --accent: #0d6b58; --accent-ink: #ffffff; --ok: #2b7a4b; --bad: #b2402d; --warn: #9a6400;
+  --casa: #dcbb7c; --casa-b: #6a522e; --bloque: #8ea6c4; --bloque-b: #2c4260; --calzada: #aab1b3;
+  --plaza: #dfe4e5; --plaza-b: #a3abad; --acera: #ead3a6; --zona-u: #f3eddd; --zona-m: #e3ebf3;
+  --parcela: #1c2427; --ret-u: #8a6d3b; --ret-m: #3b5f8a; --corte: #0d6b58;
+  --f-ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-head: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --f-num: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111618; --panel: #192023; --ink: #e2e8e9; --muted: #98a6aa; --line: #2b3538; --soft: #1f272a;
+  --accent: #3cb398; --accent-ink: #0b1513; --ok: #5cc184; --bad: #ef7d68; --warn: #e0a640;
+  --casa: #b8975c; --casa-b: #e6cf9f; --bloque: #5c789c; --bloque-b: #b9cbe2; --calzada: #4b5457;
+  --plaza: #2f383b; --plaza-b: #5b6669; --acera: #6c5a3a; --zona-u: #23221c; --zona-m: #1b2430;
+  --parcela: #e2e8e9; --ret-u: #c9a865; --ret-m: #7fa2cf; --corte: #3cb398; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #111618; --panel: #192023; --ink: #e2e8e9; --muted: #98a6aa; --line: #2b3538; --soft: #1f272a;
+  --accent: #3cb398; --accent-ink: #0b1513; --ok: #5cc184; --bad: #ef7d68; --warn: #e0a640;
+  --casa: #b8975c; --casa-b: #e6cf9f; --bloque: #5c789c; --bloque-b: #b9cbe2; --calzada: #4b5457;
+  --plaza: #2f383b; --plaza-b: #5b6669; --acera: #6c5a3a; --zona-u: #23221c; --zona-m: #1b2430;
+  --parcela: #e2e8e9; --ret-u: #c9a865; --ret-m: #7fa2cf; --corte: #3cb398; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 14px/1.45 var(--f-ui);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 14px 28px; }
+h1, h2, h3 { font-family: var(--f-head); font-weight: 600; margin: 0; text-wrap: balance; }
+h1 { font-size: 22px; letter-spacing: .01em; }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.num { font-family: var(--f-num); font-variant-numeric: tabular-nums; }
+button, select, input, textarea { font: inherit; color: inherit; }
+button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible, .tarjeta:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.cabecera { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; margin-bottom: 12px; }
+.cabecera p { margin: 0; color: var(--muted); }
+.sello { font-family: var(--f-num); font-size: 11px; letter-spacing: .04em; color: var(--warn);
+  border: 1px solid currentColor; border-radius: 3px; padding: 1px 6px; }
+
+.mesa { display: grid; grid-template-columns: 290px minmax(0, 1fr) 310px; gap: 12px; align-items: start; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px; min-width: 0;
+  display: flex; flex-direction: column; gap: 14px; }
+.grupo { display: flex; flex-direction: column; gap: 8px; }
+.campo { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; align-items: center; }
+.campo label { color: var(--muted); font-size: 13px; }
+.campo output { font-family: var(--f-num); font-size: 13px; }
+.campo input[type="range"] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); }
+.campo select, .campo input[type="number"] { background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 4px 6px; }
+.campo input[type="number"] { width: 84px; font-family: var(--f-num); text-align: right; }
+.seg { display: flex; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; grid-column: 1 / -1; }
+.seg button { flex: 1; background: var(--soft); border: 0; padding: 6px 4px; cursor: pointer; font-size: 13px; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+details[open] summary { margin-bottom: 8px; }
+.dato { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; border-bottom: 1px dashed var(--line); padding: 2px 0; }
+.dato span:first-child { color: var(--muted); }
+.fuente { font-size: 12px; color: var(--muted); margin: 0; }
+.boton { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-weight: 500; }
+.boton.sec { background: var(--soft); color: var(--ink); border: 1px solid var(--line); }
+.boton:disabled { opacity: .55; cursor: progress; }
+.fila-botones { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.lienzo { padding: 0; overflow: hidden; gap: 0; }
+.barra { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.barra .seg { grid-column: auto; min-width: 190px; }
+.estado { font-size: 12px; color: var(--muted); }
+#plano { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; max-width: 100%; touch-action: none; background: var(--panel); }
+.leyenda { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 10px 12px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.leyenda i { display: inline-block; width: 12px; height: 9px; margin-right: 5px; vertical-align: -1px; border: 1px solid var(--line); }
+
+.cifras { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cifra { background: var(--soft); border-radius: 4px; padding: 8px 10px; }
+.cifra b { display: block; font: 500 22px/1.1 var(--f-num); font-variant-numeric: tabular-nums; }
+.cifra span { font-size: 12px; color: var(--muted); }
+.cifra small { font-family: var(--f-num); font-size: 12px; color: var(--muted); }
+.chk { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.chk li { display: grid; grid-template-columns: 18px 1fr; gap: 6px; font-size: 13px; }
+.chk li::before { font-weight: 600; }
+.chk li.si::before { content: "✓"; color: var(--ok); }
+.chk li.no::before { content: "✕"; color: var(--bad); }
+.veredicto { font-family: var(--f-head); font-size: 15px; padding: 6px 10px; border-radius: 4px; border-left: 4px solid; }
+.veredicto.si { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, transparent); }
+.veredicto.no { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, transparent); }
+.notas { margin: 0; padding-left: 18px; font-size: 12.5px; color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
+.notas li.aviso { color: var(--warn); }
+
+.banco { margin-top: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.banco-cab { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+.banco-cab .filtros { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; font-size: 13px; color: var(--muted); }
+.progreso { height: 4px; background: var(--soft); border-radius: 2px; overflow: hidden; }
+.progreso div { height: 100%; width: 0; background: var(--accent); transition: width .15s; }
+.galeria { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
+.tarjeta { background: var(--soft); border: 1px solid var(--line); border-radius: 5px; padding: 6px; cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 4px; }
+.tarjeta:hover { border-color: var(--accent); }
+.tarjeta.activa { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.tarjeta svg { width: 100%; height: auto; aspect-ratio: 4 / 3; display: block; }
+.tarjeta .t1 { display: flex; justify-content: space-between; font-family: var(--f-num); font-size: 12px; }
+.tarjeta .t2 { font-size: 11.5px; color: var(--muted); }
+.tag { font-size: 11px; padding: 0 5px; border-radius: 3px; }
+.tag.si { color: var(--ok); border: 1px solid var(--ok); }
+.tag.no { color: var(--bad); border: 1px solid var(--bad); }
+.vacio { color: var(--muted); font-size: 13px; margin: 0; }
+.galeria .vacio { grid-column: 1 / -1; }
+.tabla-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { padding: 5px 8px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { font-weight: 500; color: var(--muted); font-size: 12px; }
+td { font-family: var(--f-num); font-variant-numeric: tabular-nums; }
+td button { font-family: var(--f-ui); background: none; border: 0; color: var(--accent); cursor: pointer; padding: 0; }
+textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 8px; font: 12px/1.4 var(--f-num); }
+.error { color: var(--bad); font-size: 13px; margin: 0; }
+.copiado { font-size: 12px; color: var(--ok); }
+.tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 12px; padding: 4px 8px; border-radius: 3px; z-index: 5; }
+
+@media (max-width: 1150px) {
+  .mesa { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .lienzo { grid-column: 1 / -1; order: -1; }
+}
+@media (max-width: 720px) { .mesa { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { .progreso div { transition: none; } }
+</style>
+
+<header class="cabecera">
+  <h1 id="titulo">Tanteo de parcelas</h1>
+  <p id="subtitulo">Cargando motor de geometría…</p>
+  <span class="sello">PENDIENTE DE VALIDAR POR EL ARQUITECTO</span>
+</header>
+
+<main class="mesa">
+  <!-- Parámetros -->
+  <section class="panel" aria-labelledby="h-param">
+    <h2 id="h-param">Ordenación</h2>
+    <div class="grupo">
+      <div class="campo">
+        <label for="pct">Suelo para casas</label><output id="pct-o" class="num">60 %</output>
+        <input id="pct" type="range" min="0" max="100" step="5" value="60">
+      </div>
+      <div class="campo">
+        <label>Casas al</label><span></span>
+        <div class="seg" id="lado" role="group" aria-label="Lado de las casas">
+          <button type="button" data-v="abajo" aria-pressed="true">S</button>
+          <button type="button" data-v="arriba" aria-pressed="false">N</button>
+        </div>
+      </div>
+      <div class="campo">
+        <label for="ang">Orientación de hileras</label><output id="ang-o" class="num">0,5°</output>
+        <input id="ang" type="range" min="0" max="179.5" step="0.5" value="0.5">
+        <select id="ang-sel" aria-label="Orientaciones de las fachadas" style="grid-column: 1 / -1"></select>
+      </div>
+      <div class="campo">
+        <label>Final de la calle</label><span></span>
+        <div class="seg" id="remate" role="group" aria-label="Final de la calle de casas">
+          <button type="button" data-v="fondo_saco" aria-pressed="false">Fondo de saco</button>
+          <button type="button" data-v="martillo" aria-pressed="true">Martillo</button>
+          <button type="button" data-v="lazo" aria-pressed="false">Lazo</button>
+        </div>
+      </div>
+      <div class="campo">
+        <label>Acera en la calle</label><span></span>
+        <div class="seg" id="acera" role="group" aria-label="Acera">
+          <button type="button" data-v="0" aria-pressed="false">No</button>
+          <button type="button" data-v="1" aria-pressed="true">Sí</button>
+        </div>
+      </div>
+    </div>
+
+    <details open>
+      <summary>Hipótesis de diseño</summary>
+      <div class="grupo" id="hipotesis"></div>
+      <p class="fuente">Valores de diseño (F2). Cambian solo esta sesión.</p>
+    </details>
+
+    <details>
+      <summary>Datos urbanísticos (ficha)</summary>
+      <div class="grupo" id="urbanismo"></div>
+      <p class="fuente" id="urb-fuente"></p>
+    </details>
+
+    <details>
+      <summary>Cargar otra parcela (JSON de entrada)</summary>
+      <div class="grupo">
+        <textarea id="json-entrada" aria-label="JSON de entrada" spellcheck="false"></textarea>
+        <div class="fila-botones">
+          <button type="button" class="boton sec" id="cargar-json">Cargar parcela</button>
+          <button type="button" class="boton sec" id="restaurar">Volver a UA-03-01</button>
+        </div>
+        <p class="error" id="json-error" hidden></p>
+        <p class="fuente">Mismo formato que <span class="num">planos/variantes/entrada_*.json</span>. Lo que falte se marca FALTA DATO.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- Planta -->
+  <section class="panel lienzo" aria-labelledby="h-plano">
+    <div class="barra">
+      <h2 id="h-plano">Planta de ordenación</h2>
+      <div class="seg" id="vista" role="group" aria-label="Vista">
+        <button type="button" data-v="planta" aria-pressed="true">Planta</button>
+        <button type="button" data-v="axo" aria-pressed="false">Axonometría</button>
+      </div>
+      <span class="estado" id="estado">—</span>
+    </div>
+    <svg id="plano" role="img" aria-label="Planta de la variante actual"></svg>
+    <div class="leyenda">
+      <span><i style="background:var(--casa)"></i>Casas</span>
+      <span><i style="background:var(--bloque)"></i>Bloques</span>
+      <span><i style="background:var(--calzada)"></i>Calzada</span>
+      <span><i style="background:var(--plaza)"></i>Plazas</span>
+      <span><i style="background:var(--acera)"></i>Acera</span>
+      <span><i style="border:1px dashed var(--ret-u);background:none"></i>Retranqueos</span>
+      <span>Arrastra la línea verde para cambiar el reparto</span>
+    </div>
+  </section>
+
+  <!-- Cifras -->
+  <section class="panel" aria-labelledby="h-cifras">
+    <h2 id="h-cifras">Cifras de la variante</h2>
+    <div class="veredicto" id="veredicto">—</div>
+    <div class="cifras">
+      <div class="cifra"><span>Viviendas</span><b id="c-viv">—</b><small id="c-viv2"></small></div>
+      <div class="cifra"><span>Techo m²c</span><b id="c-techo">—</b><small id="c-techo2"></small></div>
+      <div class="cifra"><span>Plazas</span><b id="c-plazas">—</b><small id="c-plazas2"></small></div>
+      <div class="cifra"><span>Ocupación</span><b id="c-ocup">—</b><small id="c-ocup2"></small></div>
+    </div>
+    <ul class="chk" id="checks"></ul>
+    <ul class="notas" id="notas"></ul>
+    <div class="fila-botones">
+      <button type="button" class="boton sec" id="fijar">Fijar para comparar</button>
+      <button type="button" class="boton sec" id="copiar">Copiar orden para DXF</button>
+    </div>
+    <span class="copiado" id="copiado" hidden></span>
+  </section>
+</main>
+
+<section class="banco" aria-labelledby="h-banco">
+  <div class="banco-cab">
+    <h2 id="h-banco">Banco de variantes</h2>
+    <div class="filtros">
+      <label><input type="checkbox" id="solo-ok"> Solo las que cumplen</label>
+      <label for="orden">Ordenar por</label>
+      <select id="orden">
+        <option value="ranking">Ranking (cumplimiento, viviendas, techo)</option>
+        <option value="viviendas">Viviendas</option>
+        <option value="techo">Techo</option>
+        <option value="casas">Más casas</option>
+        <option value="ocupacion">Menor ocupación</option>
+      </select>
+      <button type="button" class="boton" id="generar">Generar variantes</button>
+    </div>
+  </div>
+  <div class="progreso" aria-hidden="true"><div id="barra-prog"></div></div>
+  <div class="galeria" id="galeria"><p class="vacio">Pulsa «Generar variantes» para explorar todas las combinaciones de reparto, lado, final de calle y acera. Haz clic en una para editarla.</p></div>
+
+  <h2>Comparación</h2>
+  <div class="tabla-wrap">
+    <table id="comparar">
+      <thead><tr><th>Variante</th><th>Casas</th><th>Pisos</th><th>Viv.</th><th>m²c</th><th>Plazas</th><th>Ocup. %</th><th>F. saco</th><th>Cumple</th><th></th></tr></thead>
+      <tbody><tr><td colspan="10" class="vacio" style="font-family:var(--f-ui)">Fija variantes con «Fijar para comparar».</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<div class="tip" id="tip" hidden></div>
+
+<script id="entrada-defecto" type="application/json">{"nombre": "UA-03-01 Los Pocillos", "_fuentes": "Parámetros de fases/01_urbanismo.md (rev. 2, aprobada). Separación 6 m: dato provisional del arquitecto. Hipótesis de vivienda: fases/02_diseno.md (V1).", "parcela": {"coordenadas": [[414988.78, 4478854.76], [414988.78, 4478782.0], [414896.93, 4478781.24], [414865.48, 4478877.9], [414894.46, 4478874.31], [414968.83, 4478858.29]], "superficie_oficial_m2": 8839}, "fachadas": [1, 2], "accesos": [2], "comun": {"edificabilidad_m2m2": 0.5769884, "viviendas_max": 34, "plazas_por_vivienda": 2, "separacion_edificios_m": 6}, "unifamiliar": {"ocupacion_pct": 60, "plantas_max": 2, "altura_max_m": 7.5, "retranqueo_fachada_m": 3, "retranqueo_linderos_m": 3}, "multifamiliar": {"ocupacion_pct": 45, "plantas_max": 3, "altura_max_m": 10.0, "retranqueo_fachada_m": 5, "retranqueo_linderos_m": 5}, "hipotesis": {"fondo_casa_m": 12.0, "ancho_casa_m": 6.5, "sup_casa_m2": 156.0, "sup_piso_m2": 135.0, "fondo_bloque_m": 12.0}}</script>
+<script src="https://cdn.jsdelivr.net/npm/jsts@2.11.3/dist/jsts.min.js"></script>
+<script src="motor.js"></script>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var NS = "http://www.w3.org/2000/svg";
+  var DEFECTO = JSON.parse($("entrada-defecto").textContent);
+  var HIP_UI = [
+    ["ancho_casa_m", "Frente de casa", 0.1, "m"], ["fondo_casa_m", "Fondo de casa", 0.5, "m"],
+    ["sup_casa_m2", "Construido por casa", 1, "m²"], ["sup_piso_m2", "Construido por piso", 1, "m²"],
+    ["casas_max_hilera", "Máx. casas por hilera", 1, ""], ["casas_min_hilera", "Mín. casas por hilera", 1, ""],
+    ["jardin_trasero_m", "Jardín trasero", 0.5, "m"], ["fondo_bloque_m", "Fondo de bloque", 0.5, "m"],
+    ["longitud_max_bloque_m", "Longitud máx. bloque", 1, "m"], ["calzada_m", "Calzada", 0.5, "m"],
+    ["acera_m", "Acera", 0.1, "m"], ["martillo_largo_m", "Brazo del martillo", 0.5, "m"]
+  ];
+  var URB_TXT = {
+    edificabilidad_m2m2: "Edificabilidad (m²/m²)", viviendas_max: "Viviendas máximas", plazas_por_vivienda: "Plazas por vivienda",
+    separacion_edificios_m: "Separación entre edificios (m)", ocupacion_pct: "Ocupación máx. (%)", plantas_max: "Plantas máx.",
+    altura_max_m: "Altura cornisa (m)", retranqueo_fachada_m: "Retranqueo a fachada (m)", retranqueo_linderos_m: "Retranqueo a linderos (m)"
+  };
+  var CHK_TXT = {
+    hay_viviendas: "Hay viviendas", viviendas: "Viviendas dentro del máximo", techo: "Techo dentro de la edificabilidad",
+    plazas: "Plazas suficientes", ocupacion_A: "Ocupación de cada zona", fondo_saco_SI5: "Calle sin salida ≤ 20 m o con maniobra (DB-SI SI 5)",
+    itinerario_peatonal: "Acera en la calle de casas (DB-SUA 9)"
+  };
+
+  var ctx = null, entradaActual = null, actual = null, params = null, vista = "planta";
+  var variantes = [], fijadas = [], idActiva = null, cola = null;
+
+  function fmt(n, d) { return (+n).toLocaleString("es-ES", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }); }
+
+  // ---------------------------------------------------------------- carga
+  function cargarEntrada(cfg) {
+    var c = Motor.cargar(cfg);
+    ctx = c; entradaActual = cfg;
+    $("titulo").textContent = "Tanteo · " + (cfg.nombre || "parcela");
+    var Emax = c.sup * c.comun.edificabilidad_m2m2;
+    $("subtitulo").textContent = fmt(c.sup) + " m² · " + fmt(Emax) + " m²c · máx. " + c.comun.viviendas_max + " viviendas · reglas fijas, sin IA";
+    // orientaciones de fachada
+    var angs = Motor.angulos(c), sel = $("ang-sel");
+    sel.innerHTML = "";
+    Motor.lados(c.pts, c.ccw).forEach(function (l) {
+      if (!c.fachadas.has(l.indice)) return;
+      var a = Math.round((((l.angulo % 180) + 180) % 180) * 2) / 2;
+      var o = document.createElement("option"); o.value = a; o.textContent = "Paralelas a fachada " + l.indice + " (" + l.mira_a + ", " + fmt(a, 1) + "°)";
+      sel.appendChild(o);
+    });
+    var libre = document.createElement("option"); libre.value = "libre"; libre.textContent = "Ángulo libre"; sel.appendChild(libre);
+    params = { ang: Math.round(angs[0] * 2) / 2, pct: 60, uni_en: "abajo", remate: "martillo", acera: true };
+    pintarHipotesis(); pintarUrbanismo(); sincronizarControles();
+    variantes = []; fijadas = []; idActiva = null; pintarGaleria(); pintarComparacion();
+    recalcular();
+  }
+  function pintarHipotesis() {
+    var cont = $("hipotesis"); cont.innerHTML = "";
+    HIP_UI.forEach(function (h) {
+      var d = document.createElement("div"); d.className = "campo";
+      var id = "h-" + h[0];
+      d.innerHTML = '<label for="' + id + '">' + h[1] + (h[3] ? " (" + h[3] + ")" : "") + '</label>' +
+        '<input type="number" id="' + id + '" step="' + h[2] + '" value="' + ctx.hip[h[0]] + '">';
+      cont.appendChild(d);
+      d.querySelector("input").addEventListener("change", function (e) {
+        var v = parseFloat(e.target.value);
+        if (!isFinite(v) || v <= 0) { e.target.value = ctx.hip[h[0]]; return; }
+        ctx.hip[h[0]] = v; variantes = []; pintarGaleria(); recalcular();
+      });
+    });
+  }
+  function pintarUrbanismo() {
+    var cont = $("urbanismo"), html = "";
+    function fila(k, v) { html += '<div class="dato"><span>' + (URB_TXT[k] || k) + '</span><span class="num">' + v + "</span></div>"; }
+    Object.keys(ctx.comun).forEach(function (k) { fila(k, ctx.comun[k]); });
+    html += '<div class="dato"><span><b>Unifamiliar</b></span><span></span></div>';
+    Object.keys(ctx.uni).forEach(function (k) { fila(k, ctx.uni[k]); });
+    html += '<div class="dato"><span><b>Multifamiliar</b></span><span></span></div>';
+    Object.keys(ctx.multi).forEach(function (k) { fila(k, ctx.multi[k]); });
+    cont.innerHTML = html;
+    $("urb-fuente").textContent = entradaActual._fuentes || "Datos de la ficha urbanística. Para cambiarlos, carga otro JSON de entrada.";
+  }
+
+  // ---------------------------------------------------------------- controles
+  function setSeg(id, v) { Array.prototype.forEach.call($(id).querySelectorAll("button"), function (b) { b.setAttribute("aria-pressed", String(b.dataset.v === String(v))); }); }
+  function sincronizarControles() {
+    $("pct").value = params.pct; $("pct-o").textContent = fmt(params.pct) + " %";
+    $("ang").value = params.ang; $("ang-o").textContent = fmt(params.ang, 1) + "°";
+    var sel = $("ang-sel"), hay = false;
+    Array.prototype.forEach.call(sel.options, function (o) { if (o.value !== "libre" && Math.abs(+o.value - params.ang) < 0.3) { sel.value = o.value; hay = true; } });
+    if (!hay) sel.value = "libre";
+    setSeg("lado", params.uni_en); setSeg("remate", params.remate); setSeg("acera", params.acera ? 1 : 0);
+    // Rótulo del lado según la orientación
+    var a = params.ang * Math.PI / 180;
+    function rumbo(dy0) { var dx = -Math.sin(a) * dy0, dy = Math.cos(a) * dy0; var r = (Math.atan2(dx, dy) * 180 / Math.PI + 360) % 360; return ["N", "NE", "E", "SE", "S", "SO", "O", "NO"][Math.floor(((r + 22.5) % 360) / 45)]; }
+    var bs = $("lado").querySelectorAll("button"); bs[0].textContent = rumbo(-1); bs[1].textContent = rumbo(1);
+  }
+  function segClick(id, fn) {
+    $(id).addEventListener("click", function (e) { var b = e.target.closest("button"); if (!b) return; fn(b.dataset.v); });
+  }
+  $("pct").addEventListener("input", function (e) { params.pct = +e.target.value; $("pct-o").textContent = fmt(params.pct) + " %"; programar(); });
+  $("ang").addEventListener("input", function (e) { params.ang = +e.target.value; sincronizarControles(); programar(); });
+  $("ang-sel").addEventListener("change", function (e) { if (e.target.value !== "libre") { params.ang = +e.target.value; sincronizarControles(); recalcular(); } });
+  segClick("lado", function (v) { params.uni_en = v; sincronizarControles(); recalcular(); });
+  segClick("remate", function (v) { params.remate = v; sincronizarControles(); recalcular(); });
+  segClick("acera", function (v) { params.acera = v === "1"; sincronizarControles(); recalcular(); });
+  segClick("vista", function (v) { vista = v; setSeg("vista", v); pintarPlano(); });
+
+  function programar() { clearTimeout(cola); cola = setTimeout(recalcular, 120); }
+  function recalcular() {
+    if (!ctx) return;
+    var t0 = performance.now();
+    try { actual = Motor.variante(ctx, params); }
+    catch (err) { $("estado").textContent = "Error: " + err.message; return; }
+    actual.params = Object.assign({}, params);
+    $("estado").textContent = "Calculado en " + fmt(performance.now() - t0) + " ms";
+    pintarPlano(); pintarCifras();
+  }
+
+  // ---------------------------------------------------------------- dibujo
+  function vb(ctxo, margen) {
+    var b = Motor.lim(ctxo.poly), m = margen || 8;
+    return { x0: b[0] - m, y1: b[3] + m, w: b[2] - b[0] + 2 * m, h: b[3] - b[1] + 2 * m };
+  }
+  function ruta(g, v) {
+    var d = "";
+    Motor.polys(g).forEach(function (p) {
+      var anillos = [p.getExteriorRing()];
+      for (var k = 0; k < p.getNumInteriorRing(); k++) anillos.push(p.getInteriorRingN(k));
+      anillos.forEach(function (r) {
+        var cs = r.getCoordinates();
+        d += "M" + cs.map(function (c) { return (c.x - v.x0).toFixed(2) + "," + (v.y1 - c.y).toFixed(2); }).join("L") + "Z";
+      });
+    });
+    return d;
+  }
+  var CAPAS = [
+    ["zona_uni", "var(--zona-u)", "none", 0], ["zona_multi", "var(--zona-m)", "none", 0],
+    ["calzadas", "var(--calzada)", "none", 0], ["bolsas", "var(--plaza)", "var(--plaza-b)", 0.08],
+    ["plazas_casas", "var(--plaza)", "var(--plaza-b)", 0.08], ["aceras", "var(--acera)", "none", 0],
+    ["casas", "var(--casa)", "var(--casa-b)", 0.14], ["bloques", "var(--bloque)", "var(--bloque-b)", 0.18],
+    ["edif_uni", "none", "var(--ret-u)", 0.18], ["edif_multi", "none", "var(--ret-m)", 0.18], ["parcela", "none", "var(--parcela)", 0.4]
+  ];
+  function svgVariante(r, v, detalle) {
+    var s = "";
+    CAPAS.forEach(function (c) {
+      var gs = r.geo[c[0]]; gs = Array.isArray(gs) ? gs : [gs];
+      var dash = c[0].indexOf("edif") === 0 ? ' stroke-dasharray="1.2 0.9"' : "";
+      gs.forEach(function (g, i) {
+        if (!g || g.isEmpty()) return;
+        var data = detalle && (c[0] === "casas" || c[0] === "bloques") ? ' data-tipo="' + c[0] + '" data-i="' + i + '"' : "";
+        s += '<path d="' + ruta(g, v) + '" fill="' + c[1] + '" stroke="' + c[2] + '" stroke-width="' + c[3] + '"' + dash + data + ' fill-rule="evenodd"/>';
+      });
+    });
+    // separación de plazas en batería
+    if (detalle) {
+      var pa = ctx.hip.plaza_ancho_m;
+      r.geo.plazas_casas.concat(r.geo.bolsas).forEach(function (g) {
+        var cs = g.getCoordinates(); if (cs.length < 4) return;
+        var a = cs[0], b = cs[1], d = cs[3], L = Math.hypot(b.x - a.x, b.y - a.y), n = Math.floor(L / pa + 1e-6);
+        var ux = (b.x - a.x) / L, uy = (b.y - a.y) / L;
+        var fr = (r.geo.bolsas.indexOf(g) >= 0) ? [0, 1] : [0, 1];
+        for (var i = 1; i < n; i++) {
+          var x = a.x + ux * pa * i, y = a.y + uy * pa * i, x2 = x + (d.x - a.x), y2 = y + (d.y - a.y);
+          s += '<line x1="' + (x - v.x0).toFixed(2) + '" y1="' + (v.y1 - y).toFixed(2) + '" x2="' + (x2 - v.x0).toFixed(2) + '" y2="' + (v.y1 - y2).toFixed(2) + '" stroke="var(--plaza-b)" stroke-width="0.07"/>';
+        }
+      });
+    }
+    return s;
+  }
+  function pintarPlano() {
+    var svg = $("plano");
+    if (!actual) return;
+    if (vista === "axo") { pintarAxo(svg); return; }
+    var v = vb(ctx, 10);
+    svg.setAttribute("viewBox", "0 0 " + v.w.toFixed(1) + " " + v.h.toFixed(1));
+    var s = svgVariante(actual, v, true);
+    // línea de reparto arrastrable
+    if (actual.geo.corte && !actual.geo.corte.isEmpty()) {
+      var cs = actual.geo.corte.getCoordinates(), a = cs[0], b = cs[cs.length - 1];
+      var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      s += '<g id="corte"><line x1="' + (a.x - v.x0) + '" y1="' + (v.y1 - a.y) + '" x2="' + (b.x - v.x0) + '" y2="' + (v.y1 - b.y) + '" stroke="var(--corte)" stroke-width="0.6" stroke-dasharray="2 1.2"/>' +
+        '<circle cx="' + (mx - v.x0) + '" cy="' + (v.y1 - my) + '" r="2.2" fill="var(--corte)" stroke="var(--panel)" stroke-width="0.5" style="cursor:ns-resize" id="tirador"/>' +
+        '<text x="' + (mx - v.x0 + 3.2) + '" y="' + (v.y1 - my - 2.6) + '" font-size="2.6" fill="var(--corte)" font-family="IBM Plex Mono, monospace">' + fmt(actual.pct_zona_unifamiliar) + ' % casas</text></g>';
+    }
+    // norte y escala
+    var sx = 4, sy = v.h - 4;
+    s += '<g fill="var(--muted)" stroke="var(--muted)" font-family="IBM Plex Sans, sans-serif">' +
+      '<path d="M' + (v.w - 6) + ',4 l1.6,5 h-3.2 Z" stroke="none"/><text x="' + (v.w - 6) + '" y="13" font-size="2.6" text-anchor="middle" stroke="none">N</text>' +
+      '<line x1="' + sx + '" y1="' + sy + '" x2="' + (sx + 20) + '" y2="' + sy + '" stroke-width="0.4"/>' +
+      '<line x1="' + sx + '" y1="' + (sy - 1) + '" x2="' + sx + '" y2="' + (sy + 1) + '" stroke-width="0.4"/><line x1="' + (sx + 10) + '" y1="' + (sy - 1) + '" x2="' + (sx + 10) + '" y2="' + (sy + 1) + '" stroke-width="0.4"/><line x1="' + (sx + 20) + '" y1="' + (sy - 1) + '" x2="' + (sx + 20) + '" y2="' + (sy + 1) + '" stroke-width="0.4"/>' +
+      '<text x="' + sx + '" y="' + (sy - 2) + '" font-size="2.4" stroke="none">0</text><text x="' + (sx + 10) + '" y="' + (sy - 2) + '" font-size="2.4" stroke="none" text-anchor="middle">10</text><text x="' + (sx + 20) + '" y="' + (sy - 2) + '" font-size="2.4" stroke="none" text-anchor="middle">20 m</text></g>';
+    svg.innerHTML = s;
+    activarArrastre(svg, v);
+  }
+  function pintarAxo(svg) {
+    // Axonometría isométrica: x' = (x - y)·cos30, y' = (x + y)·sin30 - z
+    var r = actual, c30 = Math.cos(Math.PI / 6), s30 = 0.5, hp = ctx.hip.altura_planta_m;
+    var b = Motor.lim(ctx.poly), cx = (b[0] + b[2]) / 2, cy = (b[1] + b[3]) / 2;
+    function P(x, y, z) { var X = x - cx, Y = y - cy; return [(X - Y) * c30, -((X + Y) * s30 + z)]; }
+    var pts = [];
+    function anota(p) { pts.push(p); return p; }
+    function poli(cs, z) { return cs.map(function (c) { return anota(P(c.x, c.y, z)); }); }
+    function d(ps) { return "M" + ps.map(function (p) { return p[0].toFixed(2) + "," + p[1].toFixed(2); }).join("L") + "Z"; }
+    var suelo = "";
+    [["zona_uni", "var(--zona-u)"], ["zona_multi", "var(--zona-m)"], ["calzadas", "var(--calzada)"], ["bolsas", "var(--plaza)"], ["plazas_casas", "var(--plaza)"], ["aceras", "var(--acera)"]].forEach(function (cp) {
+      var gs = r.geo[cp[0]]; gs = Array.isArray(gs) ? gs : [gs];
+      gs.forEach(function (g) { Motor.polys(g).forEach(function (p) { suelo += '<path d="' + d(poli(p.getExteriorRing().getCoordinates(), 0)) + '" fill="' + cp[1] + '"/>'; }); });
+    });
+    suelo += '<path d="' + d(poli(ctx.poly.getExteriorRing().getCoordinates(), 0)) + '" fill="none" stroke="var(--parcela)" stroke-width="0.4"/>';
+    var cuerpos = [];
+    [["casas", r.plantas_casa * hp, "var(--casa)", "var(--casa-b)"], ["bloques", r.plantas_bloque * hp, "var(--bloque)", "var(--bloque-b)"]].forEach(function (t) {
+      r.geo[t[0]].forEach(function (g) {
+        var cs = g.getExteriorRing().getCoordinates(), h = t[1], prof = 0;
+        cs.forEach(function (c) { prof += (c.x - cx) + (c.y - cy); }); prof /= cs.length;
+        var caras = "";
+        for (var i = 0; i + 1 < cs.length; i++) {
+          var a = cs[i], e = cs[i + 1];
+          // cara visible si mira hacia el observador (sur-oeste en el marco del dibujo)
+          var nx = e.y - a.y, ny = -(e.x - a.x), ccw = J_ccw(cs) ? 1 : -1;
+          if ((nx * ccw) * -1 + (ny * ccw) * -1 > 0) {
+            var q = [P(a.x, a.y, 0), P(e.x, e.y, 0), P(e.x, e.y, h), P(a.x, a.y, h)];
+            q.forEach(anota);
+            var tono = Math.abs(nx) > Math.abs(ny) ? 0.78 : 0.9;
+            caras += '<path d="' + d(q) + '" fill="' + t[2] + '" stroke="' + t[3] + '" stroke-width="0.12" style="filter:brightness(' + tono + ')"/>';
+          }
+        }
+        caras += '<path d="' + d(poli(cs, h)) + '" fill="' + t[2] + '" stroke="' + t[3] + '" stroke-width="0.12"/>';
+        cuerpos.push({ prof: prof, svg: caras });
+      });
+    });
+    cuerpos.sort(function (x, y) { return y.prof - x.prof; });
+    var minx = Infinity, miny = Infinity, maxx = -Infinity, maxy = -Infinity;
+    pts.forEach(function (p) { minx = Math.min(minx, p[0]); maxx = Math.max(maxx, p[0]); miny = Math.min(miny, p[1]); maxy = Math.max(maxy, p[1]); });
+    var m = 6;
+    svg.setAttribute("viewBox", (minx - m).toFixed(1) + " " + (miny - m).toFixed(1) + " " + (maxx - minx + 2 * m).toFixed(1) + " " + (maxy - miny + 2 * m).toFixed(1));
+    svg.innerHTML = suelo + cuerpos.map(function (c) { return c.svg; }).join("");
+  }
+  function J_ccw(cs) { var a = 0; for (var i = 0; i + 1 < cs.length; i++) a += cs[i].x * cs[i + 1].y - cs[i + 1].x * cs[i].y; return a > 0; }
+
+  // arrastre de la línea de reparto
+  function activarArrastre(svg, v) {
+    var t = svg.querySelector("#tirador"); if (!t) return;
+    var arrastrando = false;
+    function mundo(ev) {
+      var p = svg.createSVGPoint(); p.x = ev.clientX; p.y = ev.clientY;
+      var q = p.matrixTransform(svg.getScreenCTM().inverse());
+      return [q.x + v.x0, v.y1 - q.y];
+    }
+    t.addEventListener("pointerdown", function (ev) { arrastrando = true; t.setPointerCapture(ev.pointerId); ev.preventDefault(); });
+    t.addEventListener("pointermove", function (ev) {
+      if (!arrastrando) return;
+      var w = mundo(ev);
+      var pct = Math.max(0, Math.min(100, Math.round(Motor.pctDesdePunto(ctx, params.ang, params.uni_en, w[0], w[1]))));
+      var l = Motor.lineaCorte(ctx, params.ang, w[0], w[1]);
+      var g = svg.querySelector("#corte"); if (!g || l.isEmpty()) return;
+      var cs = l.getCoordinates(), a = cs[0], b = cs[cs.length - 1], mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      var ln = g.querySelector("line"), tx = g.querySelector("text");
+      ln.setAttribute("x1", a.x - v.x0); ln.setAttribute("y1", v.y1 - a.y); ln.setAttribute("x2", b.x - v.x0); ln.setAttribute("y2", v.y1 - b.y);
+      t.setAttribute("cx", mx - v.x0); t.setAttribute("cy", v.y1 - my);
+      tx.setAttribute("x", mx - v.x0 + 3.2); tx.setAttribute("y", v.y1 - my - 2.6); tx.textContent = fmt(pct) + " % casas";
+      params.pct = pct; $("pct").value = pct; $("pct-o").textContent = fmt(pct) + " %";
+    });
+    t.addEventListener("pointerup", function () { if (arrastrando) { arrastrando = false; recalcular(); } });
+  }
+  // información al pasar por encima
+  $("plano").addEventListener("pointermove", function (ev) {
+    var el = ev.target, tip = $("tip");
+    if (!el.dataset || !el.dataset.tipo || !actual) { tip.hidden = true; return; }
+    var g = actual.geo[el.dataset.tipo][+el.dataset.i], a = g.getArea(), txt;
+    if (el.dataset.tipo === "casas") txt = "Casa " + (+el.dataset.i + 1) + " · huella " + fmt(a) + " m² · " + actual.plantas_casa + " plantas · " + fmt(ctx.hip.sup_casa_m2) + " m²c";
+    else txt = "Bloque " + (+el.dataset.i + 1) + " · huella " + fmt(a) + " m² · " + actual.plantas_bloque + " plantas · " + fmt(a * actual.plantas_bloque) + " m²c de capacidad";
+    tip.textContent = txt; tip.hidden = false; tip.style.left = (ev.clientX + 12) + "px"; tip.style.top = (ev.clientY + 12) + "px";
+  });
+  $("plano").addEventListener("pointerleave", function () { $("tip").hidden = true; });
+
+  // ---------------------------------------------------------------- cifras
+  function pintarCifras() {
+    var r = actual, Emax = ctx.sup * ctx.comun.edificabilidad_m2m2;
+    $("veredicto").className = "veredicto " + (r.cumple ? "si" : "no");
+    $("veredicto").textContent = r.cumple ? "Cumple todas las comprobaciones" : "No cumple: " + Object.keys(r.comprobaciones).filter(function (k) { return !r.comprobaciones[k]; }).length + " comprobación(es)";
+    $("c-viv").textContent = r.viviendas; $("c-viv2").textContent = r.casas + " casas + " + r.pisos + " pisos";
+    $("c-techo").textContent = fmt(r.techo_m2); $("c-techo2").textContent = fmt(r.aprovechamiento_pct, 1) + " % de " + fmt(Emax);
+    $("c-plazas").textContent = r.plazas + "/" + r.plazas_necesarias; $("c-plazas2").textContent = r.plazas_casas + " en calle + " + r.plazas_bolsa + " en bolsa";
+    $("c-ocup").textContent = fmt(r.ocupacion_B_pct, 1) + " %"; $("c-ocup2").textContent = "casas " + fmt(r.ocupacion_A_uni_pct, 1) + " % · bloques " + fmt(r.ocupacion_A_multi_pct, 1) + " %";
+    $("checks").innerHTML = Object.keys(r.comprobaciones).map(function (k) { return '<li class="' + (r.comprobaciones[k] ? "si" : "no") + '">' + CHK_TXT[k] + "</li>"; }).join("");
+    $("notas").innerHTML = r.avisos.map(function (t) { return '<li class="aviso">' + t + "</li>"; }).join("") + r.notas.map(function (t) { return "<li>" + t + "</li>"; }).join("") +
+      (r.fondo_saco_m ? "<li>Calle sin salida: " + fmt(r.fondo_saco_m) + " m.</li>" : "");
+  }
+
+  // ---------------------------------------------------------------- banco de variantes
+  $("generar").addEventListener("click", function () {
+    var btn = $("generar"), comb = Motor.combinaciones(ctx), res = [], vistos = {}, i = 0;
+    btn.disabled = true; btn.textContent = "Generando…";
+    function paso() {
+      var t0 = performance.now();
+      while (i < comb.length && performance.now() - t0 < 60) {
+        var p = comb[i++], r = Motor.variante(ctx, p);
+        var k = [r.angulo_hileras, p.pct, r.unifamiliar_en, r.remate, p.acera, r.casas, r.pisos, r.plazas].join("|");
+        if (!vistos[k]) { vistos[k] = 1; r.params = p; res.push(r); }
+      }
+      $("barra-prog").style.width = (100 * i / comb.length) + "%";
+      $("estado").textContent = "Variantes: " + i + " de " + comb.length;
+      if (i < comb.length) { setTimeout(paso, 0); return; }
+      variantes = Motor.ordenar(res);
+      btn.disabled = false; btn.textContent = "Generar de nuevo";
+      $("estado").textContent = variantes.length + " variantes distintas · " + variantes.filter(function (r) { return r.cumple; }).length + " cumplen";
+      pintarGaleria();
+    }
+    setTimeout(paso, 0);
+  });
+  $("solo-ok").addEventListener("change", pintarGaleria);
+  $("orden").addEventListener("change", pintarGaleria);
+  function pintarGaleria() {
+    var gal = $("galeria");
+    if (!variantes.length) { gal.innerHTML = '<p class="vacio">Pulsa «Generar variantes» para explorar todas las combinaciones de reparto, lado, final de calle y acera. Haz clic en una para editarla.</p>'; $("barra-prog").style.width = "0"; return; }
+    var lista = variantes.filter(function (r) { return !$("solo-ok").checked || r.cumple; });
+    var o = $("orden").value;
+    var f = { viviendas: function (a, b) { return b.viviendas - a.viviendas || b.techo_m2 - a.techo_m2; }, techo: function (a, b) { return b.techo_m2 - a.techo_m2; },
+      casas: function (a, b) { return b.casas - a.casas || b.viviendas - a.viviendas; }, ocupacion: function (a, b) { return a.ocupacion_B_pct - b.ocupacion_B_pct; } }[o];
+    if (f) lista = lista.slice().sort(f);
+    var v = vb(ctx, 4);
+    gal.innerHTML = lista.slice(0, 48).map(function (r) {
+      return '<button type="button" class="tarjeta' + (r.id === idActiva ? " activa" : "") + '" data-id="' + r.id + '">' +
+        '<svg viewBox="0 0 ' + v.w.toFixed(1) + " " + v.h.toFixed(1) + '" aria-hidden="true">' + svgVariante(r, v, false) + "</svg>" +
+        '<span class="t1"><b>' + r.id + '</b><span class="tag ' + (r.cumple ? "si" : "no") + '">' + (r.cumple ? "cumple" : "no cumple") + "</span></span>" +
+        '<span class="t1"><span>' + r.casas + "+" + r.pisos + " = " + r.viviendas + " viv</span><span>" + fmt(r.techo_m2) + " m²c</span></span>" +
+        '<span class="t2">' + fmt(r.pct_zona_unifamiliar) + " % casas " + r.unifamiliar_en + " · " + r.remate.replace("_", " ") + " · acera " + (r.acera ? "sí" : "no") + " · plazas " + r.plazas + "/" + r.plazas_necesarias + "</span></button>";
+    }).join("") + (lista.length > 48 ? '<p class="vacio">Se muestran 48 de ' + lista.length + '.</p>' : "") + (!lista.length ? '<p class="vacio">Ninguna variante cumple todas las comprobaciones.</p>' : "");
+  }
+  $("galeria").addEventListener("click", function (e) {
+    var t = e.target.closest(".tarjeta"); if (!t) return;
+    var r = variantes.filter(function (x) { return x.id === t.dataset.id; })[0]; if (!r) return;
+    idActiva = r.id; params = Object.assign({}, r.params); sincronizarControles(); recalcular(); pintarGaleria();
+    $("plano").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
+  });
+
+  // ---------------------------------------------------------------- comparación y exportación
+  $("fijar").addEventListener("click", function () {
+    if (!actual) return;
+    var r = actual; r.etiqueta = idActiva && variantes.some(function (x) { return x.id === idActiva && sameParams(x.params, r.params); }) ? idActiva : "Ajuste " + (fijadas.length + 1);
+    fijadas.push(r); if (fijadas.length > 6) fijadas.shift(); pintarComparacion();
+  });
+  function sameParams(a, b) { return a && b && a.ang === b.ang && a.pct === b.pct && a.uni_en === b.uni_en && a.remate === b.remate && a.acera === b.acera; }
+  function pintarComparacion() {
+    var tb = $("comparar").querySelector("tbody");
+    if (!fijadas.length) { tb.innerHTML = '<tr><td colspan="10" class="vacio" style="font-family:var(--f-ui)">Fija variantes con «Fijar para comparar».</td></tr>'; return; }
+    tb.innerHTML = fijadas.map(function (r, i) {
+      return "<tr><td style=\"font-family:var(--f-ui)\">" + r.etiqueta + " · " + fmt(r.pct_zona_unifamiliar) + " % " + r.unifamiliar_en + ", " + r.remate.replace("_", " ") + "</td><td>" + r.casas + "</td><td>" + r.pisos + "</td><td>" + r.viviendas +
+        "</td><td>" + fmt(r.techo_m2) + "</td><td>" + r.plazas + "/" + r.plazas_necesarias + "</td><td>" + fmt(r.ocupacion_B_pct, 1) + "</td><td>" + fmt(r.fondo_saco_m) +
+        "</td><td>" + (r.cumple ? "sí" : "no") + '</td><td><button type="button" data-i="' + i + '" data-a="ver">Ver</button> · <button type="button" data-i="' + i + '" data-a="quitar">Quitar</button></td></tr>';
+    }).join("");
+  }
+  $("comparar").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    var i = +b.dataset.i;
+    if (b.dataset.a === "quitar") { fijadas.splice(i, 1); pintarComparacion(); return; }
+    params = Object.assign({}, fijadas[i].params); sincronizarControles(); recalcular();
+  });
+  $("copiar").addEventListener("click", function () {
+    if (!actual) return;
+    var hipCambiadas = {};
+    Object.keys(ctx.hip).forEach(function (k) { if (ctx.hip[k] !== Motor.HIPOTESIS_DEFECTO[k] && !(entradaActual.hipotesis && entradaActual.hipotesis[k] === ctx.hip[k])) hipCambiadas[k] = ctx.hip[k]; });
+    var q = Object.assign({}, params); if (Object.keys(hipCambiadas).length) q.hipotesis = hipCambiadas;
+    var cmd = "python3 scripts/variantes_generador.py planos/variantes/entrada_UA-03-01.json --parametros '" + JSON.stringify(q) + "'";
+    var ok = function () { $("copiado").hidden = false; $("copiado").textContent = "Orden copiada. Ejecútala en el repositorio para obtener el DXF."; };
+    try {
+      navigator.clipboard.writeText(cmd).then(ok, function () { mostrarCmd(cmd); });
+    } catch (err) { mostrarCmd(cmd); }
+  });
+  function mostrarCmd(cmd) { $("copiado").hidden = false; $("copiado").textContent = cmd; }
+
+  // ---------------------------------------------------------------- otra parcela
+  $("json-entrada").value = JSON.stringify(DEFECTO, null, 2);
+  $("cargar-json").addEventListener("click", function () {
+    $("json-error").hidden = true;
+    try { cargarEntrada(JSON.parse($("json-entrada").value)); }
+    catch (err) { $("json-error").hidden = false; $("json-error").textContent = "No se ha podido cargar: " + err.message; }
+  });
+  $("restaurar").addEventListener("click", function () { $("json-entrada").value = JSON.stringify(DEFECTO, null, 2); $("json-error").hidden = true; cargarEntrada(DEFECTO); });
+
+  // ---------------------------------------------------------------- arranque
+  if (!window.jsts || !window.Motor) {
+    $("subtitulo").textContent = "No se ha podido cargar el motor de geometría. Recarga la página.";
+    return;
+  }
+  try { cargarEntrada(DEFECTO); }
+  catch (err) { $("subtitulo").textContent = "Error al cargar la parcela: " + err.message; }
+})();
+</script>

@@ -712,6 +712,10 @@ def main(argv=None) -> int:
     p.add_argument("--top", type=int, default=9, help="Variantes en la lámina (por defecto 9)")
     p.add_argument("--salida", type=Path, default=None, help="Carpeta (por defecto planos/variantes/<nombre>)")
     p.add_argument("--dxf", default=None, help="Exportar a DXF la variante indicada (p. ej. V001)")
+    p.add_argument("--parametros", default=None,
+                   help="JSON con una variante concreta (lo copia el visor): "
+                        '{"ang":0.5,"pct":60,"uni_en":"abajo","remate":"martillo","acera":true,"hipotesis":{...}}. '
+                        "Calcula solo esa variante y exporta su DXF y SVG.")
     args = p.parse_args(argv)
     try:
         ctx = cargar(args.entrada)
@@ -720,6 +724,21 @@ def main(argv=None) -> int:
         return 1
     carpeta = args.salida or Path("planos/variantes") / re.sub(r"[^\w-]+", "_", ctx["nombre"]).strip("_")
     carpeta.mkdir(parents=True, exist_ok=True)
+
+    if args.parametros:
+        q = json.loads(args.parametros)
+        ctx["hip"].update(q.get("hipotesis") or {})
+        if "separacion_edificios_m" in q:
+            ctx["comun"]["separacion_edificios_m"] = q["separacion_edificios_m"]
+        r = variante(ctx, float(q["ang"]), float(q["pct"]), q.get("uni_en", "abajo"), q.get("remate", "fondo_saco"),
+                     bool(q.get("acera", False)))
+        r["id"] = "VISOR"
+        exportar_dxf(r, ctx, carpeta / "visor.dxf")
+        (carpeta / "visor.svg").write_text(svg_variante(r, ctx), encoding="utf-8")
+        print(json.dumps(publico(r), ensure_ascii=False, indent=2))
+        print(f"DXF: {carpeta / 'visor.dxf'} · SVG: {carpeta / 'visor.svg'}")
+        print("PENDIENTE DE VALIDAR POR EL ARQUITECTO")
+        return 0
 
     rs = barrer(ctx)
     top = rs[: args.top]
