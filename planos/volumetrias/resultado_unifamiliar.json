@@ -1,0 +1,108 @@
+{
+  "parcela": {
+    "nombre": "UA-03-01 Sector-1 Los Pocillos (Villanueva de la Cañada) - UNIFAMILIAR",
+    "superficie_calculo_m2": 8839.0,
+    "superficie_poligono_m2": 9022.15
+  },
+  "lados": [
+    {
+      "indice": 0,
+      "longitud_m": 72.76,
+      "mira_a": "E",
+      "rumbo_normal_grados": 90.0
+    },
+    {
+      "indice": 1,
+      "longitud_m": 91.85,
+      "mira_a": "S",
+      "rumbo_normal_grados": 179.5
+    },
+    {
+      "indice": 2,
+      "longitud_m": 101.65,
+      "mira_a": "O",
+      "rumbo_normal_grados": 252.0
+    },
+    {
+      "indice": 3,
+      "longitud_m": 29.2,
+      "mira_a": "N",
+      "rumbo_normal_grados": 7.1
+    },
+    {
+      "indice": 4,
+      "longitud_m": 76.08,
+      "mira_a": "N",
+      "rumbo_normal_grados": 12.2
+    },
+    {
+      "indice": 5,
+      "longitud_m": 20.26,
+      "mira_a": "N",
+      "rumbo_normal_grados": 10.0
+    }
+  ],
+  "hipotesis": {
+    "altura_planta_m": 3.0,
+    "fondo_bloque_m": 12.0,
+    "longitud_min_bloque_m": 15.0,
+    "lado_torre_m": 20.0,
+    "fondo_adosada_m": 10.0,
+    "ancho_adosada_m": 6.0,
+    "plantas_unifamiliar": 2,
+    "sup_construida_vivienda_m2": 100.0,
+    "paso_rejilla_m": 0.5,
+    "paso_angulo_grados": 5
+  },
+  "resultados": [
+    {
+      "tipologia": "unifamiliar_adosada",
+      "estado": "OK",
+      "huella_m2": 4515.0,
+      "ocupacion_pct": 51.08,
+      "plantas": 2,
+      "atico_m2": 0,
+      "sup_construida_geometrica_m2": 9030.0,
+      "sup_construida_materializable_m2": 5100.0,
+      "sup_computable_m2": 5100.0,
+      "sup_no_computable_m2": 0.0,
+      "factor_computo": 1.0,
+      "desglose_no_computables": [],
+      "techo_materializable_m2": 5100.0,
+      "aprovechamiento_pct": 100.0,
+      "viviendas_estimadas": 34,
+      "criterio_viviendas": "longitud de hilera / 6.0 m (hipótesis)",
+      "orientacion_bloques_grados": 108.0,
+      "n_edificios": 6,
+      "notas": [
+        "Ático: no regulado en la entrada (no se genera). Si la ficha lo permite, añada 'atico'.",
+        "La superficie computable geométrica (9030 m²) supera la edificabilidad (5100 m²): sobran 3930 m² construidos (reducir ático, plantas o fondo).",
+        "Viviendas limitadas por la ficha: 73 → 34."
+      ]
+    },
+    {
+      "tipologia": "unifamiliar_aislada",
+      "estado": "OK",
+      "huella_m2": 5303.4,
+      "ocupacion_pct": 60.0,
+      "plantas": 2,
+      "atico_m2": 0,
+      "sup_construida_geometrica_m2": 10606.8,
+      "sup_construida_materializable_m2": 5100.0,
+      "sup_computable_m2": 5100.0,
+      "sup_no_computable_m2": 0.0,
+      "factor_computo": 1.0,
+      "desglose_no_computables": [],
+      "techo_materializable_m2": 5100.0,
+      "aprovechamiento_pct": 100.0,
+      "viviendas_estimadas": 1,
+      "criterio_viviendas": "por unidades de parcela",
+      "notas": [
+        "La huella se ha reducido desde la zona de retranqueos para cumplir la ocupación.",
+        "Ático: no regulado en la entrada (no se genera). Si la ficha lo permite, añada 'atico'.",
+        "La superficie computable geométrica (10607 m²) supera la edificabilidad (5100 m²): sobran 5507 m² construidos (reducir ático, plantas o fondo)."
+      ]
+    }
+  ],
+  "aviso": "PENDIENTE DE VALIDAR POR EL ARQUITECTO"
+}

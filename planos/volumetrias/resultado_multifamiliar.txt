@@ -1,0 +1,31 @@
+GENERADOR DE VOLUMETRÍAS (reglas fijas, sin IA)
+  Parcela: UA-03-01 Sector-1 Los Pocillos (Villanueva de la Cañada) - MULTIFAMILIAR — superficie de cálculo 8839.00 m² (polígono 9022.15 m²)
+  AVISO: El polígono mide 9022.15 m² y la superficie oficial 8839.00 m² (+2.1 %). Los parámetros se calculan sobre la oficial; la geometría, sobre el polígono.
+
+  Tipología             Estado        Huella m²  Ocup.%  Pl.  Ático m²  Constr. m²  Comput. m²  Aprov.%  Viv.
+  -----------------------------------------------------------------------------------------------------------
+  bloque_abierto        OK               3240.0    36.7    3       0.0      5100.0      5100.0    100.0    34
+  torre                 OK               2400.0    27.1    3       0.0      5100.0      5100.0    100.0    34
+
+  · bloque_abierto: Ático: no regulado en la entrada (no se genera). Si la ficha lo permite, añada 'atico'.
+  · bloque_abierto: La superficie computable geométrica (9720 m²) supera la edificabilidad (5100 m²): sobran 4620 m² construidos (reducir ático, plantas o fondo).
+  · bloque_abierto: Viviendas limitadas por la ficha: 51 → 34.
+  · bloque_abierto: DXF → planos/volumetrias/UA-03-01_Sector-1_Los_Pocillos_Villanueva_de_la_Cañada_-_MULTIFAMILIAR_bloque_abierto.dxf
+  · torre: Ático: no regulado en la entrada (no se genera). Si la ficha lo permite, añada 'atico'.
+  · torre: La superficie computable geométrica (7200 m²) supera la edificabilidad (5100 m²): sobran 2100 m² construidos (reducir ático, plantas o fondo).
+  · torre: Viviendas limitadas por la ficha: 51 → 34.
+  · torre: DXF → planos/volumetrias/UA-03-01_Sector-1_Los_Pocillos_Villanueva_de_la_Cañada_-_MULTIFAMILIAR_torre.dxf
+
+  Hipótesis de diseño usadas (modificables en 'hipotesis'):
+    - altura_planta_m = 3.0
+    - fondo_bloque_m = 12.0
+    - longitud_min_bloque_m = 15.0
+    - lado_torre_m = 20.0
+    - fondo_adosada_m = 10.0
+    - ancho_adosada_m = 6.0
+    - plantas_unifamiliar = 2
+    - sup_construida_vivienda_m2 = 100.0
+    - paso_rejilla_m = 0.5
+    - paso_angulo_grados = 5
+
+PENDIENTE DE VALIDAR POR EL ARQUITECTO

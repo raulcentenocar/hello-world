@@ -1,0 +1,54 @@
+{
+  "nombre": "UA-03-01 Sector-1 Los Pocillos (Villanueva de la Cañada) - UNIFAMILIAR",
+  "parcela": {
+    "coordenadas": [
+      [
+        414988.78,
+        4478854.76
+      ],
+      [
+        414988.78,
+        4478782.0
+      ],
+      [
+        414896.93,
+        4478781.24
+      ],
+      [
+        414865.48,
+        4478877.9
+      ],
+      [
+        414894.46,
+        4478874.31
+      ],
+      [
+        414968.83,
+        4478858.29
+      ]
+    ],
+    "superficie_oficial_m2": 8839
+  },
+  "fachadas": [
+    1,
+    2
+  ],
+  "urbanismo": {
+    "edificabilidad_m2m2": 0.5769884,
+    "ocupacion_pct": 60,
+    "plantas_max": 2,
+    "altura_max_m": 7.5,
+    "retranqueo_fachada_m": 3,
+    "retranqueo_linderos_m": 3,
+    "fondo_edificable_m": null,
+    "separacion_edificios_m": 6,
+    "longitud_max_bloque_m": null,
+    "viviendas_max": 34,
+    "atico": null,
+    "computo": null
+  },
+  "tipologias": [
+    "unifamiliar_adosada",
+    "unifamiliar_aislada"
+  ]
+}
