@@ -2,151 +2,151 @@ VARIANTES DE ORDENACIÓN (reglas fijas, sin IA) — UA-03-01 Los Pocillos
 Superficie 8839 m² · edificabilidad 5100 m²c · máx. 34 viv · 134 variantes generadas
 
 Id    OK   Uni% Uni en Remate     Acera  Casas Pisos  Viv    m²c   Plazas Ocup.B% F.saco
-V001  ✔      50 N      martillo   sí        14    20   34   4884    68/68    22.5      0
-V002  ✔      70 N      martillo   sí         4    30   34   4674    68/68    18.8      0
-V003  ✔       0 —      fondo_saco no         0    34   34   4590    68/68    18.1      0
-V004  ✘      30 N      martillo   sí        24    10   34   5094    48/68    26.3      0
-V005  ✘      60 S      martillo   sí        24    10   34   5094    62/68    26.3      0
-V006  ✘      70 S      martillo   sí        24    10   34   5094    46/68    26.3      0
-V007  ✘      40 N      martillo   sí        21    13   34   5031    40/68    26.0      0
-V008  ✘      50 N      martillo   no        18    16   34   4968    68/68    24.0      0
-V009  ✘      50 N      fondo_saco sí        14    20   34   4884    68/68    22.5    107
-V010  ✘      50 S      fondo_saco sí        13    21   34   4863    68/68    22.2    101
-V011  ✘      50 S      martillo   sí        13    21   34   4863    66/68    22.2      0
-V012  ✘      40 S      martillo   sí        12    22   34   4842    34/68    23.5      0
-V013  ✘      60 N      martillo   sí         8    26   34   4758    14/68    20.3      0
-V014  ✘      70 N      martillo   no         5    29   34   4695    68/68    19.2      0
-V015  ✘      70 N      fondo_saco sí         4    30   34   4674    68/68    18.8     36
-V016  ✘       0 —      fondo_saco no         0    34   34   4590    64/68    17.3      0
-V017  ✘      30 E      fondo_saco no         0    34   34   4590    16/68    17.3      0
-V018  ✘      30 E      fondo_saco sí         0    34   34   4590    16/68    17.3      0
-V019  ✘      30 E      martillo   no         0    34   34   4590    16/68    17.3      0
-V020  ✘      30 E      martillo   sí         0    34   34   4590    16/68    17.3      0
-V021  ✘      30 E      lazo       no         0    34   34   4590    16/68    17.3      0
-V022  ✘      30 E      lazo       sí         0    34   34   4590    16/68    17.3      0
-V023  ✘      40 E      fondo_saco no         0    34   34   4590    16/68    17.3      0
-V024  ✘      40 E      fondo_saco sí         0    34   34   4590    16/68    17.3      0
-V025  ✘      40 E      martillo   no         0    34   34   4590    16/68    17.3      0
-V026  ✘      40 E      martillo   sí         0    34   34   4590    16/68    17.3      0
-V027  ✘      40 E      lazo       no         0    34   34   4590    16/68    17.3      0
-V028  ✘      40 E      lazo       sí         0    34   34   4590    16/68    17.3      0
-V029  ✘      60 O      fondo_saco no         0    34   34   4590     0/68    17.3      0
-V030  ✘      60 O      fondo_saco sí         0    34   34   4590     0/68    17.3      0
-V031  ✘      60 O      martillo   no         0    34   34   4590     0/68    17.3      0
-V032  ✘      60 O      martillo   sí         0    34   34   4590     0/68    17.3      0
-V033  ✘      60 O      lazo       no         0    34   34   4590     0/68    17.3      0
-V034  ✘      60 O      lazo       sí         0    34   34   4590     0/68    17.3      0
-V035  ✘      80 O      fondo_saco no         0    34   34   4590     0/68    17.3      0
-V036  ✘      80 O      fondo_saco sí         0    34   34   4590     0/68    17.3      0
-V037  ✘      80 O      martillo   no         0    34   34   4590     0/68    17.3      0
-V038  ✘      80 O      martillo   sí         0    34   34   4590     0/68    17.3      0
-V039  ✘      80 O      lazo       no         0    34   34   4590     0/68    17.3      0
-V040  ✘      80 O      lazo       sí         0    34   34   4590     0/68    17.3      0
-V041  ✘      50 E      fondo_saco no         0    34   34   4590    14/68    17.4      0
-V042  ✘      50 E      fondo_saco sí         0    34   34   4590    14/68    17.4      0
-V043  ✘      50 E      martillo   no         0    34   34   4590    14/68    17.4      0
-V044  ✘      50 E      martillo   sí         0    34   34   4590    14/68    17.4      0
-V045  ✘      50 E      lazo       no         0    34   34   4590    14/68    17.4      0
-V046  ✘      50 E      lazo       sí         0    34   34   4590    14/68    17.4      0
-V047  ✘      50 O      fondo_saco sí         0    34   34   4590     0/68    17.9      0
-V048  ✘      50 O      martillo   sí         0    34   34   4590     0/68    17.9      0
-V049  ✘      50 O      lazo       sí         0    34   34   4590     0/68    17.9      0
-V050  ✘      70 O      fondo_saco no         0    34   34   4590     0/68    17.9      0
-V051  ✘      70 O      fondo_saco sí         0    34   34   4590     0/68    17.9      0
-V052  ✘      70 O      martillo   no         0    34   34   4590     0/68    17.9      0
-V053  ✘      70 O      martillo   sí         0    34   34   4590     0/68    17.9      0
-V054  ✘      70 O      lazo       no         0    34   34   4590     0/68    17.9      0
-V055  ✘      70 O      lazo       sí         0    34   34   4590     0/68    17.9      0
-V056  ✘      30 S      fondo_saco sí         0    34   34   4590    40/68    18.3      0
-V057  ✘      30 S      martillo   sí         0    34   34   4590    40/68    18.3      0
-V058  ✘      30 S      lazo       sí         0    34   34   4590    40/68    18.3      0
-V059  ✘      80 N      fondo_saco no         0    34   34   4590     0/68    18.3      0
-V060  ✘      80 N      fondo_saco sí         0    34   34   4590     0/68    18.3      0
-V061  ✘      80 N      martillo   no         0    34   34   4590     0/68    18.3      0
-V062  ✘      80 N      martillo   sí         0    34   34   4590     0/68    18.3      0
-V063  ✘      80 N      lazo       no         0    34   34   4590     0/68    18.3      0
-V064  ✘      80 N      lazo       sí         0    34   34   4590     0/68    18.3      0
-V065  ✘      80 S      martillo   sí        27     6   33   5022    50/66    26.9      0
-V066  ✘     100 todo   fondo_saco sí        32     0   32   4992    64/64    28.2     97
-V067  ✘     100 todo   martillo   sí        32     0   32   4992    60/64    28.2      0
-V068  ✘     100 todo   lazo       sí        30     0   30   4680    56/60    26.5      0
-V069  ✘      40 O      fondo_saco sí         0    27   27   3645     0/54    14.1      0
-V070  ✘      40 O      martillo   sí         0    27   27   3645     0/54    14.1      0
-V071  ✘      40 O      lazo       sí         0    27   27   3645     0/54    14.1      0
-V072  ✘      30 O      fondo_saco sí         0    20   20   2700     0/40    10.5      0
-V073  ✘      30 O      martillo   sí         0    20   20   2700     0/40    10.5      0
-V074  ✘      30 O      lazo       sí         0    20   20   2700     0/40    10.5      0
-V075  ✘      60 E      fondo_saco no         0    20   20   2700     0/40    10.5      0
-V076  ✘      60 E      fondo_saco sí         0    20   20   2700     0/40    10.5      0
-V077  ✘      60 E      martillo   no         0    20   20   2700     0/40    10.5      0
-V078  ✘      60 E      martillo   sí         0    20   20   2700     0/40    10.5      0
-V079  ✘      60 E      lazo       no         0    20   20   2700     0/40    10.5      0
-V080  ✘      60 E      lazo       sí         0    20   20   2700     0/40    10.5      0
-V081  ✘      70 E      fondo_saco no         0    20   20   2700     0/40    10.5      0
-V082  ✘      70 E      fondo_saco sí         0    20   20   2700     0/40    10.5      0
-V083  ✘      70 E      martillo   no         0    20   20   2700     0/40    10.5      0
-V084  ✘      70 E      martillo   sí         0    20   20   2700     0/40    10.5      0
-V085  ✘      70 E      lazo       no         0    20   20   2700     0/40    10.5      0
-V086  ✘      70 E      lazo       sí         0    20   20   2700     0/40    10.5      0
-V087  ✘      80 E      fondo_saco no         0     0    0      0      0/0     0.0      0
-V088  ✘      80 E      fondo_saco sí         0     0    0      0      0/0     0.0      0
-V089  ✘      80 E      martillo   no         0     0    0      0      0/0     0.0      0
-V090  ✘      80 E      martillo   sí         0     0    0      0      0/0     0.0      0
-V091  ✘      80 E      lazo       no         0     0    0      0      0/0     0.0      0
-V092  ✘      80 E      lazo       sí         0     0    0      0      0/0     0.0      0
-V093  ✘     100 todo   fondo_saco no         0     0    0      0      0/0     0.0      0
-V094  ✘     100 todo   fondo_saco sí         0     0    0      0      0/0     0.0      0
-V095  ✘     100 todo   martillo   no         0     0    0      0      0/0     0.0      0
-V096  ✘     100 todo   martillo   sí         0     0    0      0      0/0     0.0      0
-V097  ✘     100 todo   lazo       no         0     0    0      0      0/0     0.0      0
-V098  ✘     100 todo   lazo       sí         0     0    0      0      0/0     0.0      0
-V099  ✘      30 N      fondo_saco sí        24    10   34   5094    48/68    26.3    100
-V100  ✘      30 N      martillo   no        24    10   34   5094    48/68    26.3      0
-V101  ✘      60 S      fondo_saco sí        24    10   34   5094    64/68    26.3     97
-V102  ✘      60 S      martillo   no        24    10   34   5094    62/68    26.3      0
-V103  ✘      70 S      fondo_saco sí        24    10   34   5094    48/68    26.3     97
-V104  ✘      70 S      martillo   no        24    10   34   5094    48/68    26.3      0
-V105  ✘      40 N      martillo   no        22    12   34   5052    42/68    26.9      0
-V106  ✘      40 N      fondo_saco sí        21    13   34   5031    42/68    26.0    107
-V107  ✘      50 N      fondo_saco no        18    16   34   4968    68/68    24.0    106
-V108  ✘      50 S      fondo_saco no        13    21   34   4863    68/68    22.2    100
-V109  ✘      50 S      martillo   no        13    21   34   4863    66/68    22.2      0
-V110  ✘      30 S      martillo   no        12    22   34   4842    62/68    23.5      0
-V111  ✘      40 S      fondo_saco sí        12    22   34   4842    36/68    23.5     94
-V112  ✘      40 S      martillo   no        12    22   34   4842    34/68    23.5      0
-V113  ✘      50 O      martillo   no        11    23   34   4821    20/68    22.2      0
-V114  ✘      40 O      martillo   no        11    23   34   4821    20/68    22.6      0
-V115  ✘      60 N      fondo_saco sí         8    26   34   4758    16/68    20.3     62
-V116  ✘      60 N      martillo   no         8    26   34   4758    14/68    20.3      0
-V117  ✘      70 N      fondo_saco no         5    29   34   4695    68/68    19.2     42
-V118  ✘      80 S      fondo_saco sí        27     6   33   5022    54/66    26.9    100
-V119  ✘      80 S      martillo   no        27     6   33   5022    50/66    26.9      0
-V120  ✘     100 todo   fondo_saco no        32     0   32   4992    64/64    28.2     97
-V121  ✘     100 todo   martillo   no        32     0   32   4992    60/64    28.2      0
-V122  ✘     100 todo   lazo       no        32     0   32   4992    60/64    28.2      0
-V123  ✘      30 O      martillo   no        11    20   31   4416    20/62    20.2      0
-V124  ✘      30 N      fondo_saco no        24    10   34   5094    48/68    26.3    100
-V125  ✘      60 S      fondo_saco no        24    10   34   5094    64/68    26.3     98
-V126  ✘      70 S      fondo_saco no        24    10   34   5094    48/68    26.3    100
-V127  ✘      40 N      fondo_saco no        22    12   34   5052    44/68    26.9    106
-V128  ✘      30 S      fondo_saco no        12    22   34   4842    64/68    23.5     93
-V129  ✘      40 S      fondo_saco no        12    22   34   4842    36/68    23.5     94
-V130  ✘      50 O      fondo_saco no        11    23   34   4821    22/68    22.2     44
-V131  ✘      40 O      fondo_saco no        11    23   34   4821    22/68    22.6     44
-V132  ✘      60 N      fondo_saco no         8    26   34   4758    16/68    20.3     62
-V133  ✘      80 S      fondo_saco no        27     6   33   5022    54/66    26.9    100
-V134  ✘      30 O      fondo_saco no        11    20   31   4416    22/62    20.2     44
+V001  ✔      70 N      martillo   sí         4    30   34   4974    68/68    19.9      0
+V002  ✔      50 N      martillo   sí        13    21   34   4893    68/68    22.3      0
+V003  ✔      30 N      martillo   sí        24     9   33   5049    66/66    26.1      0
+V004  ✔      60 S      martillo   sí        24     9   33   5049    66/66    26.1      0
+V005  ✔      40 S      martillo   sí        12    21   33   4737    66/66    21.4      0
+V006  ✔       0 —      fondo_saco no         0    33   33   4665    67/66    17.6      0
+V007  ✔      80 N      fondo_saco no         0    33   33   4665    67/66    17.6      0
+V008  ✔      80 N      fondo_saco sí         0    33   33   4665    67/66    17.6      0
+V009  ✔      80 N      martillo   no         0    33   33   4665    67/66    17.6      0
+V010  ✔      80 N      martillo   sí         0    33   33   4665    67/66    17.6      0
+V011  ✔      80 N      lazo       no         0    33   33   4665    67/66    17.6      0
+V012  ✔      80 N      lazo       sí         0    33   33   4665    67/66    17.6      0
+V013  ✔      70 S      martillo   sí        26     6   32   4806    64/64    25.8      0
+V014  ✔      50 S      martillo   sí        13    18   31   4578    62/62    21.1      0
+V015  ✔      40 N      martillo   sí        21     9   30   4581    60/60    23.5      0
+V016  ✔       0 —      fondo_saco no         0    30   30   4170    60/60    15.7      0
+V017  ✔      30 E      fondo_saco no         0    30   30   4170    60/60    15.7      0
+V018  ✔      30 E      fondo_saco sí         0    30   30   4170    60/60    15.7      0
+V019  ✔      30 E      martillo   no         0    30   30   4170    60/60    15.7      0
+V020  ✔      30 E      martillo   sí         0    30   30   4170    60/60    15.7      0
+V021  ✔      30 E      lazo       no         0    30   30   4170    60/60    15.7      0
+V022  ✔      30 E      lazo       sí         0    30   30   4170    60/60    15.7      0
+V023  ✔      60 N      martillo   sí         8    21   29   4113    58/58    17.9      0
+V024  ✔      80 S      martillo   sí        27     0   27   4212    54/54    23.8      0
+V025  ✔      30 S      fondo_saco sí         0    27   27   3855    54/54    14.5      0
+V026  ✔      30 S      martillo   sí         0    27   27   3855    54/54    14.5      0
+V027  ✔      30 S      lazo       sí         0    27   27   3855    54/54    14.5      0
+V028  ✔      40 E      fondo_saco no         0    21   21   2865    42/42    10.8      0
+V029  ✔      40 E      fondo_saco sí         0    21   21   2865    42/42    10.8      0
+V030  ✔      40 E      martillo   no         0    21   21   2865    42/42    10.8      0
+V031  ✔      40 E      martillo   sí         0    21   21   2865    42/42    10.8      0
+V032  ✔      40 E      lazo       no         0    21   21   2865    42/42    10.8      0
+V033  ✔      40 E      lazo       sí         0    21   21   2865    42/42    10.8      0
+V034  ✔      50 E      fondo_saco no         0    21   21   2865    42/42    10.8      0
+V035  ✔      50 E      fondo_saco sí         0    21   21   2865    42/42    10.8      0
+V036  ✔      50 E      martillo   no         0    21   21   2865    42/42    10.8      0
+V037  ✔      50 E      martillo   sí         0    21   21   2865    42/42    10.8      0
+V038  ✔      50 E      lazo       no         0    21   21   2865    42/42    10.8      0
+V039  ✔      50 E      lazo       sí         0    21   21   2865    42/42    10.8      0
+V040  ✔     100 todo   martillo   sí        19     0   19   2964    38/38    16.8      0
+V041  ✔      60 E      fondo_saco no         0     9    9   1305    18/18     4.9      0
+V042  ✔      60 E      fondo_saco sí         0     9    9   1305    18/18     4.9      0
+V043  ✔      60 E      martillo   no         0     9    9   1305    18/18     4.9      0
+V044  ✔      60 E      martillo   sí         0     9    9   1305    18/18     4.9      0
+V045  ✔      60 E      lazo       no         0     9    9   1305    18/18     4.9      0
+V046  ✔      60 E      lazo       sí         0     9    9   1305    18/18     4.9      0
+V047  ✔      70 E      fondo_saco no         0     9    9   1305    18/18     4.9      0
+V048  ✔      70 E      fondo_saco sí         0     9    9   1305    18/18     4.9      0
+V049  ✔      70 E      martillo   no         0     9    9   1305    18/18     4.9      0
+V050  ✔      70 E      martillo   sí         0     9    9   1305    18/18     4.9      0
+V051  ✔      70 E      lazo       no         0     9    9   1305    18/18     4.9      0
+V052  ✔      70 E      lazo       sí         0     9    9   1305    18/18     4.9      0
+V053  ✘      50 N      martillo   no        16    18   34   5046    68/68    23.7      0
+V054  ✘      70 N      fondo_saco sí         4    30   34   4974    68/68    19.9     36
+V055  ✘      70 N      martillo   no         4    30   34   4974    68/68    19.9      0
+V056  ✘      30 S      martillo   no         7    27   34   4947    68/68    20.7      0
+V057  ✘      50 N      fondo_saco sí        13    21   34   4893    68/68    22.3    107
+V058  ✘      30 N      fondo_saco sí        24     9   33   5049    66/66    26.1    100
+V059  ✘      30 N      martillo   no        24     9   33   5049    66/66    26.1      0
+V060  ✘      60 S      fondo_saco sí        24     9   33   5049    66/66    26.1     97
+V061  ✘      60 S      martillo   no        24     9   33   5049    66/66    26.1      0
+V062  ✘      70 S      martillo   no        27     6   33   4962    66/66    26.7      0
+V063  ✘      40 S      fondo_saco sí        12    21   33   4737    66/66    21.4     94
+V064  ✘      40 S      martillo   no        12    21   33   4737    66/66    21.4      0
+V065  ✘     100 todo   fondo_saco sí        32     0   32   4992    64/64    28.2     97
+V066  ✘      70 S      fondo_saco sí        26     6   32   4806    64/64    25.8     97
+V067  ✘      40 N      martillo   no        22     9   31   4737    62/62    24.3      0
+V068  ✘      50 S      fondo_saco sí        13    18   31   4578    62/62    21.1    101
+V069  ✘      50 S      martillo   no        13    18   31   4578    62/62    21.1      0
+V070  ✘     100 todo   lazo       sí        30     0   30   4680    56/60    26.5      0
+V071  ✘      40 N      fondo_saco sí        21     9   30   4581    60/60    23.5    107
+V072  ✘      60 N      fondo_saco sí         8    21   29   4113    58/58    17.9     62
+V073  ✘      60 N      martillo   no         8    21   29   4113    58/58    17.9      0
+V074  ✘      80 S      fondo_saco sí        27     0   27   4212    54/54    23.8    100
+V075  ✘      80 S      martillo   no        27     0   27   4212    54/54    23.8      0
+V076  ✘     100 todo   martillo   no        22     0   22   3432    44/44    19.4      0
+V077  ✘      30 O      fondo_saco sí         0     0    0      0      0/0     0.0      0
+V078  ✘      30 O      martillo   sí         0     0    0      0      0/0     0.0      0
+V079  ✘      30 O      lazo       sí         0     0    0      0      0/0     0.0      0
+V080  ✘      40 O      fondo_saco sí         0     0    0      0      0/0     0.0      0
+V081  ✘      40 O      martillo   sí         0     0    0      0      0/0     0.0      0
+V082  ✘      40 O      lazo       sí         0     0    0      0      0/0     0.0      0
+V083  ✘      50 O      fondo_saco sí         0     0    0      0      0/0     0.0      0
+V084  ✘      50 O      martillo   sí         0     0    0      0      0/0     0.0      0
+V085  ✘      50 O      lazo       sí         0     0    0      0      0/0     0.0      0
+V086  ✘      60 O      fondo_saco no         0     0    0      0      0/0     0.0      0
+V087  ✘      60 O      fondo_saco sí         0     0    0      0      0/0     0.0      0
+V088  ✘      60 O      martillo   no         0     0    0      0      0/0     0.0      0
+V089  ✘      60 O      martillo   sí         0     0    0      0      0/0     0.0      0
+V090  ✘      60 O      lazo       no         0     0    0      0      0/0     0.0      0
+V091  ✘      60 O      lazo       sí         0     0    0      0      0/0     0.0      0
+V092  ✘      70 O      fondo_saco no         0     0    0      0      0/0     0.0      0
+V093  ✘      70 O      fondo_saco sí         0     0    0      0      0/0     0.0      0
+V094  ✘      70 O      martillo   no         0     0    0      0      0/0     0.0      0
+V095  ✘      70 O      martillo   sí         0     0    0      0      0/0     0.0      0
+V096  ✘      70 O      lazo       no         0     0    0      0      0/0     0.0      0
+V097  ✘      70 O      lazo       sí         0     0    0      0      0/0     0.0      0
+V098  ✘      80 E      fondo_saco no         0     0    0      0      0/0     0.0      0
+V099  ✘      80 E      fondo_saco sí         0     0    0      0      0/0     0.0      0
+V100  ✘      80 E      martillo   no         0     0    0      0      0/0     0.0      0
+V101  ✘      80 E      martillo   sí         0     0    0      0      0/0     0.0      0
+V102  ✘      80 E      lazo       no         0     0    0      0      0/0     0.0      0
+V103  ✘      80 E      lazo       sí         0     0    0      0      0/0     0.0      0
+V104  ✘      80 O      fondo_saco no         0     0    0      0      0/0     0.0      0
+V105  ✘      80 O      fondo_saco sí         0     0    0      0      0/0     0.0      0
+V106  ✘      80 O      martillo   no         0     0    0      0      0/0     0.0      0
+V107  ✘      80 O      martillo   sí         0     0    0      0      0/0     0.0      0
+V108  ✘      80 O      lazo       no         0     0    0      0      0/0     0.0      0
+V109  ✘      80 O      lazo       sí         0     0    0      0      0/0     0.0      0
+V110  ✘     100 todo   fondo_saco no         0     0    0      0      0/0     0.0      0
+V111  ✘     100 todo   fondo_saco sí         0     0    0      0      0/0     0.0      0
+V112  ✘     100 todo   martillo   no         0     0    0      0      0/0     0.0      0
+V113  ✘     100 todo   martillo   sí         0     0    0      0      0/0     0.0      0
+V114  ✘     100 todo   lazo       no         0     0    0      0      0/0     0.0      0
+V115  ✘     100 todo   lazo       sí         0     0    0      0      0/0     0.0      0
+V116  ✘      50 N      fondo_saco no        16    18   34   5046    68/68    23.7    106
+V117  ✘      70 N      fondo_saco no         4    30   34   4974    68/68    19.9     42
+V118  ✘      30 S      fondo_saco no         7    27   34   4947    68/68    20.7     93
+V119  ✘      30 N      fondo_saco no        24     9   33   5049    66/66    26.1    100
+V120  ✘      60 S      fondo_saco no        24     9   33   5049    66/66    26.1     98
+V121  ✘      70 S      fondo_saco no        27     6   33   4962    66/66    26.7    100
+V122  ✘      40 S      fondo_saco no        12    21   33   4737    66/66    21.4     94
+V123  ✘     100 todo   fondo_saco no        32     0   32   4992    64/64    28.2     97
+V124  ✘     100 todo   lazo       no        32     0   32   4992    60/64    28.2      0
+V125  ✘      40 N      fondo_saco no        22     9   31   4737    62/62    24.3    106
+V126  ✘      50 S      fondo_saco no        13    18   31   4578    62/62    21.1    100
+V127  ✘      60 N      fondo_saco no         8    21   29   4113    58/58    17.9     62
+V128  ✘      80 S      fondo_saco no        27     0   27   4212    54/54    23.8    100
+V129  ✘      30 O      fondo_saco no        11     0   11   1716    22/22     9.7     44
+V130  ✘      40 O      fondo_saco no        11     0   11   1716    22/22     9.7     44
+V131  ✘      50 O      fondo_saco no        11     0   11   1716    22/22     9.7     44
+V132  ✘      30 O      martillo   no         0     0    0      0      0/0     0.0      0
+V133  ✘      40 O      martillo   no         0     0    0      0      0/0     0.0      0
+V134  ✘      50 O      martillo   no         0     0    0      0      0/0     0.0      0
 
 Detalle de las mejores:
-  V001: La bolsa de aparcamiento es un fondo de saco de ≈ 61 m (revisar). Hileras: 8 + 6 casas.
-  V002: La bolsa de aparcamiento es un fondo de saco de ≈ 86 m (revisar). Hileras: 4 casas.
-  V003: La bolsa de aparcamiento es un fondo de saco de ≈ 93 m (revisar).
-  V004: Faltan 20 plazas. Se colocan 24 de 25 casas posibles para maximizar viviendas y techo. Hileras: 8 + 4 + 8 + 4 casas.
-  V005: Faltan 6 plazas. Se colocan 24 de 26 casas posibles para maximizar viviendas y techo. La bolsa de aparcamiento es un fondo de saco de ≈ 28 m (revisar). Hileras: 8 + 4 + 8 + 4 casas.
-  V006: Faltan 22 plazas. Se colocan 24 de 26 casas posibles para maximizar viviendas y techo. Hileras: 8 + 4 + 8 + 4 casas.
-  V007: Faltan 28 plazas. Hileras: 8 + 6 + 7 casas.
-  V008: Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar). La bolsa de aparcamiento es un fondo de saco de ≈ 51 m (revisar). Hileras: 8 + 6 + 4 casas.
-  V009: Calle sin salida de 107 m sin espacio de maniobra (DB-SI SI 5, revisar). La bolsa de aparcamiento es un fondo de saco de ≈ 58 m (revisar). Hileras: 8 + 6 casas.
+  V001: Pisos: 10 por planta × 3 plantas en 7 portales (2D 9, 3D 15, 4D 6). La bolsa de aparcamiento es un fondo de saco de ≈ 89 m (revisar). Hileras: 4 casas.
+  V002: Se colocan 13 de 14 casas posibles para maximizar viviendas y techo. Pisos: 7 por planta × 3 plantas en 4 portales (2D 6, 3D 12, 4D 3). La bolsa de aparcamiento es un fondo de saco de ≈ 65 m (revisar). Hileras: 8 + 5 casas.
+  V003: Se colocan 24 de 25 casas posibles para maximizar viviendas y techo. Pisos: 3 por planta × 3 plantas en 2 portales (2D 3, 3D 3, 4D 3). La bolsa de aparcamiento es un fondo de saco de ≈ 35 m (revisar). Hileras: 8 + 4 + 8 + 4 casas.
+  V004: Se colocan 24 de 26 casas posibles para maximizar viviendas y techo. Pisos: 3 por planta × 3 plantas en 2 portales (2D 3, 3D 3, 4D 3). La bolsa de aparcamiento es un fondo de saco de ≈ 37 m (revisar). Hileras: 8 + 4 + 8 + 4 casas.
+  V005: Pisos: 7 por planta × 3 plantas en 4 portales (2D 6, 3D 12, 4D 3). La bolsa de aparcamiento es un fondo de saco de ≈ 67 m (revisar). Hileras: 8 + 4 casas.
+  V006: Pisos: 11 por planta × 3 plantas en 7 portales (2D 9, 3D 18, 4D 6). La bolsa de aparcamiento es un fondo de saco de ≈ 91 m (revisar).
+  V007: Pisos: 11 por planta × 3 plantas en 7 portales (2D 9, 3D 18, 4D 6). La bolsa de aparcamiento es un fondo de saco de ≈ 91 m (revisar).
+  V008: Pisos: 11 por planta × 3 plantas en 7 portales (2D 9, 3D 18, 4D 6). La bolsa de aparcamiento es un fondo de saco de ≈ 91 m (revisar).
+  V009: Pisos: 11 por planta × 3 plantas en 7 portales (2D 9, 3D 18, 4D 6). La bolsa de aparcamiento es un fondo de saco de ≈ 91 m (revisar).
 
 Hipótesis de diseño (modificables en 'hipotesis'):
   - fondo_casa_m = 12.0
@@ -158,7 +158,9 @@ Hipótesis de diseño (modificables en 'hipotesis'):
   - fondo_bloque_m = 12.0
   - longitud_min_bloque_m = 15.0
   - longitud_max_bloque_m = 40.0
-  - sup_piso_m2 = 135.0
+  - tipos_piso = {'2D': {'construida_m2': 85.0}, '3D': {'construida_m2': 105.0}, '4D': {'construida_m2': 125.0}}
+  - mix_pisos_pct = {'2D': 30, '3D': 50, '4D': 20}
+  - nucleo_ancho_m = 5.0
   - altura_planta_m = 3.0
   - calzada_m = 6.0
   - plaza_ancho_m = 2.5
@@ -169,6 +171,9 @@ Hipótesis de diseño (modificables en 'hipotesis'):
   - fondo_saco_max_m = 20.0
   - distancia_aparcamiento_edificio_m = 2.0
   - aparcamiento_fuera_retranqueo = True
+  - plazas_accesibles = 2
+  - repartos_probados = 8
+  - transferencia_accesible_m = 1.2
   - paso_rejilla_m = 0.5
   - paso_fase_m = 2.0
 

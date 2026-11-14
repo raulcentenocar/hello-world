@@ -3,13 +3,40 @@
   "_fuentes": "Parámetros de fases/01_urbanismo.md (rev. 2, aprobada). Separación 6 m: dato provisional del arquitecto. Hipótesis de vivienda: fases/02_diseno.md (V1).",
   "parcela": {
     "coordenadas": [
-      [414988.78, 4478854.76], [414988.78, 4478782.00], [414896.93, 4478781.24],
-      [414865.48, 4478877.90], [414894.46, 4478874.31], [414968.83, 4478858.29]
+      [
+        414988.78,
+        4478854.76
+      ],
+      [
+        414988.78,
+        4478782.0
+      ],
+      [
+        414896.93,
+        4478781.24
+      ],
+      [
+        414865.48,
+        4478877.9
+      ],
+      [
+        414894.46,
+        4478874.31
+      ],
+      [
+        414968.83,
+        4478858.29
+      ]
     ],
     "superficie_oficial_m2": 8839
   },
-  "fachadas": [1, 2],
-  "accesos": [2],
+  "fachadas": [
+    1,
+    2
+  ],
+  "accesos": [
+    2
+  ],
   "comun": {
     "edificabilidad_m2m2": 0.5769884,
     "viviendas_max": 34,
@@ -17,15 +44,23 @@
     "separacion_edificios_m": 6
   },
   "unifamiliar": {
-    "ocupacion_pct": 60, "plantas_max": 2, "altura_max_m": 7.5,
-    "retranqueo_fachada_m": 3, "retranqueo_linderos_m": 3
+    "ocupacion_pct": 60,
+    "plantas_max": 2,
+    "altura_max_m": 7.5,
+    "retranqueo_fachada_m": 3,
+    "retranqueo_linderos_m": 3
   },
   "multifamiliar": {
-    "ocupacion_pct": 45, "plantas_max": 3, "altura_max_m": 10.0,
-    "retranqueo_fachada_m": 5, "retranqueo_linderos_m": 5
+    "ocupacion_pct": 45,
+    "plantas_max": 3,
+    "altura_max_m": 10.0,
+    "retranqueo_fachada_m": 5,
+    "retranqueo_linderos_m": 5
   },
   "hipotesis": {
-    "fondo_casa_m": 12.0, "ancho_casa_m": 6.5, "sup_casa_m2": 156.0,
-    "sup_piso_m2": 135.0, "fondo_bloque_m": 12.0
+    "fondo_casa_m": 12.0,
+    "ancho_casa_m": 6.5,
+    "sup_casa_m2": 156.0,
+    "fondo_bloque_m": 12.0
   }
 }

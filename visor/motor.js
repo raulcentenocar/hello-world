@@ -18,11 +18,31 @@
   var FALTA = "FALTA DATO";
   var REQ_COMUN = ["edificabilidad_m2m2", "viviendas_max", "plazas_por_vivienda", "separacion_edificios_m"];
   var REQ_USO = ["ocupacion_pct", "plantas_max", "retranqueo_fachada_m", "retranqueo_linderos_m"];
+  var REQ_ECONOMIA = ["precio_venta_casa_eur_m2c", "precio_venta_piso_eur_m2c", "coste_construccion_casa_eur_m2c",
+    "coste_construccion_piso_eur_m2c", "coste_urbanizacion_eur_m2", "coste_plaza_superficie_eur", "coste_suelo_eur", "gastos_generales_pct"];
+  function cuentaResultados(eco, techoCasas, techoPisos, plazas, sup, huella) {
+    var faltan = REQ_ECONOMIA.filter(function (k) { return !(k in eco); });
+    if (faltan.length) return { estado: FALTA, faltan: faltan };
+    var ingresos = techoCasas * eco.precio_venta_casa_eur_m2c + techoPisos * eco.precio_venta_piso_eur_m2c;
+    var construccion = techoCasas * eco.coste_construccion_casa_eur_m2c + techoPisos * eco.coste_construccion_piso_eur_m2c;
+    var urbanizacion = Math.max(0, sup - huella) * eco.coste_urbanizacion_eur_m2;
+    var aparcamiento = plazas * eco.coste_plaza_superficie_eur;
+    var gastos = (construccion + urbanizacion + aparcamiento) * eco.gastos_generales_pct / 100;
+    var coste = construccion + urbanizacion + aparcamiento + gastos + eco.coste_suelo_eur, beneficio = ingresos - coste;
+    var r1 = function (x) { return Math.round(x * 10) / 10; };
+    return { estado: "OK", ingresos_eur: Math.round(ingresos), coste_construccion_eur: Math.round(construccion),
+      coste_urbanizacion_eur: Math.round(urbanizacion), coste_aparcamiento_eur: Math.round(aparcamiento),
+      gastos_generales_eur: Math.round(gastos), coste_suelo_eur: Math.round(eco.coste_suelo_eur), coste_total_eur: Math.round(coste),
+      beneficio_eur: Math.round(beneficio), margen_sobre_ventas_pct: ingresos ? r1(100 * beneficio / ingresos) : 0,
+      rentabilidad_sobre_coste_pct: coste ? r1(100 * beneficio / coste) : 0 };
+  }
 
   var HIPOTESIS_DEFECTO = {
     fondo_casa_m: 12.0, ancho_casa_m: 6.5, sup_casa_m2: 156.0, casas_min_hilera: 3, casas_max_hilera: 8,
     jardin_trasero_m: 6.0, fondo_bloque_m: 12.0, longitud_min_bloque_m: 15.0, longitud_max_bloque_m: 40.0,
-    sup_piso_m2: 135.0, altura_planta_m: 3.0, calzada_m: 6.0, plaza_ancho_m: 2.5, plaza_fondo_m: 5.0,
+    tipos_piso: { "2D": { construida_m2: 85.0 }, "3D": { construida_m2: 105.0 }, "4D": { construida_m2: 125.0 } },
+    mix_pisos_pct: { "2D": 30, "3D": 50, "4D": 20 }, nucleo_ancho_m: 5.0,
+    plazas_accesibles: 2, transferencia_accesible_m: 1.2, altura_planta_m: 3.0, calzada_m: 6.0, plaza_ancho_m: 2.5, plaza_fondo_m: 5.0,
     paso_peatonal_casa_m: 1.5, acera_m: 1.5, martillo_largo_m: 12.0, fondo_saco_max_m: 20.0,
     distancia_aparcamiento_edificio_m: 2.0, aparcamiento_fuera_retranqueo: true,
     paso_rejilla_m: 0.5, paso_fase_m: 2.0
@@ -237,7 +257,8 @@
     var sup = +(par.superficie_oficial_m2 || poly.getArea());
     var ccw = J.algorithm.Orientation.isCCW(poly.getExteriorRing().getCoordinates());
     var cen = poly.getCentroid();
-    return { nombre: cfg.nombre || "parcela", pts: pts, poly: poly, sup: sup, f_sup: sup / poly.getArea(), ccw: ccw,
+    var eco = {}; Object.keys(cfg.economia || {}).forEach(function (k) { if (cfg.economia[k] !== null && cfg.economia[k] !== undefined) eco[k] = +cfg.economia[k]; });
+    return { economia: eco, nombre: cfg.nombre || "parcela", pts: pts, poly: poly, sup: sup, f_sup: sup / poly.getArea(), ccw: ccw,
       centro: [cen.getX(), cen.getY()], fachadas: new Set(cfg.fachadas), accesos: new Set(cfg.accesos),
       comun: comun, uni: usos.unifamiliar, multi: usos.multifamiliar, hip: hip, barrido: barr, cfg: cfg };
   }
@@ -326,6 +347,47 @@
   function plazasCasa(c, lado, yc, hip) {
     var P = hip.plaza_fondo_m, Cz = hip.calzada_m;
     return lado === "abajo" ? [c[0], yc - P, c[2], yc] : [c[0], yc + Cz, c[2], yc + Cz + P];
+  }
+  function secuenciaMix(n, mix) {
+    var tipos = Object.keys(mix), tot = tipos.reduce(function (s, t) { return s + mix[t]; }, 0) || 1, cnt = {}, out = [];
+    tipos.forEach(function (t) { cnt[t] = 0; });
+    for (var i = 1; i <= n; i++) {
+      var mejor = null, mv = null;
+      tipos.forEach(function (t, j) {
+        var v = mix[t] / tot * i - cnt[t];
+        if (mejor === null || v > mv) { mejor = t; mv = v; }
+      });
+      cnt[mejor]++; out.push(mejor);
+    }
+    return out;
+  }
+  function colocarPortales(cand, seq, tipos, hip, huellaMax) {
+    var F = hip.fondo_bloque_m, nw = hip.nucleo_ancho_m, bloques = [], pisos = [], nucleos = [], k = 0, huella = 0;
+    for (var i = 0; i < cand.length && k < seq.length; i++) {
+      var b = cand[i], x1 = b[0], y1 = b[1], x2 = b[2], x = x1;
+      while (k < seq.length) {
+        var wl = tipos[seq[k]].construida_m2 / F, fin;
+        if (k + 1 < seq.length) {
+          var wr = tipos[seq[k + 1]].construida_m2 / F;
+          fin = x + wl + nw + wr;
+          if (fin <= x2 + 1e-6 && huella + (fin - x1) * F <= huellaMax + 1e-6) {
+            pisos.push([[x, y1, x + wl, y1 + F], seq[k]], [[x + wl + nw, y1, fin, y1 + F], seq[k + 1]]);
+            nucleos.push([x + wl, y1, x + wl + nw, y1 + F]);
+            x = fin; k += 2; continue;
+          }
+        }
+        fin = x + wl + nw;
+        if (fin <= x2 + 1e-6 && huella + (fin - x1) * F <= huellaMax + 1e-6) {
+          pisos.push([[x, y1, x + wl, y1 + F], seq[k]]);
+          nucleos.push([x + wl, y1, fin, y1 + F]);
+          x = fin; k += 1; continue;
+        }
+        break;
+      }
+      if (x > x1 + 1e-6) { bloques.push([x1, y1, x, y1 + F]); huella += (x - x1) * F; }
+    }
+    var techo = pisos.reduce(function (s, p) { return s + tipos[p[1]].construida_m2; }, 0) + nucleos.length * nw * F;
+    return [bloques, pisos, nucleos, k, techo];
   }
   function recuentoHileras(casas) {
     var filas = {};
@@ -447,102 +509,138 @@
     lista.sort(function (a, b) { return a.d - b.d; });
     var porCasa = Math.floor((hip.ancho_casa_m - hip.paso_peatonal_casa_m) / hip.plaza_ancho_m);
 
-    // 3. Reparto
+    // 3. Reparto (programa de pisos por portales) con el aparcamiento reservado primero
     var Emax = ctx.sup * com.edificabilidad_m2m2, vmax = Math.floor(com.viviendas_max);
     var plM = Math.floor(ctx.multi.plantas_max);
     if ("altura_max_m" in ctx.multi) plM = Math.min(plM, Math.floor(ctx.multi.altura_max_m / hip.altura_planta_m + 1e-9));
-    var cand = [];
-    if (!M.isEmpty()) {
-      cand = bloquesLineales0(M, hip.fondo_bloque_m, sep, hip.longitud_min_bloque_m, hip.longitud_max_bloque_m, hip.paso_rejilla_m);
-      cand.sort(function (a, b) { var ya = (a[1] + a[3]) / 2, yb = (b[1] + b[3]) / 2; return ya - yb || ((a[0] + a[2]) / 2 - (b[0] + b[2]) / 2); });
-    }
     var huellaMaxM = Zm.isEmpty() ? 0 : ctx.multi.ocupacion_pct / 100 * Zm.getArea() * ctx.f_sup;
-    function colocarBloques(pisosObj) {
-      var bl = [];
-      if (!pisosObj || !cand.length) return [bl, 0];
-      var falta = Math.min(pisosObj * hip.sup_piso_m2 / plM, huellaMaxM);
-      for (var i = 0; i < cand.length; i++) {
-        if (falta <= 1) break;
-        var b = cand[i], fondo = b[3] - b[1];
-        var largo = Math.min(b[2] - b[0], Math.ceil(falta / fondo / 0.5) * 0.5);
-        if (largo < hip.longitud_min_bloque_m) largo = (b[2] - b[0]) >= hip.longitud_min_bloque_m ? hip.longitud_min_bloque_m : 0;
-        if (largo <= 0) continue;
-        bl.push([b[0], b[1], b[0] + largo, b[3]]);
-        falta -= largo * fondo;
-      }
-      var cap = bl.reduce(function (s, r) { return s + areaR(r); }, 0) * plM;
-      return [bl, Math.min(pisosObj, Math.floor(cap / hip.sup_piso_m2 + 1e-6))];
-    }
-    var tope = Math.min(lista.length, vmax, Math.floor(Emax / hip.sup_casa_m2)), best = null;
-    for (var nn = tope; nn > Math.max(-1, tope - 16); nn--) {
-      var pObj = Math.max(0, Math.min(vmax - nn, Math.floor((Emax - nn * hip.sup_casa_m2) / hip.sup_piso_m2)));
-      var cb = colocarBloques(pObj);
-      var clave = [nn + cb[1], nn * hip.sup_casa_m2 + cb[1] * hip.sup_piso_m2];
-      if (!best || clave[0] > best.clave[0] || (clave[0] === best.clave[0] && clave[1] > best.clave[1]))
-        best = { clave: clave, n: nn, bl: cb[0], np: cb[1], pObj: pObj };
-    }
-    var nCasas = best.n, bloques = best.bl, nPisos = best.np;
-    if (nCasas < lista.length) notas.push("Se colocan " + nCasas + " de " + lista.length + " casas posibles para maximizar viviendas y techo.");
-    if (best.pObj && nPisos < best.pObj) notas.push("La zona multifamiliar solo admite " + nPisos + " de " + best.pObj + " pisos.");
-    var casas = lista.slice(0, nCasas).map(function (x) { return x.casa; });
-    var plazasU = lista.slice(0, nCasas).filter(function (x) { return x.plazas; }).map(function (x) { return x.plazas; });
-    var nPlazasU = plazasU.length * porCasa, techoU = nCasas * hip.sup_casa_m2;
-    var hilerasN = recuentoHileras(casas);
+    var tipos = hip.tipos_piso, mix = {};
+    Object.keys(hip.mix_pisos_pct).forEach(function (t) { if (hip.mix_pisos_pct[t] > 0 && tipos[t]) mix[t] = hip.mix_pisos_pct[t]; });
+    var hayMix = Object.keys(mix).length > 0;
+    var P = hip.plaza_fondo_m, pa = hip.plaza_ancho_m, da = hip.distancia_aparcamiento_edificio_m;
+    var calles = mods.map(function (m) { return m.calzada; }).concat(remates);
+    var red = calles.length ? union(calles).buffer(1.0, QS) : vacio();
+    var dmaxAcc = Math.max(ctx.uni.retranqueo_fachada_m, ctx.multi.retranqueo_fachada_m, ctx.uni.retranqueo_linderos_m, ctx.multi.retranqueo_linderos_m) + 3.0;
+    var baseAp = hip.aparcamiento_fuera_retranqueo ? (!M.isEmpty() ? M : U) : (!Zm.isEmpty() ? Zm : Zu);
+    var accCx = acc.getCentroid().getX();
 
-    // Bolsa
-    var viv = nCasas + nPisos, necesarias = Math.floor(com.plazas_por_vivienda) * viv;
-    var faltaPl = Math.max(0, necesarias - nPlazasU), bolsas = [], vialesBolsa = [], nBolsa = 0, largoBolsa = 0;
-    if (faltaPl) {
-      var P = hip.plaza_fondo_m, W = 2 * P + Cz;
-      var ocupado = union(casas.map(R).concat(bloques.map(R), plazasU.map(R), mods.map(function (m) { return m.calzada; }), remates, aceras.map(R)));
-      var da = hip.distancia_aparcamiento_edificio_m;
-      var base = hip.aparcamiento_fuera_retranqueo ? (!M.isEmpty() ? M : U) : (!Zm.isEmpty() ? Zm : Zu);
-      var libre = limpia(base.intersection(poly).difference(ocupado.isEmpty() ? vacio() : ocupado.buffer(da, QS)));
-      if (corteG && !Zm.isEmpty()) libre = limpia(libre.difference(corteG));
-      var bl2 = libre.isEmpty() ? [0, 0, 0, 0] : lim(libre), y = bl2[1], pa = hip.plaza_ancho_m;
-      var dmaxAcc = Math.max(ctx.uni.retranqueo_fachada_m, ctx.multi.retranqueo_fachada_m, ctx.uni.retranqueo_linderos_m, ctx.multi.retranqueo_linderos_m) + 3.0;
-      var accCx = acc.getCentroid().getX();
-      while (faltaPl > 0 && !libre.isEmpty() && y + W <= bl2[3]) {
-        var trs = tramosEnFranja(libre, bl2[0], bl2[2], y, W, 0.0, 2 * pa, null, hip.paso_rejilla_m)
-          .map(function (r) { return { r: r, d: R(r).distance(acc) }; })
+    function bolsa(libre, faltaPl, nAcc) {
+      var out = { bolsas: [], viales_bolsa: [], n_bolsa: 0, largo_bolsa: 0, accesibles: [], falta: 0 }, accPend = nAcc;
+      var lb = libre.isEmpty() ? [0, 0, 0, 0] : lim(libre), y = lb[1];
+      while (faltaPl > 0 && !libre.isEmpty() && y + P + Cz <= lb[3]) {
+        var doble = y + 2 * P + Cz <= lb[3], W = doble ? 2 * P + Cz : P + Cz, ladosPl = doble ? 2 : 1;
+        var trs = tramosEnFranja(libre, lb[0], lb[2], y, W, 0.0, 2 * pa, null, hip.paso_rejilla_m)
+          .map(function (r) { var g = R(r); return { r: r, d: g.distance(acc), red: !red.isEmpty() && g.distance(red) <= 0.01 }; })
           .sort(function (a, b) { return a.d - b.d; });
         var usado = false;
         for (var q = 0; q < trs.length; q++) {
-          if (trs[q].d > dmaxAcc) continue;
+          if (trs[q].d > dmaxAcc && !trs[q].red) continue;
           var r = trs[q].r, x1 = r[0], y1 = r[1], x2 = r[2], y2 = r[3];
-          var nMax = 2 * Math.floor((x2 - x1) / pa);
-          var nb = Math.min(nMax, faltaPl + (faltaPl % 2));
-          var largo = Math.ceil(nb / 2) * pa;
+          var anchoAcc = accPend * pa + Math.ceil(accPend / 2) * hip.transferencia_accesible_m;
+          var cap = ladosPl === 1 ? Math.floor((x2 - x1 - anchoAcc) / pa) + accPend
+                                  : 2 * Math.floor((x2 - x1) / pa) - Math.ceil(anchoAcc / pa) + accPend;
+          if (cap <= 0) continue;
+          var nb = Math.min(cap, faltaPl + (faltaPl % ladosPl));
+          var largo = Math.min(anchoAcc + Math.ceil(Math.max(0, nb - accPend) / ladosPl) * pa, x2 - x1);
           var cercaIzq = Math.abs(x1 - accCx) < Math.abs(x2 - accCx);
           var rr = cercaIzq ? [x1, y1, x1 + largo, y2] : [x2 - largo, y1, x2, y2];
-          bolsas.push(rr);
-          var vx1 = cercaIzq ? bp[0] - 1 : rr[2], vx2 = cercaIzq ? rr[0] : bp[2] + 1;
-          var vial = piezaQueToca(poly.intersection(caja(vx1, y1 + P, vx2, y1 + P + Cz)), acc);
-          if (vial) vialesBolsa.push(vial);
-          nBolsa += nb;
-          largoBolsa = Math.max(largoBolsa, largo + (vial ? vial.getLength() / 2 - Cz : 0));
-          faltaPl -= nb;
-          usado = true;
+          out.bolsas.push(rr);
+          if (accPend) {
+            var ax = cercaIzq ? rr[0] : rr[2] - anchoAcc;
+            out.accesibles.push([ax, y1, ax + anchoAcc, y1 + P]);
+            accPend = 0;
+          }
+          if (!trs[q].red) {
+            var vx1 = cercaIzq ? bp[0] - 1 : rr[2], vx2 = cercaIzq ? rr[0] : bp[2] + 1, ya = y1 + (doble ? P : 0);
+            var vial = piezaQueToca(poly.intersection(caja(vx1, ya, vx2, ya + Cz)), acc);
+            if (vial) { out.viales_bolsa.push(vial); out.largo_bolsa = Math.max(out.largo_bolsa, largo + vial.getLength() / 2 - Cz); }
+          }
+          out.n_bolsa += nb; faltaPl -= nb; usado = true;
           if (faltaPl <= 0) break;
         }
         y += usado ? W : 1.0;
       }
+      out.falta = Math.max(0, faltaPl);
+      return out;
     }
+    function solucion(n, u) {
+      var cs = lista.slice(0, n), casasN = cs.map(function (x) { return x.casa; });
+      var plazasN = cs.filter(function (x) { return x.plazas; }).map(function (x) { return x.plazas; });
+      var nPlU = plazasN.length * porCasa, nPis = u * plM;
+      var nec = Math.floor(com.plazas_por_vivienda) * (n + nPis), nAcc = nPis ? Math.floor(hip.plazas_accesibles) : 0;
+      var falta = Math.max(0, nec - nPlU, nAcc);
+      var ap = { bolsas: [], viales_bolsa: [], n_bolsa: 0, largo_bolsa: 0, accesibles: [], falta: 0 };
+      if (falta && !baseAp.isEmpty()) {
+        var ocupado = union(casasN.map(R).concat(plazasN.map(R), calles, aceras.map(R)));
+        var libre = limpia(baseAp.intersection(poly).difference(ocupado.isEmpty() ? vacio() : ocupado.buffer(da, QS)));
+        if (corteG && !Zm.isEmpty()) libre = limpia(libre.difference(corteG));
+        ap = bolsa(libre, falta, nAcc);
+      } else if (falta) ap.falta = falta;
+      var lay = [[], [], [], 0, 0];
+      if (u && !M.isEmpty()) {
+        var ocAp = union(ap.bolsas.map(R).concat(ap.viales_bolsa));
+        var Mlib = ocAp.isEmpty() ? M : limpia(M.difference(ocAp.buffer(da, QS)));
+        var cand = Mlib.isEmpty() ? [] : bloquesLineales0(Mlib, hip.fondo_bloque_m, sep, hip.longitud_min_bloque_m, hip.longitud_max_bloque_m, hip.paso_rejilla_m);
+        cand.sort(function (a, b) { var ya = (a[1] + a[3]) / 2, yb = (b[1] + b[3]) / 2; return ya - yb || ((a[0] + a[2]) / 2 - (b[0] + b[2]) / 2); });
+        lay = colocarPortales(cand, secuenciaMix(u, mix), tipos, hip, huellaMaxM);
+      }
+      var okPl = nPlU + ap.n_bolsa >= nec && !(nAcc && !ap.accesibles.length);
+      return { n: n, u: u, lay: lay, casas: casasN, plazas_u: plazasN, n_plazas_u: nPlU, n_pisos: nPis, necesarias: nec,
+        n_acc: nAcc, ap: ap, ok_pl: okPl, completo: lay[3] === u };
+    }
+    function mayor(a, b) { return a[0] > b[0] || (a[0] === b[0] && a[1] > b[1]); }
+    var tope = Math.min(lista.length, vmax, Math.floor(Emax / hip.sup_casa_m2)), elegido = null, mejorClave = null, respaldo = null;
+    for (var nn = tope; nn > Math.max(-1, tope - 16); nn--) {
+      var limViv = vmax - nn, limTecho = Emax - nn * hip.sup_casa_m2;
+      var uMax = (hayMix && !M.isEmpty()) ? Math.floor(limViv / plM) : 0;
+      if (mejorClave && nn + uMax * plM < mejorClave[0]) continue;
+      if (nn && Math.min.apply(null, recuentoHileras(lista.slice(0, nn).map(function (x) { return x.casa; }))) < hip.casas_min_hilera) continue;
+      for (var u = uMax; u >= 0; u--) {
+        var seq = secuenciaMix(u, mix);
+        if (plM * seq.reduce(function (s, t) { return s + tipos[t].construida_m2; }, 0) > limTecho + 1e-6) continue;
+        if (mejorClave && nn + u * plM < mejorClave[0]) break;
+        var so = solucion(nn, u);
+        if (!respaldo) respaldo = so;
+        if (!so.completo || plM * so.lay[4] > limTecho + 1e-6) continue;
+        if (so.ok_pl) {
+          var clave = [nn + u * plM, nn * hip.sup_casa_m2 + plM * so.lay[4]];
+          if (!mejorClave || mayor(clave, mejorClave)) { elegido = so; mejorClave = clave; }
+          break;
+        }
+      }
+    }
+    if (!elegido) {
+      elegido = respaldo || solucion(Math.min(tope, lista.length), 0);
+      notas.push("Ningún reparto cabe con todas sus plazas: se muestra el de más viviendas.");
+    }
+    var nCasas = elegido.n, nPisos = elegido.n_pisos;
+    var bloques = elegido.lay[0], pisosGeo = elegido.lay[1], nucleos = elegido.lay[2], uPlanta = elegido.lay[3], techoPlanta = elegido.lay[4];
+    if (nCasas < lista.length) notas.push("Se colocan " + nCasas + " de " + lista.length + " casas posibles para maximizar viviendas y techo.");
+    var casas = elegido.casas, plazasU = elegido.plazas_u, nPlazasU = elegido.n_plazas_u;
+    var techoU = nCasas * hip.sup_casa_m2, techoM = plM * techoPlanta;
+    var hilerasN = recuentoHileras(casas);
+    var mixReal = {};
+    pisosGeo.forEach(function (p) { mixReal[p[1]] = (mixReal[p[1]] || 0) + plM; });
+    if (nPisos) notas.push("Pisos: " + uPlanta + " por planta × " + plM + " plantas en " + nucleos.length + " portales (" +
+      Object.keys(mixReal).sort().map(function (k) { return k + " " + mixReal[k]; }).join(", ") + ").");
+    var viv = nCasas + nPisos, necesarias = elegido.necesarias, nAccR = elegido.n_acc;
+    var bolsas = elegido.ap.bolsas, vialesBolsa = elegido.ap.viales_bolsa, nBolsa = elegido.ap.n_bolsa;
+    var largoBolsa = elegido.ap.largo_bolsa, accesibles = elegido.ap.accesibles;
 
     // 4. Comprobaciones
     var huellaU = casas.reduce(function (s, r) { return s + areaR(r); }, 0);
     var huellaM = bloques.reduce(function (s, r) { return s + areaR(r); }, 0);
-    var techo = techoU + nPisos * hip.sup_piso_m2, plazas = nPlazasU + nBolsa;
+    var techo = techoU + techoM, plazas = nPlazasU + nBolsa;
     var ocAu = Zu.isEmpty() ? 0 : 100 * huellaU / (Zu.getArea() * ctx.f_sup);
     var ocAm = Zm.isEmpty() ? 0 : 100 * huellaM / (Zm.getArea() * ctx.f_sup);
     var ocB = 100 * (huellaU + huellaM) / ctx.sup;
     var fondoSaco = Math.max.apply(null, mods.map(function (m) { return m.largo; }).concat([0]));
     var chk = {
-      hay_viviendas: viv > 0, viviendas: viv <= vmax, techo: techo <= Emax + 0.5, plazas: plazas >= necesarias,
+      hay_viviendas: viv > 0, viviendas: viv <= vmax, techo: techo <= Emax + 0.5, plazas: plazas >= necesarias && !(nAccR && !accesibles.length),
       ocupacion_A: ocAu <= ctx.uni.ocupacion_pct + 1e-6 && ocAm <= ctx.multi.ocupacion_pct + 1e-6,
       fondo_saco_SI5: fondoSaco <= hip.fondo_saco_max_m + 1e-6, itinerario_peatonal: acera || !mods.length
     };
-    if (!chk.plazas) avisos.push("Faltan " + (necesarias - plazas) + " plazas.");
+    if (!chk.plazas) avisos.push(plazas < necesarias ? "Faltan " + (necesarias - plazas) + " plazas." : "Faltan las plazas accesibles.");
     if (!chk.fondo_saco_SI5) avisos.push("Calle sin salida de " + Math.round(fondoSaco) + " m sin espacio de maniobra (DB-SI SI 5, revisar).");
     if (!chk.itinerario_peatonal) avisos.push("Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar).");
     if (largoBolsa > hip.fondo_saco_max_m) notas.push("La bolsa de aparcamiento es un fondo de saco de ≈ " + Math.round(largoBolsa) + " m (revisar).");
@@ -555,6 +653,8 @@
       calzadas: mods.map(function (m) { return back(m.calzada); }).concat(remates.map(back), vialesBolsa.map(back)),
       bolsas: bolsas.map(function (r) { return back(R(r)); }), bloques: bloques.map(function (r) { return back(R(r)); }),
       aceras: aceras.map(function (r) { return back(R(r)); }),
+      pisos: pisosGeo.map(function (p) { return back(R(p[0])); }), nucleos: nucleos.map(function (r) { return back(R(r)); }),
+      accesibles: accesibles.map(function (r) { return back(R(r)); }),
       corte: corteG ? back(linea([bp[0] - 1, yc], [bp[2] + 1, yc]).intersection(poly)) : null
     };
     var r1 = function (x) { return Math.round(x * 10) / 10; };
@@ -563,7 +663,10 @@
       angulo_hileras: r1(((ang % 180) + 180) % 180), pct_zona_unifamiliar: pct,
       unifamiliar_en: (pct > 0 && pct < 100) ? ladoTxt(ang, uniEn) : (pct >= 100 ? "todo" : "—"),
       uni_en_marco: uniEn, remate: remate, acera: acera,
-      casas: nCasas, pisos: nPisos, viviendas: viv, bloques: bloques.length, plantas_bloque: plM,
+      casas: nCasas, pisos: nPisos, viviendas: viv, bloques: bloques.length, plantas_bloque: plM, portales: nucleos.length,
+      pisos_por_planta: uPlanta, mix_pisos: mixReal, tipos_pisos_planta: pisosGeo.map(function (p) { return p[1]; }),
+      plazas_accesibles: accesibles.length ? nAccR : 0, techo_casas_m2: r1(techoU), techo_pisos_m2: r1(techoM),
+      economia: cuentaResultados(ctx.economia, techoU, techoM, plazas, ctx.sup, huellaU + huellaM),
       plantas_casa: Math.floor(ctx.uni.plantas_max),
       techo_m2: r1(techo), aprovechamiento_pct: r1(100 * techo / Emax), plazas: plazas, plazas_necesarias: necesarias,
       plazas_casas: nPlazasU, plazas_bolsa: nBolsa, huella_m2: r1(huellaU + huellaM),
@@ -600,9 +703,16 @@
     });
     return out;
   }
-  function ordenar(rs) {
+  var OBJETIVOS = {
+    viviendas: function (r) { return [-r.viviendas, -r.techo_m2]; }, techo: function (r) { return [-r.techo_m2, -r.viviendas]; },
+    casas: function (r) { return [-r.casas, -r.viviendas]; }, ocupacion: function (r) { return [r.ocupacion_B_pct, -r.viviendas]; },
+    beneficio: function (r) { return [-(r.economia.beneficio_eur !== undefined ? r.economia.beneficio_eur : -1e18), -r.viviendas]; }
+  };
+  function ordenar(rs, objetivo) {
     function suma(r) { return Object.keys(r.comprobaciones).filter(function (k) { return r.comprobaciones[k]; }).length; }
-    var key = function (r) { return [r.cumple ? 0 : 1, -suma(r), -r.viviendas, -r.techo_m2, -((r.plazas - r.plazas_necesarias >= 0) ? 1 : 0), r.ocupacion_B_pct]; };
+    var key = (!objetivo || objetivo === "ranking")
+      ? function (r) { return [r.cumple ? 0 : 1, -suma(r), -r.viviendas, -r.techo_m2, -((r.plazas - r.plazas_necesarias >= 0) ? 1 : 0), r.ocupacion_B_pct]; }
+      : function (r) { return [r.cumple ? 0 : 1].concat(OBJETIVOS[objetivo](r)); };
     rs.forEach(function (r, i) { r._k = key(r); r._i = i; });
     rs.sort(function (a, b) {
       for (var i = 0; i < a._k.length; i++) if (a._k[i] !== b._k[i]) return a._k[i] - b._k[i];
@@ -611,7 +721,7 @@
     rs.forEach(function (r, i) { r.id = "V" + String(i + 1).padStart(3, "0"); });
     return rs;
   }
-  function barrer(ctx, onProgreso) {
+  function barrer(ctx, onProgreso, objetivo) {
     var comb = combinaciones(ctx), res = [], vistos = {};
     comb.forEach(function (p, i) {
       var r = variante(ctx, p);
@@ -619,7 +729,7 @@
       if (!vistos[clave]) { vistos[clave] = 1; r.params = p; res.push(r); }
       if (onProgreso) onProgreso(i + 1, comb.length);
     });
-    return ordenar(res);
+    return ordenar(res, objetivo);
   }
 
   // ------------------------------------------------------------------ ayudas del visor

@@ -8,13 +8,16 @@ const ctx = {}; ctx.self = ctx; ctx.window = ctx; vm.createContext(ctx);
 vm.runInContext(fs.readFileSync(jstsPath, "utf8"), ctx);
 vm.runInContext(fs.readFileSync(__dirname + "/motor.js", "utf8"), ctx);
 const M = ctx.Motor;
+const norm = (r) => { r.mix = JSON.stringify(Object.keys(r.mix_pisos || {}).sort().map((t) => [t, r.mix_pisos[t]])); return r; };
+
 const t0 = Date.now();
 ctx.__txt = fs.readFileSync(entrada, "utf8");
 const c = M.cargar(vm.runInContext("JSON.parse(__txt)", ctx));
 const js = M.barrer(c);
 const t = (Date.now() - t0) / 1000;
-const py = JSON.parse(fs.readFileSync(rankingPy, "utf8")).variantes;
-const campos = ["casas", "pisos", "plazas", "techo_m2", "cumple", "ocupacion_B_pct", "fondo_saco_m"];
+const py = JSON.parse(fs.readFileSync(rankingPy, "utf8")).variantes.map(norm);
+js.forEach(norm);
+const campos = ["casas", "pisos", "plazas", "techo_m2", "cumple", "ocupacion_B_pct", "fondo_saco_m", "portales", "plazas_accesibles", "mix"];
 const k = (r) => [r.angulo_hileras, r.pct_zona_unifamiliar, r.unifamiliar_en, r.remate, r.acera].join("|");
 const pyPor = {};
 py.forEach((r) => (pyPor[k(r)] = pyPor[k(r)] || []).push(r));

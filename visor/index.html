@@ -11,6 +11,7 @@
   --casa: #dcbb7c; --casa-b: #6a522e; --bloque: #8ea6c4; --bloque-b: #2c4260; --calzada: #aab1b3;
   --plaza: #dfe4e5; --plaza-b: #a3abad; --acera: #ead3a6; --zona-u: #f3eddd; --zona-m: #e3ebf3;
   --parcela: #1c2427; --ret-u: #8a6d3b; --ret-m: #3b5f8a; --corte: #0d6b58;
+  --p2: #c9d8ea; --p3: #a9bfd9; --p4: #8aa6c8; --nucleo: #55708f; --acc: #cfe3f7; --acc-b: #2c5d9a;
   --f-ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --f-head: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
   --f-num: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -20,13 +21,15 @@
   --accent: #3cb398; --accent-ink: #0b1513; --ok: #5cc184; --bad: #ef7d68; --warn: #e0a640;
   --casa: #b8975c; --casa-b: #e6cf9f; --bloque: #5c789c; --bloque-b: #b9cbe2; --calzada: #4b5457;
   --plaza: #2f383b; --plaza-b: #5b6669; --acera: #6c5a3a; --zona-u: #23221c; --zona-m: #1b2430;
-  --parcela: #e2e8e9; --ret-u: #c9a865; --ret-m: #7fa2cf; --corte: #3cb398; color-scheme: dark; } }
+  --parcela: #e2e8e9; --ret-u: #c9a865; --ret-m: #7fa2cf; --corte: #3cb398;
+  --p2: #4f6886; --p3: #5d789c; --p4: #6d8ab0; --nucleo: #b9cbe2; --acc: #27425f; --acc-b: #9cc3ef; color-scheme: dark; } }
 :root[data-theme="dark"] {
   --bg: #111618; --panel: #192023; --ink: #e2e8e9; --muted: #98a6aa; --line: #2b3538; --soft: #1f272a;
   --accent: #3cb398; --accent-ink: #0b1513; --ok: #5cc184; --bad: #ef7d68; --warn: #e0a640;
   --casa: #b8975c; --casa-b: #e6cf9f; --bloque: #5c789c; --bloque-b: #b9cbe2; --calzada: #4b5457;
   --plaza: #2f383b; --plaza-b: #5b6669; --acera: #6c5a3a; --zona-u: #23221c; --zona-m: #1b2430;
-  --parcela: #e2e8e9; --ret-u: #c9a865; --ret-m: #7fa2cf; --corte: #3cb398; color-scheme: dark; }
+  --parcela: #e2e8e9; --ret-u: #c9a865; --ret-m: #7fa2cf; --corte: #3cb398;
+  --p2: #4f6886; --p3: #5d789c; --p4: #6d8ab0; --nucleo: #b9cbe2; --acc: #27425f; --acc-b: #9cc3ef; color-scheme: dark; }
 
 * { box-sizing: border-box; }
 body { background: var(--bg); color: var(--ink); font: 14px/1.45 var(--f-ui);
@@ -55,6 +58,7 @@ button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-
 .campo input[type="range"] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); }
 .campo select, .campo input[type="number"] { background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 4px 6px; }
 .campo input[type="number"] { width: 84px; font-family: var(--f-num); text-align: right; }
+#economia .campo input[type="number"] { width: 112px; }
 .seg { display: flex; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; grid-column: 1 / -1; }
 .seg button { flex: 1; background: var(--soft); border: 0; padding: 6px 4px; cursor: pointer; font-size: 13px; }
 .seg button + button { border-left: 1px solid var(--line); }
@@ -92,6 +96,14 @@ details[open] summary { margin-bottom: 8px; }
 .veredicto.no { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, transparent); }
 .notas { margin: 0; padding-left: 18px; font-size: 12.5px; color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
 .notas li.aviso { color: var(--warn); }
+.prog { display: grid; grid-template-columns: 1fr auto auto; gap: 4px 10px; align-items: center; font-size: 13px; }
+.prog input { width: 64px; background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 3px 5px; font-family: var(--f-num); text-align: right; }
+.prog .cab { color: var(--muted); font-size: 12px; }
+.tabla-min { display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+.tabla-min div { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dashed var(--line); padding: 2px 0; }
+.tabla-min div span:first-child { color: var(--muted); }
+.tabla-min div.total { font-weight: 600; border-bottom: 0; }
+.tabla-min div.total span:first-child { color: var(--ink); }
 
 .banco { margin-top: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
 .banco-cab { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
@@ -175,6 +187,18 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
     </div>
 
     <details open>
+      <summary>Programa de pisos</summary>
+      <div class="prog" id="programa"></div>
+      <p class="fuente">Construido por vivienda (sin núcleo) y reparto objetivo. Cada portal da a una vivienda pasante a cada lado.</p>
+    </details>
+
+    <details>
+      <summary>Cuenta de resultados</summary>
+      <div class="grupo" id="economia"></div>
+      <p class="fuente">Valores tuyos. Si falta alguno no se calcula (FALTA DATO): la herramienta no supone precios ni costes.</p>
+    </details>
+
+    <details>
       <summary>Hipótesis de diseño</summary>
       <div class="grupo" id="hipotesis"></div>
       <p class="fuente">Valores de diseño (F2). Cambian solo esta sesión.</p>
@@ -217,6 +241,9 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
       <span><i style="background:var(--calzada)"></i>Calzada</span>
       <span><i style="background:var(--plaza)"></i>Plazas</span>
       <span><i style="background:var(--acera)"></i>Acera</span>
+      <span><i style="background:var(--p3)"></i>Pisos 2D·3D·4D</span>
+      <span><i style="background:var(--nucleo)"></i>Núcleo</span>
+      <span><i style="background:var(--acc);border-color:var(--acc-b)"></i>Plaza accesible</span>
       <span><i style="border:1px dashed var(--ret-u);background:none"></i>Retranqueos</span>
       <span>Arrastra la línea verde para cambiar el reparto</span>
     </div>
@@ -233,6 +260,8 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
       <div class="cifra"><span>Ocupación</span><b id="c-ocup">—</b><small id="c-ocup2"></small></div>
     </div>
     <ul class="chk" id="checks"></ul>
+    <div id="programa-res"></div>
+    <div id="pro-forma"></div>
     <ul class="notas" id="notas"></ul>
     <div class="fila-botones">
       <button type="button" class="boton sec" id="fijar">Fijar para comparar</button>
@@ -254,6 +283,7 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
         <option value="techo">Techo</option>
         <option value="casas">Más casas</option>
         <option value="ocupacion">Menor ocupación</option>
+        <option value="beneficio">Mayor beneficio</option>
       </select>
       <button type="button" class="boton" id="generar">Generar variantes</button>
     </div>
@@ -264,15 +294,15 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
   <h2>Comparación</h2>
   <div class="tabla-wrap">
     <table id="comparar">
-      <thead><tr><th>Variante</th><th>Casas</th><th>Pisos</th><th>Viv.</th><th>m²c</th><th>Plazas</th><th>Ocup. %</th><th>F. saco</th><th>Cumple</th><th></th></tr></thead>
-      <tbody><tr><td colspan="10" class="vacio" style="font-family:var(--f-ui)">Fija variantes con «Fijar para comparar».</td></tr></tbody>
+      <thead><tr><th>Variante</th><th>Casas</th><th>Pisos</th><th>Viv.</th><th>m²c</th><th>Plazas</th><th>Ocup. %</th><th>F. saco</th><th>Beneficio €</th><th>Cumple</th><th></th></tr></thead>
+      <tbody><tr><td colspan="11" class="vacio" style="font-family:var(--f-ui)">Fija variantes con «Fijar para comparar».</td></tr></tbody>
     </table>
   </div>
 </section>
 
 <div class="tip" id="tip" hidden></div>
 
-<script id="entrada-defecto" type="application/json">{"nombre": "UA-03-01 Los Pocillos", "_fuentes": "Parámetros de fases/01_urbanismo.md (rev. 2, aprobada). Separación 6 m: dato provisional del arquitecto. Hipótesis de vivienda: fases/02_diseno.md (V1).", "parcela": {"coordenadas": [[414988.78, 4478854.76], [414988.78, 4478782.0], [414896.93, 4478781.24], [414865.48, 4478877.9], [414894.46, 4478874.31], [414968.83, 4478858.29]], "superficie_oficial_m2": 8839}, "fachadas": [1, 2], "accesos": [2], "comun": {"edificabilidad_m2m2": 0.5769884, "viviendas_max": 34, "plazas_por_vivienda": 2, "separacion_edificios_m": 6}, "unifamiliar": {"ocupacion_pct": 60, "plantas_max": 2, "altura_max_m": 7.5, "retranqueo_fachada_m": 3, "retranqueo_linderos_m": 3}, "multifamiliar": {"ocupacion_pct": 45, "plantas_max": 3, "altura_max_m": 10.0, "retranqueo_fachada_m": 5, "retranqueo_linderos_m": 5}, "hipotesis": {"fondo_casa_m": 12.0, "ancho_casa_m": 6.5, "sup_casa_m2": 156.0, "sup_piso_m2": 135.0, "fondo_bloque_m": 12.0}}</script>
+<script id="entrada-defecto" type="application/json">{"nombre": "UA-03-01 Los Pocillos", "_fuentes": "Parámetros de fases/01_urbanismo.md (rev. 2, aprobada). Separación 6 m: dato provisional del arquitecto. Hipótesis de vivienda: fases/02_diseno.md (V1).", "parcela": {"coordenadas": [[414988.78, 4478854.76], [414988.78, 4478782.0], [414896.93, 4478781.24], [414865.48, 4478877.9], [414894.46, 4478874.31], [414968.83, 4478858.29]], "superficie_oficial_m2": 8839}, "fachadas": [1, 2], "accesos": [2], "comun": {"edificabilidad_m2m2": 0.5769884, "viviendas_max": 34, "plazas_por_vivienda": 2, "separacion_edificios_m": 6}, "unifamiliar": {"ocupacion_pct": 60, "plantas_max": 2, "altura_max_m": 7.5, "retranqueo_fachada_m": 3, "retranqueo_linderos_m": 3}, "multifamiliar": {"ocupacion_pct": 45, "plantas_max": 3, "altura_max_m": 10.0, "retranqueo_fachada_m": 5, "retranqueo_linderos_m": 5}, "hipotesis": {"fondo_casa_m": 12.0, "ancho_casa_m": 6.5, "sup_casa_m2": 156.0, "fondo_bloque_m": 12.0}}</script>
 <script src="https://cdn.jsdelivr.net/npm/jsts@2.11.3/dist/jsts.min.js"></script>
 <script src="motor.js"></script>
 <script>
@@ -283,7 +313,8 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
   var DEFECTO = JSON.parse($("entrada-defecto").textContent);
   var HIP_UI = [
     ["ancho_casa_m", "Frente de casa", 0.1, "m"], ["fondo_casa_m", "Fondo de casa", 0.5, "m"],
-    ["sup_casa_m2", "Construido por casa", 1, "m²"], ["sup_piso_m2", "Construido por piso", 1, "m²"],
+    ["sup_casa_m2", "Construido por casa", 1, "m²"], ["nucleo_ancho_m", "Ancho de núcleo (portal)", 0.1, "m"],
+    ["plazas_accesibles", "Plazas accesibles", 1, ""],
     ["casas_max_hilera", "Máx. casas por hilera", 1, ""], ["casas_min_hilera", "Mín. casas por hilera", 1, ""],
     ["jardin_trasero_m", "Jardín trasero", 0.5, "m"], ["fondo_bloque_m", "Fondo de bloque", 0.5, "m"],
     ["longitud_max_bloque_m", "Longitud máx. bloque", 1, "m"], ["calzada_m", "Calzada", 0.5, "m"],
@@ -294,6 +325,12 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
     separacion_edificios_m: "Separación entre edificios (m)", ocupacion_pct: "Ocupación máx. (%)", plantas_max: "Plantas máx.",
     altura_max_m: "Altura cornisa (m)", retranqueo_fachada_m: "Retranqueo a fachada (m)", retranqueo_linderos_m: "Retranqueo a linderos (m)"
   };
+  var ECO_UI = [
+    ["precio_venta_casa_eur_m2c", "Venta casa (€/m²c)"], ["precio_venta_piso_eur_m2c", "Venta piso (€/m²c)"],
+    ["coste_construccion_casa_eur_m2c", "Construcción casa (€/m²c)"], ["coste_construccion_piso_eur_m2c", "Construcción piso (€/m²c)"],
+    ["coste_urbanizacion_eur_m2", "Urbanización (€/m² libre)"], ["coste_plaza_superficie_eur", "Plaza en superficie (€)"],
+    ["coste_suelo_eur", "Suelo (€)"], ["gastos_generales_pct", "Gastos generales (%)"]
+  ];
   var CHK_TXT = {
     hay_viviendas: "Hay viviendas", viviendas: "Viviendas dentro del máximo", techo: "Techo dentro de la edificabilidad",
     plazas: "Plazas suficientes", ocupacion_A: "Ocupación de cada zona", fondo_saco_SI5: "Calle sin salida ≤ 20 m o con maniobra (DB-SI SI 5)",
@@ -323,7 +360,7 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
     });
     var libre = document.createElement("option"); libre.value = "libre"; libre.textContent = "Ángulo libre"; sel.appendChild(libre);
     params = { ang: Math.round(angs[0] * 2) / 2, pct: 60, uni_en: "abajo", remate: "martillo", acera: true };
-    pintarHipotesis(); pintarUrbanismo(); sincronizarControles();
+    pintarHipotesis(); pintarPrograma(); pintarEconomia(); pintarUrbanismo(); sincronizarControles();
     variantes = []; fijadas = []; idActiva = null; pintarGaleria(); pintarComparacion();
     recalcular();
   }
@@ -338,10 +375,39 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
       d.querySelector("input").addEventListener("change", function (e) {
         var v = parseFloat(e.target.value);
         if (!isFinite(v) || v <= 0) { e.target.value = ctx.hip[h[0]]; return; }
-        ctx.hip[h[0]] = v; variantes = []; pintarGaleria(); recalcular();
+        ctx.hip[h[0]] = v; invalidar();
       });
     });
   }
+  function pintarPrograma() {
+    var cont = $("programa"), html = '<span class="cab">Tipo</span><span class="cab">m²c</span><span class="cab">% obj.</span>';
+    Object.keys(ctx.hip.tipos_piso).forEach(function (t) {
+      html += "<span>" + t + '</span><input type="number" step="1" id="tp-' + t + '" value="' + ctx.hip.tipos_piso[t].construida_m2 + '" aria-label="Construido ' + t + '">' +
+        '<input type="number" step="5" id="mx-' + t + '" value="' + (ctx.hip.mix_pisos_pct[t] || 0) + '" aria-label="Porcentaje ' + t + '">';
+    });
+    cont.innerHTML = html;
+    Object.keys(ctx.hip.tipos_piso).forEach(function (t) {
+      $("tp-" + t).addEventListener("change", function (e) { var v = parseFloat(e.target.value); if (!(v > 20)) { e.target.value = ctx.hip.tipos_piso[t].construida_m2; return; }
+        ctx.hip.tipos_piso = JSON.parse(JSON.stringify(ctx.hip.tipos_piso)); ctx.hip.tipos_piso[t].construida_m2 = v; invalidar(); });
+      $("mx-" + t).addEventListener("change", function (e) { var v = parseFloat(e.target.value); if (!(v >= 0)) { e.target.value = ctx.hip.mix_pisos_pct[t] || 0; return; }
+        ctx.hip.mix_pisos_pct = Object.assign({}, ctx.hip.mix_pisos_pct); ctx.hip.mix_pisos_pct[t] = v; invalidar(); });
+    });
+  }
+  function pintarEconomia() {
+    var cont = $("economia"); cont.innerHTML = "";
+    ECO_UI.forEach(function (e) {
+      var d = document.createElement("div"); d.className = "campo";
+      var v = ctx.economia[e[0]];
+      d.innerHTML = '<label for="e-' + e[0] + '">' + e[1] + '</label><input type="number" id="e-' + e[0] + '" step="any" placeholder="—" value="' + (v === undefined ? "" : v) + '">';
+      cont.appendChild(d);
+      d.querySelector("input").addEventListener("change", function (ev) {
+        var x = ev.target.value.trim();
+        if (x === "") delete ctx.economia[e[0]]; else if (isFinite(+x)) ctx.economia[e[0]] = +x; else { ev.target.value = ""; delete ctx.economia[e[0]]; }
+        invalidar();
+      });
+    });
+  }
+  function invalidar() { variantes = []; pintarGaleria(); recalcular(); }
   function pintarUrbanismo() {
     var cont = $("urbanismo"), html = "";
     function fila(k, v) { html += '<div class="dato"><span>' + (URB_TXT[k] || k) + '</span><span class="num">' + v + "</span></div>"; }
@@ -411,7 +477,9 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
     ["zona_uni", "var(--zona-u)", "none", 0], ["zona_multi", "var(--zona-m)", "none", 0],
     ["calzadas", "var(--calzada)", "none", 0], ["bolsas", "var(--plaza)", "var(--plaza-b)", 0.08],
     ["plazas_casas", "var(--plaza)", "var(--plaza-b)", 0.08], ["aceras", "var(--acera)", "none", 0],
+    ["accesibles", "var(--acc)", "var(--acc-b)", 0.1],
     ["casas", "var(--casa)", "var(--casa-b)", 0.14], ["bloques", "var(--bloque)", "var(--bloque-b)", 0.18],
+    ["pisos", "var(--p3)", "var(--bloque-b)", 0.08], ["nucleos", "var(--nucleo)", "var(--bloque-b)", 0.08],
     ["edif_uni", "none", "var(--ret-u)", 0.18], ["edif_multi", "none", "var(--ret-m)", 0.18], ["parcela", "none", "var(--parcela)", 0.4]
   ];
   function svgVariante(r, v, detalle) {
@@ -421,10 +489,19 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
       var dash = c[0].indexOf("edif") === 0 ? ' stroke-dasharray="1.2 0.9"' : "";
       gs.forEach(function (g, i) {
         if (!g || g.isEmpty()) return;
-        var data = detalle && (c[0] === "casas" || c[0] === "bloques") ? ' data-tipo="' + c[0] + '" data-i="' + i + '"' : "";
-        s += '<path d="' + ruta(g, v) + '" fill="' + c[1] + '" stroke="' + c[2] + '" stroke-width="' + c[3] + '"' + dash + data + ' fill-rule="evenodd"/>';
+        var fill = c[1];
+        if (c[0] === "pisos") { var tp = r.tipos_pisos_planta[i]; fill = tp === "2D" ? "var(--p2)" : tp === "4D" ? "var(--p4)" : "var(--p3)"; }
+        var data = detalle && (c[0] === "casas" || c[0] === "bloques" || c[0] === "pisos") ? ' data-tipo="' + c[0] + '" data-i="' + i + '"' : "";
+        s += '<path d="' + ruta(g, v) + '" fill="' + fill + '" stroke="' + c[2] + '" stroke-width="' + c[3] + '"' + dash + data + ' fill-rule="evenodd"/>';
       });
     });
+    // rótulos de tipo en las viviendas de la planta tipo
+    if (detalle) {
+      r.geo.pisos.forEach(function (g, i) {
+        var ce = g.getCentroid();
+        s += '<text x="' + (ce.getX() - v.x0).toFixed(2) + '" y="' + (v.y1 - ce.getY() + 0.8).toFixed(2) + '" font-size="2.2" text-anchor="middle" fill="var(--ink)" font-family="IBM Plex Mono, monospace">' + r.tipos_pisos_planta[i] + "</text>";
+      });
+    }
     // separación de plazas en batería
     if (detalle) {
       var pa = ctx.hip.plaza_ancho_m;
@@ -541,7 +618,8 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
     var el = ev.target, tip = $("tip");
     if (!el.dataset || !el.dataset.tipo || !actual) { tip.hidden = true; return; }
     var g = actual.geo[el.dataset.tipo][+el.dataset.i], a = g.getArea(), txt;
-    if (el.dataset.tipo === "casas") txt = "Casa " + (+el.dataset.i + 1) + " · huella " + fmt(a) + " m² · " + actual.plantas_casa + " plantas · " + fmt(ctx.hip.sup_casa_m2) + " m²c";
+    if (el.dataset.tipo === "pisos") txt = "Piso " + actual.tipos_pisos_planta[+el.dataset.i] + " · " + fmt(a) + " m²c por planta · " + actual.plantas_bloque + " plantas";
+    else if (el.dataset.tipo === "casas") txt = "Casa " + (+el.dataset.i + 1) + " · huella " + fmt(a) + " m² · " + actual.plantas_casa + " plantas · " + fmt(ctx.hip.sup_casa_m2) + " m²c";
     else txt = "Bloque " + (+el.dataset.i + 1) + " · huella " + fmt(a) + " m² · " + actual.plantas_bloque + " plantas · " + fmt(a * actual.plantas_bloque) + " m²c de capacidad";
     tip.textContent = txt; tip.hidden = false; tip.style.left = (ev.clientX + 12) + "px"; tip.style.top = (ev.clientY + 12) + "px";
   });
@@ -556,6 +634,24 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
     $("c-techo").textContent = fmt(r.techo_m2); $("c-techo2").textContent = fmt(r.aprovechamiento_pct, 1) + " % de " + fmt(Emax);
     $("c-plazas").textContent = r.plazas + "/" + r.plazas_necesarias; $("c-plazas2").textContent = r.plazas_casas + " en calle + " + r.plazas_bolsa + " en bolsa";
     $("c-ocup").textContent = fmt(r.ocupacion_B_pct, 1) + " %"; $("c-ocup2").textContent = "casas " + fmt(r.ocupacion_A_uni_pct, 1) + " % · bloques " + fmt(r.ocupacion_A_multi_pct, 1) + " %";
+    var obj = ctx.hip.mix_pisos_pct, totObj = Object.keys(obj).reduce(function (s2, k) { return s2 + (obj[k] || 0); }, 0) || 1;
+    $("programa-res").innerHTML = r.pisos ? '<div class="tabla-min">' +
+      '<div><span>Portales · pisos por planta</span><span class="num">' + r.portales + " · " + r.pisos_por_planta + " × " + r.plantas_bloque + " pl.</span></div>" +
+      Object.keys(ctx.hip.tipos_piso).map(function (t) {
+        var n = r.mix_pisos[t] || 0;
+        return "<div><span>" + t + " (obj. " + fmt(100 * (obj[t] || 0) / totObj) + " %)</span><span class=\"num\">" + n + " · " + fmt(r.pisos ? 100 * n / r.pisos : 0) + " %</span></div>";
+      }).join("") + "</div>" : "";
+    var e = r.economia;
+    if (e.estado === "OK") {
+      $("pro-forma").innerHTML = '<div class="tabla-min">' +
+        "<div><span>Ingresos</span><span class=\"num\">" + fmt(e.ingresos_eur) + " €</span></div>" +
+        "<div><span>Construcción</span><span class=\"num\">" + fmt(e.coste_construccion_eur) + " €</span></div>" +
+        "<div><span>Urbanización + plazas</span><span class=\"num\">" + fmt(e.coste_urbanizacion_eur + e.coste_aparcamiento_eur) + " €</span></div>" +
+        "<div><span>Gastos generales + suelo</span><span class=\"num\">" + fmt(e.gastos_generales_eur + e.coste_suelo_eur) + " €</span></div>" +
+        "<div class=\"total\"><span>Beneficio</span><span class=\"num\">" + fmt(e.beneficio_eur) + " € · " + fmt(e.margen_sobre_ventas_pct, 1) + " %</span></div></div>";
+    } else {
+      $("pro-forma").innerHTML = '<p class="fuente">Cuenta de resultados: FALTA DATO (' + e.faltan.length + " valores). Rellénalos en «Cuenta de resultados».</p>";
+    }
     $("checks").innerHTML = Object.keys(r.comprobaciones).map(function (k) { return '<li class="' + (r.comprobaciones[k] ? "si" : "no") + '">' + CHK_TXT[k] + "</li>"; }).join("");
     $("notas").innerHTML = r.avisos.map(function (t) { return '<li class="aviso">' + t + "</li>"; }).join("") + r.notas.map(function (t) { return "<li>" + t + "</li>"; }).join("") +
       (r.fondo_saco_m ? "<li>Calle sin salida: " + fmt(r.fondo_saco_m) + " m.</li>" : "");
@@ -590,15 +686,16 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
     var lista = variantes.filter(function (r) { return !$("solo-ok").checked || r.cumple; });
     var o = $("orden").value;
     var f = { viviendas: function (a, b) { return b.viviendas - a.viviendas || b.techo_m2 - a.techo_m2; }, techo: function (a, b) { return b.techo_m2 - a.techo_m2; },
-      casas: function (a, b) { return b.casas - a.casas || b.viviendas - a.viviendas; }, ocupacion: function (a, b) { return a.ocupacion_B_pct - b.ocupacion_B_pct; } }[o];
-    if (f) lista = lista.slice().sort(f);
+      casas: function (a, b) { return b.casas - a.casas || b.viviendas - a.viviendas; }, ocupacion: function (a, b) { return a.ocupacion_B_pct - b.ocupacion_B_pct; },
+      beneficio: function (a, b) { var x = a.economia.beneficio_eur, y = b.economia.beneficio_eur; return (y === undefined ? -1e18 : y) - (x === undefined ? -1e18 : x) || b.viviendas - a.viviendas; } }[o];
+    if (f) lista = lista.slice().sort(function (a, b) { return (a.cumple === b.cumple ? 0 : a.cumple ? -1 : 1) || f(a, b); });
     var v = vb(ctx, 4);
     gal.innerHTML = lista.slice(0, 48).map(function (r) {
       return '<button type="button" class="tarjeta' + (r.id === idActiva ? " activa" : "") + '" data-id="' + r.id + '">' +
         '<svg viewBox="0 0 ' + v.w.toFixed(1) + " " + v.h.toFixed(1) + '" aria-hidden="true">' + svgVariante(r, v, false) + "</svg>" +
         '<span class="t1"><b>' + r.id + '</b><span class="tag ' + (r.cumple ? "si" : "no") + '">' + (r.cumple ? "cumple" : "no cumple") + "</span></span>" +
         '<span class="t1"><span>' + r.casas + "+" + r.pisos + " = " + r.viviendas + " viv</span><span>" + fmt(r.techo_m2) + " m²c</span></span>" +
-        '<span class="t2">' + fmt(r.pct_zona_unifamiliar) + " % casas " + r.unifamiliar_en + " · " + r.remate.replace("_", " ") + " · acera " + (r.acera ? "sí" : "no") + " · plazas " + r.plazas + "/" + r.plazas_necesarias + "</span></button>";
+        '<span class="t2">' + fmt(r.pct_zona_unifamiliar) + " % casas " + r.unifamiliar_en + " · " + r.remate.replace("_", " ") + " · acera " + (r.acera ? "sí" : "no") + " · plazas " + r.plazas + "/" + r.plazas_necesarias + (r.economia.estado === "OK" ? " · " + fmt(r.economia.beneficio_eur / 1000) + " k€" : "") + "</span></button>";
     }).join("") + (lista.length > 48 ? '<p class="vacio">Se muestran 48 de ' + lista.length + '.</p>' : "") + (!lista.length ? '<p class="vacio">Ninguna variante cumple todas las comprobaciones.</p>' : "");
   }
   $("galeria").addEventListener("click", function (e) {
@@ -617,11 +714,11 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
   function sameParams(a, b) { return a && b && a.ang === b.ang && a.pct === b.pct && a.uni_en === b.uni_en && a.remate === b.remate && a.acera === b.acera; }
   function pintarComparacion() {
     var tb = $("comparar").querySelector("tbody");
-    if (!fijadas.length) { tb.innerHTML = '<tr><td colspan="10" class="vacio" style="font-family:var(--f-ui)">Fija variantes con «Fijar para comparar».</td></tr>'; return; }
+    if (!fijadas.length) { tb.innerHTML = '<tr><td colspan="11" class="vacio" style="font-family:var(--f-ui)">Fija variantes con «Fijar para comparar».</td></tr>'; return; }
     tb.innerHTML = fijadas.map(function (r, i) {
       return "<tr><td style=\"font-family:var(--f-ui)\">" + r.etiqueta + " · " + fmt(r.pct_zona_unifamiliar) + " % " + r.unifamiliar_en + ", " + r.remate.replace("_", " ") + "</td><td>" + r.casas + "</td><td>" + r.pisos + "</td><td>" + r.viviendas +
         "</td><td>" + fmt(r.techo_m2) + "</td><td>" + r.plazas + "/" + r.plazas_necesarias + "</td><td>" + fmt(r.ocupacion_B_pct, 1) + "</td><td>" + fmt(r.fondo_saco_m) +
-        "</td><td>" + (r.cumple ? "sí" : "no") + '</td><td><button type="button" data-i="' + i + '" data-a="ver">Ver</button> · <button type="button" data-i="' + i + '" data-a="quitar">Quitar</button></td></tr>';
+        "</td><td>" + (r.economia.estado === "OK" ? fmt(r.economia.beneficio_eur) : "—") + "</td><td>" + (r.cumple ? "sí" : "no") + '</td><td><button type="button" data-i="' + i + '" data-a="ver">Ver</button> · <button type="button" data-i="' + i + '" data-a="quitar">Quitar</button></td></tr>';
     }).join("");
   }
   $("comparar").addEventListener("click", function (e) {
@@ -633,8 +730,12 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
   $("copiar").addEventListener("click", function () {
     if (!actual) return;
     var hipCambiadas = {};
-    Object.keys(ctx.hip).forEach(function (k) { if (ctx.hip[k] !== Motor.HIPOTESIS_DEFECTO[k] && !(entradaActual.hipotesis && entradaActual.hipotesis[k] === ctx.hip[k])) hipCambiadas[k] = ctx.hip[k]; });
+    Object.keys(ctx.hip).forEach(function (k) {
+      var a = JSON.stringify(ctx.hip[k]), d = JSON.stringify(Motor.HIPOTESIS_DEFECTO[k]), en = entradaActual.hipotesis ? JSON.stringify(entradaActual.hipotesis[k]) : undefined;
+      if (a !== d && a !== en) hipCambiadas[k] = ctx.hip[k];
+    });
     var q = Object.assign({}, params); if (Object.keys(hipCambiadas).length) q.hipotesis = hipCambiadas;
+    if (Object.keys(ctx.economia).length) q.economia = ctx.economia;
     var cmd = "python3 scripts/variantes_generador.py planos/variantes/entrada_UA-03-01.json --parametros '" + JSON.stringify(q) + "'";
     var ok = function () { $("copiado").hidden = false; $("copiado").textContent = "Orden copiada. Ejecútala en el repositorio para obtener el DXF."; };
     try {

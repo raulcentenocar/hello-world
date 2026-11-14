@@ -49,6 +49,8 @@ import re
 import sys
 from pathlib import Path
 
+import numpy as np
+import shapely
 from shapely import affinity
 from shapely.geometry import LineString, MultiPolygon, Polygon, box
 from shapely.ops import unary_union
@@ -252,7 +254,11 @@ def bloques_lineales(zona, angulo, fondo, separacion, l_min, l_max, paso, fases=
 
 def _tramos_en_franja(pz, minx, maxx, y, fondo, separacion, l_min, l_max, paso):
     n = int(math.ceil((maxx - minx) / paso))
-    dentro = [pz.contains(box(minx + i * paso, y, minx + (i + 1) * paso, y + fondo)) for i in range(n)]
+    # Columnas de ancho `paso` dentro de la zona (vectorizado; mismo resultado que caja a caja).
+    xs = minx + np.arange(n) * paso
+    zona = pz.context
+    shapely.prepare(zona)
+    dentro = list(shapely.contains(zona, shapely.box(xs, y, minx + (np.arange(n) + 1) * paso, y + fondo)))
     tramos, i = [], 0
     while i < n:
         if dentro[i]:

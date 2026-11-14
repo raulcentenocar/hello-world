@@ -49,6 +49,30 @@ from volumetria_generador import (  # noqa: E402
 
 REQ_COMUN = ["edificabilidad_m2m2", "viviendas_max", "plazas_por_vivienda", "separacion_edificios_m"]
 REQ_USO = ["ocupacion_pct", "plantas_max", "retranqueo_fachada_m", "retranqueo_linderos_m"]
+# Cuenta de resultados: solo se calcula si están TODOS (los valores los da el arquitecto; no hay defectos).
+REQ_ECONOMIA = ["precio_venta_casa_eur_m2c", "precio_venta_piso_eur_m2c", "coste_construccion_casa_eur_m2c",
+                "coste_construccion_piso_eur_m2c", "coste_urbanizacion_eur_m2", "coste_plaza_superficie_eur",
+                "coste_suelo_eur", "gastos_generales_pct"]
+
+
+def cuenta_resultados(eco, techo_casas, techo_pisos, plazas, sup, huella):
+    """Ingresos, costes y beneficio. Devuelve FALTA DATO si falta algún valor."""
+    faltan = [k for k in REQ_ECONOMIA if k not in eco]
+    if faltan:
+        return {"estado": FALTA, "faltan": faltan}
+    ingresos = techo_casas * eco["precio_venta_casa_eur_m2c"] + techo_pisos * eco["precio_venta_piso_eur_m2c"]
+    construccion = techo_casas * eco["coste_construccion_casa_eur_m2c"] + techo_pisos * eco["coste_construccion_piso_eur_m2c"]
+    urbanizacion = max(0.0, sup - huella) * eco["coste_urbanizacion_eur_m2"]
+    aparcamiento = plazas * eco["coste_plaza_superficie_eur"]
+    gastos = (construccion + urbanizacion + aparcamiento) * eco["gastos_generales_pct"] / 100
+    coste = construccion + urbanizacion + aparcamiento + gastos + eco["coste_suelo_eur"]
+    beneficio = ingresos - coste
+    return {"estado": "OK", "ingresos_eur": round(ingresos), "coste_construccion_eur": round(construccion),
+            "coste_urbanizacion_eur": round(urbanizacion), "coste_aparcamiento_eur": round(aparcamiento),
+            "gastos_generales_eur": round(gastos), "coste_suelo_eur": round(eco["coste_suelo_eur"]),
+            "coste_total_eur": round(coste), "beneficio_eur": round(beneficio),
+            "margen_sobre_ventas_pct": round(100 * beneficio / ingresos, 1) if ingresos else 0.0,
+            "rentabilidad_sobre_coste_pct": round(100 * beneficio / coste, 1) if coste else 0.0}
 
 HIPOTESIS_DEFECTO = {
     # Vivienda unifamiliar adosada
@@ -62,7 +86,10 @@ HIPOTESIS_DEFECTO = {
     "fondo_bloque_m": 12.0,
     "longitud_min_bloque_m": 15.0,
     "longitud_max_bloque_m": 40.0,     # < 40 m evita junta de dilatación (DB SE-AE 3.4.1)
-    "sup_piso_m2": 135.0,              # construidos por piso, con parte de comunes
+    # Programa de pisos (hipótesis de producto; sin programa del cliente)
+    "tipos_piso": {"2D": {"construida_m2": 85.0}, "3D": {"construida_m2": 105.0}, "4D": {"construida_m2": 125.0}},
+    "mix_pisos_pct": {"2D": 30, "3D": 50, "4D": 20},
+    "nucleo_ancho_m": 5.0,             # escalera + ascensor a lo largo del bloque (por portal)
     "altura_planta_m": 3.0,
     # Viario y aparcamiento
     "calzada_m": 6.0,
@@ -73,7 +100,10 @@ HIPOTESIS_DEFECTO = {
     "martillo_largo_m": 12.0,          # brazo total del martillo de giro (hipótesis)
     "fondo_saco_max_m": 20.0,          # DB-SI SI 5 1.2: vía sin salida > 20 m → espacio de maniobra
     "distancia_aparcamiento_edificio_m": 2.0,
-    "aparcamiento_fuera_retranqueo": True,  # hipótesis H-APA de F2 (cómputo en retranqueo: FALTA DATO)
+    "aparcamiento_fuera_retranqueo": True,
+    "plazas_accesibles": 2,
+    "repartos_probados": 8,            # repartos casas/pisos que se prueban con su aparcamiento            # decisión del arquitecto (F2/F3); su número normativo: FALTA DATO
+    "transferencia_accesible_m": 1.2,  # DB-SUA Anejo A: zona de transferencia lateral ≥ 1,20 m  # hipótesis H-APA de F2 (cómputo en retranqueo: FALTA DATO)
     # Búsqueda
     "paso_rejilla_m": 0.5,
     "paso_fase_m": 2.0,
@@ -122,7 +152,9 @@ def cargar(ruta: Path) -> dict:
     barr = dict(BARRIDO_DEFECTO)
     barr.update(cfg.get("barrido") or {})
     sup = float(par.get("superficie_oficial_m2") or poly.area)
+    eco = {k: v for k, v in (cfg.get("economia") or {}).items() if v is not None}
     return {
+        "economia": eco,
         "nombre": cfg.get("nombre", "parcela"), "pts": pts, "poly": poly, "sup": sup,
         "f_sup": sup / poly.area, "ccw": poly.exterior.is_ccw,
         "fachadas": set(cfg["fachadas"]), "accesos": set(cfg["accesos"]),
@@ -260,6 +292,56 @@ def _plazas_casa(casa, lado, yc, hip, acera):
     if lado == "abajo":
         return box(x1, yc - P, x2, yc)
     return box(x1, yc + C, x2, yc + C + P)
+
+
+def secuencia_mix(n, mix):
+    """n viviendas cuyo reparto se acerca en cada paso al % objetivo (mayor déficit primero)."""
+    tipos = list(mix.keys())
+    tot = float(sum(mix.values())) or 1.0
+    cnt = {t: 0 for t in tipos}
+    out = []
+    for i in range(1, n + 1):
+        t = max(tipos, key=lambda t: (mix[t] / tot * i - cnt[t], -tipos.index(t)))
+        cnt[t] += 1
+        out.append(t)
+    return out
+
+
+def colocar_portales(cand, seq, tipos, hip, huella_max):
+    """Coloca una planta tipo: portales con núcleo y una vivienda pasante a cada lado.
+
+    Devuelve (bloques, [(vivienda, tipo)], núcleos, nº colocadas, m²c por planta).
+    """
+    F, nw = hip["fondo_bloque_m"], hip["nucleo_ancho_m"]
+    bloques, pisos, nucleos = [], [], []
+    k, huella = 0, 0.0
+    for b in cand:
+        if k >= len(seq):
+            break
+        x1, y1, x2, _ = b.bounds
+        x = x1
+        while k < len(seq):
+            wl = tipos[seq[k]]["construida_m2"] / F
+            if k + 1 < len(seq):
+                wr = tipos[seq[k + 1]]["construida_m2"] / F
+                fin = x + wl + nw + wr
+                if fin <= x2 + 1e-6 and huella + (fin - x1) * F <= huella_max + 1e-6:
+                    pisos += [(box(x, y1, x + wl, y1 + F), seq[k]), (box(x + wl + nw, y1, fin, y1 + F), seq[k + 1])]
+                    nucleos.append(box(x + wl, y1, x + wl + nw, y1 + F))
+                    x, k = fin, k + 2
+                    continue
+            fin = x + wl + nw
+            if fin <= x2 + 1e-6 and huella + (fin - x1) * F <= huella_max + 1e-6:
+                pisos.append((box(x, y1, x + wl, y1 + F), seq[k]))
+                nucleos.append(box(x + wl, y1, fin, y1 + F))
+                x, k = fin, k + 1
+                continue
+            break
+        if x > x1 + 1e-6:
+            bloques.append(box(x1, y1, x, y1 + F))
+            huella += (x - x1) * F
+    techo = sum(tipos[t]["construida_m2"] for _, t in pisos) + len(nucleos) * nw * F
+    return bloques, pisos, nucleos, k, techo
 
 
 def _recuento_hileras(casas, sep):
@@ -403,110 +485,162 @@ def variante(ctx, ang, pct, uni_en, remate, acera):
     lista.sort(key=lambda cb: cb[0].distance(acc))
     por_casa = int((hip["ancho_casa_m"] - hip["paso_peatonal_casa_m"]) // hip["plaza_ancho_m"])
 
-    # 3. Reparto de techo y viviendas
+    # 3. Reparto de techo y viviendas (programa de pisos por portales)
     Emax = ctx["sup"] * com["edificabilidad_m2m2"]
     vmax = int(com["viviendas_max"])
     pl_m = int(ctx["multi"]["plantas_max"])
     if "altura_max_m" in ctx["multi"]:
         pl_m = min(pl_m, int(ctx["multi"]["altura_max_m"] // hip["altura_planta_m"] + 1e-9))
-    cand = []
-    if not M.is_empty:
-        cand = bloques_lineales(M, 0.0, hip["fondo_bloque_m"], sep, hip["longitud_min_bloque_m"],
-                                hip["longitud_max_bloque_m"], hip["paso_rejilla_m"])
-        cand.sort(key=lambda b: (b.centroid.y, b.centroid.x))
     huella_max_m = ctx["multi"]["ocupacion_pct"] / 100 * Zm.area * ctx["f_sup"] if not Zm.is_empty else 0
+    tipos = hip["tipos_piso"]
+    mix = {t: v for t, v in hip["mix_pisos_pct"].items() if v > 0 and t in tipos}
+    P, pa = hip["plaza_fondo_m"], hip["plaza_ancho_m"]
+    da = hip["distancia_aparcamiento_edificio_m"]
+    calles = [m["calzada"] for m in mods] + remates
+    red = unary_union(calles).buffer(1.0) if calles else Polygon()
+    dmax_acc = max(ctx["uni"]["retranqueo_fachada_m"], ctx["multi"]["retranqueo_fachada_m"],
+                   ctx["uni"]["retranqueo_linderos_m"], ctx["multi"]["retranqueo_linderos_m"]) + 3.0
+    if hip["aparcamiento_fuera_retranqueo"]:
+        base_ap = M if not M.is_empty else U
+    else:
+        base_ap = Zm if not Zm.is_empty else Zu
 
-    def colocar_bloques(pisos_obj):
-        bl = []
-        if not pisos_obj or not cand:
-            return bl, 0
-        falta = min(pisos_obj * hip["sup_piso_m2"] / pl_m, huella_max_m)
-        for b in cand:
-            if falta <= 1:
-                break
-            x1, y1, x2, y2 = b.bounds
-            fondo = y2 - y1
-            largo = min(x2 - x1, math.ceil(falta / fondo / 0.5) * 0.5)
-            if largo < hip["longitud_min_bloque_m"]:
-                largo = hip["longitud_min_bloque_m"] if (x2 - x1) >= hip["longitud_min_bloque_m"] else 0
-            if largo <= 0:
-                continue
-            bl.append(box(x1, y1, x1 + largo, y2))
-            falta -= largo * fondo
-        cap = sum(b.area for b in bl) * pl_m
-        return bl, min(pisos_obj, int(cap // hip["sup_piso_m2"] + 1e-6))
-
-    tope = min(len(lista), vmax, int(Emax // hip["sup_casa_m2"]))
-    mejor = None
-    for n in range(tope, max(-1, tope - 16), -1):
-        pisos_obj = max(0, min(vmax - n, int((Emax - n * hip["sup_casa_m2"]) // hip["sup_piso_m2"])))
-        bl, n_p = colocar_bloques(pisos_obj)
-        clave = (n + n_p, n * hip["sup_casa_m2"] + n_p * hip["sup_piso_m2"])
-        if mejor is None or clave > mejor[0]:
-            mejor = (clave, n, bl, n_p, pisos_obj)
-    _, n_casas, bloques, n_pisos, pisos_obj = mejor
-    if n_casas < len(lista):
-        notas.append(f"Se colocan {n_casas} de {len(lista)} casas posibles para maximizar viviendas y techo.")
-    if pisos_obj and n_pisos < pisos_obj:
-        notas.append(f"La zona multifamiliar solo admite {n_pisos} de {pisos_obj} pisos.")
-    casas = [c for c, _ in lista[:n_casas]]
-    plazas_u = [b for _, b in lista[:n_casas] if b is not None]
-    n_plazas_u = len(plazas_u) * por_casa
-    techo_u = n_casas * hip["sup_casa_m2"]
-    hileras_n = _recuento_hileras(casas, sep)
-
-    # Bolsa de aparcamiento para las plazas que faltan
-    viv = n_casas + n_pisos
-    necesarias = int(com["plazas_por_vivienda"]) * viv
-    falta_pl = max(0, necesarias - n_plazas_u)
-    bolsas, viales_bolsa, n_bolsa, largo_bolsa = [], [], 0, 0.0
-    if falta_pl:
-        P = hip["plaza_fondo_m"]
-        W = 2 * P + C
-        ocupado = unary_union(casas + bloques + plazas_u + [m["calzada"] for m in mods] + remates + aceras)
-        da = hip["distancia_aparcamiento_edificio_m"]
-        if hip["aparcamiento_fuera_retranqueo"]:
-            base = M if not M.is_empty else U
-        else:
-            base = Zm if not Zm.is_empty else Zu
-        libre = _limpia(base.intersection(poly).difference(ocupado.buffer(da) if not ocupado.is_empty else Polygon()))
-        if corte is not None and not Zm.is_empty:
-            libre = _limpia(libre.difference(corte))
+    def bolsa(libre, falta_pl, n_acc):
+        """Bandas de aparcamiento de doble o simple crujía, conectadas al acceso o a la calle de casas."""
+        bolsas, viales, n_bolsa, largo_bolsa, accesibles = [], [], 0, 0.0, []
+        acc_pend = n_acc
         y = libre.bounds[1] if not libre.is_empty else 0
-        pa = hip["plaza_ancho_m"]
-        dmax_acc = max(ctx["uni"]["retranqueo_fachada_m"], ctx["multi"]["retranqueo_fachada_m"],
-                       ctx["uni"]["retranqueo_linderos_m"], ctx["multi"]["retranqueo_linderos_m"]) + 3.0
-        while falta_pl > 0 and not libre.is_empty and y + W <= libre.bounds[3]:
+        while falta_pl > 0 and not libre.is_empty and y + P + C <= libre.bounds[3]:
+            doble = y + 2 * P + C <= libre.bounds[3]
+            W = 2 * P + C if doble else P + C
+            lados_pl = 2 if doble else 1
             tramos = _tramos_en_franja(prep(libre), libre.bounds[0], libre.bounds[2], y, W, 0.0,
                                        2 * pa, None, hip["paso_rejilla_m"])
             usado = False
             for r in sorted(tramos, key=lambda r: r.distance(acc)):
-                if r.distance(acc) > dmax_acc:  # sin conexión razonable con el acceso
+                conectado_red = not red.is_empty and r.distance(red) <= 0.01
+                if r.distance(acc) > dmax_acc and not conectado_red:
                     continue
                 x1, y1, x2, y2 = r.bounds
-                n_max = 2 * int((x2 - x1) // pa)
-                n = min(n_max, falta_pl + (falta_pl % 2))
-                largo = math.ceil(n / 2) * pa
+                ancho_acc = acc_pend * pa + math.ceil(acc_pend / 2) * hip["transferencia_accesible_m"]
+                if lados_pl == 1:
+                    cap = int((x2 - x1 - ancho_acc) // pa) + acc_pend
+                else:
+                    cap = 2 * int((x2 - x1) // pa) - math.ceil(ancho_acc / pa) + acc_pend
+                if cap <= 0:
+                    continue
+                nb = min(cap, falta_pl + (falta_pl % lados_pl))
+                largo = min(ancho_acc + math.ceil(max(0, nb - acc_pend) / lados_pl) * pa, x2 - x1)
                 cerca_izq = abs(x1 - acc.centroid.x) < abs(x2 - acc.centroid.x)
                 rr = box(x1, y1, x1 + largo, y2) if cerca_izq else box(x2 - largo, y1, x2, y2)
                 bolsas.append(rr)
-                # vial de conexión con el acceso
-                vx1, vx2 = (poly.bounds[0] - 1, rr.bounds[0]) if cerca_izq else (rr.bounds[2], poly.bounds[2] + 1)
-                vial = _pieza_que_toca(poly.intersection(box(vx1, y1 + P, vx2, y1 + P + C)), acc)
-                if vial is not None:
-                    viales_bolsa.append(vial)
-                n_bolsa += n
-                largo_bolsa = max(largo_bolsa, largo + (vial.length / 2 - C if vial is not None else 0))
-                falta_pl -= n
+                if acc_pend:
+                    ax = rr.bounds[0] if cerca_izq else rr.bounds[2] - ancho_acc
+                    accesibles.append(box(ax, y1, ax + ancho_acc, y1 + P))
+                    acc_pend = 0
+                if not conectado_red:
+                    vx1, vx2 = (poly.bounds[0] - 1, rr.bounds[0]) if cerca_izq else (rr.bounds[2], poly.bounds[2] + 1)
+                    ya = y1 + (P if doble else 0)
+                    vial = _pieza_que_toca(poly.intersection(box(vx1, ya, vx2, ya + C)), acc)
+                    if vial is not None:
+                        viales.append(vial)
+                        largo_bolsa = max(largo_bolsa, largo + vial.length / 2 - C)
+                n_bolsa += nb
+                falta_pl -= nb
                 usado = True
                 if falta_pl <= 0:
                     break
             y += W if usado else 1.0
+        return {"bolsas": bolsas, "viales_bolsa": viales, "n_bolsa": n_bolsa, "largo_bolsa": largo_bolsa,
+                "accesibles": accesibles, "falta": max(0, falta_pl)}
+
+    def solucion(n_casas, u):
+        """Casas + aparcamiento reservado primero + portales en el suelo que queda."""
+        casas = [c for c, _ in lista[:n_casas]]
+        plazas_u = [b for _, b in lista[:n_casas] if b is not None]
+        n_plazas_u = len(plazas_u) * por_casa
+        n_pisos = u * pl_m
+        necesarias = int(com["plazas_por_vivienda"]) * (n_casas + n_pisos)
+        n_acc = int(hip["plazas_accesibles"]) if n_pisos else 0
+        falta_pl = max(0, necesarias - n_plazas_u, n_acc)
+        ocupado = unary_union(casas + plazas_u + calles + aceras)
+        ap = {"bolsas": [], "viales_bolsa": [], "n_bolsa": 0, "largo_bolsa": 0.0, "accesibles": [], "falta": 0}
+        if falta_pl and not base_ap.is_empty:
+            libre = _limpia(base_ap.intersection(poly).difference(ocupado.buffer(da) if not ocupado.is_empty else Polygon()))
+            if corte is not None and not Zm.is_empty:
+                libre = _limpia(libre.difference(corte))
+            ap = bolsa(libre, falta_pl, n_acc)
+        elif falta_pl:
+            ap["falta"] = falta_pl
+        lay = ([], [], [], 0, 0.0)
+        if u and not M.is_empty:
+            ocupa_ap = unary_union(ap["bolsas"] + ap["viales_bolsa"])
+            Mlib = _limpia(M.difference(ocupa_ap.buffer(da))) if not ocupa_ap.is_empty else M
+            cand = bloques_lineales(Mlib, 0.0, hip["fondo_bloque_m"], sep, hip["longitud_min_bloque_m"],
+                                    hip["longitud_max_bloque_m"], hip["paso_rejilla_m"]) if not Mlib.is_empty else []
+            cand.sort(key=lambda b: (b.centroid.y, b.centroid.x))
+            lay = colocar_portales(cand, secuencia_mix(u, mix), tipos, hip, huella_max_m)
+        ok_pl = n_plazas_u + ap["n_bolsa"] >= necesarias and not (n_acc and not ap["accesibles"])
+        return {"n": n_casas, "u": u, "lay": lay, "casas": casas, "plazas_u": plazas_u, "n_plazas_u": n_plazas_u,
+                "n_pisos": n_pisos, "necesarias": necesarias, "n_acc": n_acc, "ap": ap, "ok_pl": ok_pl,
+                "completo": lay[3] == u}
+
+    # Búsqueda del reparto: más viviendas, después más techo; debe caber entero (pisos y plazas).
+    tope = min(len(lista), vmax, int(Emax // hip["sup_casa_m2"]))
+    elegido, mejor_clave, respaldo = None, None, None
+    for n in range(tope, max(-1, tope - 16), -1):
+        lim_viv, lim_techo = vmax - n, Emax - n * hip["sup_casa_m2"]
+        u_max = (lim_viv // pl_m) if (mix and not M.is_empty) else 0
+        if mejor_clave is not None and n + u_max * pl_m < mejor_clave[0]:
+            continue
+        if n and min(_recuento_hileras([c for c, _ in lista[:n]], sep)) < hip["casas_min_hilera"]:
+            continue   # quitar casas no puede dejar hileras por debajo del mínimo
+        for u in range(u_max, -1, -1):
+            seq = secuencia_mix(u, mix)
+            if pl_m * sum(tipos[t]["construida_m2"] for t in seq) > lim_techo + 1e-6:
+                continue
+            if mejor_clave is not None and n + u * pl_m < mejor_clave[0]:
+                break
+            sol = solucion(n, u)
+            if respaldo is None:
+                respaldo = sol
+            if not sol["completo"] or pl_m * sol["lay"][4] > lim_techo + 1e-6:
+                continue
+            if sol["ok_pl"]:
+                clave = (n + u * pl_m, n * hip["sup_casa_m2"] + pl_m * sol["lay"][4])
+                if mejor_clave is None or clave > mejor_clave:
+                    elegido, mejor_clave = sol, clave
+                break
+    if elegido is None:
+        elegido = respaldo if respaldo is not None else solucion(min(tope, len(lista)), 0)
+        notas.append("Ningún reparto cabe con todas sus plazas: se muestra el de más viviendas.")
+    sol = elegido
+    n_casas, n_pisos = sol["n"], sol["n_pisos"]
+    bloques, pisos_geo, nucleos, u_planta, techo_planta = sol["lay"]
+    ap = sol["ap"]
+    ap.update({"casas": sol["casas"], "plazas_u": sol["plazas_u"], "n_plazas_u": sol["n_plazas_u"],
+               "viv": n_casas + n_pisos, "necesarias": sol["necesarias"], "n_acc": sol["n_acc"]})
+    if n_casas < len(lista):
+        notas.append(f"Se colocan {n_casas} de {len(lista)} casas posibles para maximizar viviendas y techo.")
+    casas, plazas_u, n_plazas_u = ap["casas"], ap["plazas_u"], ap["n_plazas_u"]
+    techo_u = n_casas * hip["sup_casa_m2"]
+    techo_m = pl_m * techo_planta
+    hileras_n = _recuento_hileras(casas, sep)
+    mix_real = {}
+    for _, t in pisos_geo:
+        mix_real[t] = mix_real.get(t, 0) + pl_m
+    if n_pisos:
+        notas.append(f"Pisos: {u_planta} por planta × {pl_m} plantas en {len(nucleos)} portales ("
+                     + ", ".join(f"{k} {v}" for k, v in sorted(mix_real.items())) + ").")
+
+    viv, necesarias, n_acc = ap["viv"], ap["necesarias"], ap["n_acc"]
+    bolsas, viales_bolsa, n_bolsa = ap["bolsas"], ap["viales_bolsa"], ap["n_bolsa"]
+    largo_bolsa, accesibles = ap["largo_bolsa"], ap["accesibles"]
 
     # 4. Comprobaciones
     huella_u = sum(c.area for c in casas)
     huella_m = sum(b.area for b in bloques)
-    techo = techo_u + n_pisos * hip["sup_piso_m2"]
+    techo = techo_u + techo_m
     plazas = n_plazas_u + n_bolsa
     ocA_u = 100 * huella_u / (Zu.area * ctx["f_sup"]) if not Zu.is_empty else 0
     ocA_m = 100 * huella_m / (Zm.area * ctx["f_sup"]) if not Zm.is_empty else 0
@@ -516,13 +650,13 @@ def variante(ctx, ang, pct, uni_en, remate, acera):
         "hay_viviendas": viv > 0,
         "viviendas": viv <= vmax,
         "techo": techo <= Emax + 0.5,
-        "plazas": plazas >= necesarias,
+        "plazas": plazas >= necesarias and not (n_acc and not accesibles),
         "ocupacion_A": ocA_u <= ctx["uni"]["ocupacion_pct"] + 1e-6 and ocA_m <= ctx["multi"]["ocupacion_pct"] + 1e-6,
         "fondo_saco_SI5": fondo_saco <= hip["fondo_saco_max_m"] + 1e-6,
         "itinerario_peatonal": acera or not mods,
     }
     if not chk["plazas"]:
-        avisos.append(f"Faltan {necesarias - plazas} plazas.")
+        avisos.append(f"Faltan {necesarias - plazas} plazas." if plazas < necesarias else "Faltan las plazas accesibles.")
     if not chk["fondo_saco_SI5"]:
         avisos.append(f"Calle sin salida de {fondo_saco:.0f} m sin espacio de maniobra (DB-SI SI 5, revisar).")
     if not chk["itinerario_peatonal"]:
@@ -536,6 +670,7 @@ def variante(ctx, ang, pct, uni_en, remate, acera):
         "parcela": poly, "zona_uni": Zu, "zona_multi": Zm, "edif_uni": U, "edif_multi": M,
         "casas": casas, "plazas_casas": plazas_u, "calzadas": [m["calzada"] for m in mods] + remates + viales_bolsa,
         "bolsas": bolsas, "bloques": bloques, "aceras": aceras,
+        "pisos": [g for g, _ in pisos_geo], "nucleos": nucleos, "accesibles": accesibles,
     }
     geo = {k: ([affinity.rotate(g, ang, origin=c) for g in v] if isinstance(v, list)
                else affinity.rotate(v, ang, origin=c)) for k, v in geo.items()}
@@ -545,7 +680,9 @@ def variante(ctx, ang, pct, uni_en, remate, acera):
         "unifamiliar_en": _lado_txt(ang, uni_en) if 0 < pct < 100 else ("todo" if pct >= 100 else "—"),
         "remate": remate, "acera": acera,
         "casas": n_casas, "pisos": n_pisos, "viviendas": viv,
-        "bloques": len(bloques), "plantas_bloque": pl_m,
+        "bloques": len(bloques), "plantas_bloque": pl_m, "portales": len(nucleos),
+        "pisos_por_planta": u_planta, "mix_pisos": mix_real, "tipos_pisos_planta": [t for _, t in pisos_geo],
+        "plazas_accesibles": n_acc if accesibles else 0,
         "techo_m2": round(techo, 1), "aprovechamiento_pct": round(100 * techo / Emax, 1),
         "plazas": plazas, "plazas_necesarias": necesarias, "plazas_casas": n_plazas_u, "plazas_bolsa": n_bolsa,
         "huella_m2": round(huella_u + huella_m, 1),
@@ -553,6 +690,8 @@ def variante(ctx, ang, pct, uni_en, remate, acera):
         "ocupacion_B_pct": round(ocB, 1),
         "fondo_saco_m": round(fondo_saco, 1),
         "comprobaciones": chk, "cumple": all(chk.values()),
+        "techo_casas_m2": round(techo_u, 1), "techo_pisos_m2": round(techo_m, 1),
+        "economia": cuenta_resultados(ctx["economia"], techo_u, techo_m, plazas, ctx["sup"], huella_u + huella_m),
         "avisos": avisos, "notas": notas, "_geo": geo,
     }
 
@@ -578,7 +717,17 @@ def angulos(ctx):
     return [float(x) for x in a]
 
 
-def barrer(ctx):
+OBJETIVOS = {
+    "ranking": lambda r: (-r["viviendas"], -r["techo_m2"]),
+    "viviendas": lambda r: (-r["viviendas"], -r["techo_m2"]),
+    "techo": lambda r: (-r["techo_m2"], -r["viviendas"]),
+    "casas": lambda r: (-r["casas"], -r["viviendas"]),
+    "ocupacion": lambda r: (r["ocupacion_B_pct"], -r["viviendas"]),
+    "beneficio": lambda r: (-(r["economia"].get("beneficio_eur") or -1e18), -r["viviendas"]),
+}
+
+
+def barrer(ctx, objetivo="ranking"):
     b = ctx["barrido"]
     res, vistos = [], set()
     for ang, pct, ue, rem, ac in itertools.product(angulos(ctx), b["pct_zona_unifamiliar"], b["unifamiliar_en"],
@@ -592,8 +741,11 @@ def barrer(ctx):
         if clave not in vistos:
             vistos.add(clave)
             res.append(r)
-    res.sort(key=lambda r: (not r["cumple"], -sum(r["comprobaciones"].values()), -r["viviendas"],
-                            -r["techo_m2"], -(r["plazas"] - r["plazas_necesarias"] >= 0), r["ocupacion_B_pct"]))
+    if objetivo == "ranking":
+        res.sort(key=lambda r: (not r["cumple"], -sum(r["comprobaciones"].values()), -r["viviendas"],
+                                -r["techo_m2"], -(r["plazas"] - r["plazas_necesarias"] >= 0), r["ocupacion_B_pct"]))
+    else:
+        res.sort(key=lambda r: (not r["cumple"],) + OBJETIVOS[objetivo](r))
     for i, r in enumerate(res, 1):
         r["id"] = f"V{i:03d}"
     return res
@@ -608,6 +760,8 @@ ESTILO = {
     "calzadas": ("#bdbdbd", "#888", 0.08), "plazas_casas": ("#e2e2e2", "#999", 0.06),
     "bolsas": ("#e2e2e2", "#999", 0.06), "aceras": ("#f0e0c0", "#b99", 0.05),
     "casas": ("#e6cfa6", "#5a4630", 0.12), "bloques": ("#9fb4cc", "#2c3e55", 0.15),
+    "pisos": ("#b8c9de", "#2c3e55", 0.08), "nucleos": ("#6f86a3", "#2c3e55", 0.08),
+    "accesibles": ("#cfe0f5", "#2c5d9a", 0.1),
 }
 
 
@@ -622,8 +776,8 @@ def _path(g, ox, oy):
 
 def svg_grupo(r, ctx, ox, oy):
     out = []
-    for capa in ["zona_uni", "zona_multi", "calzadas", "bolsas", "plazas_casas", "aceras", "casas", "bloques",
-                 "edif_uni", "edif_multi", "parcela"]:
+    for capa in ["zona_uni", "zona_multi", "calzadas", "bolsas", "accesibles", "plazas_casas", "aceras", "casas",
+                 "bloques", "pisos", "nucleos", "edif_uni", "edif_multi", "parcela"]:
         fill, stroke, sw = ESTILO[capa]
         gs = r["_geo"][capa]
         gs = gs if isinstance(gs, list) else [gs]
@@ -684,7 +838,8 @@ def exportar_dxf(r, ctx, ruta: Path):
     doc.units = ezdxf.units.M
     capas = {"parcela": ("PARCELA", 7), "edif_uni": ("RETRANQUEO_UNI", 3), "edif_multi": ("RETRANQUEO_MULTI", 4),
              "calzadas": ("VIARIO", 8), "plazas_casas": ("PLAZAS", 9), "bolsas": ("PLAZAS", 9),
-             "aceras": ("ACERAS", 30), "casas": ("CASAS", 1), "bloques": ("BLOQUES", 5)}
+             "aceras": ("ACERAS", 30), "casas": ("CASAS", 1), "bloques": ("BLOQUES", 5),
+             "pisos": ("PISOS", 150), "nucleos": ("NUCLEOS", 250), "accesibles": ("PLAZAS_ACCESIBLES", 140)}
     for nombre, color in set(capas.values()):
         doc.layers.add(nombre, color=color)
     doc.layers.add("VOLUMEN_3D", color=6)
@@ -702,6 +857,25 @@ def exportar_dxf(r, ctx, ruta: Path):
     doc.saveas(ruta)
 
 
+def escribir_csv(rs, ruta: Path):
+    """Medición de cada variante para hoja de cálculo (separador ';', decimales con coma)."""
+    import csv
+    cols = ["id", "cumple", "pct_zona_unifamiliar", "unifamiliar_en", "remate", "acera", "casas", "pisos", "viviendas",
+            "portales", "pisos_por_planta", "mix_pisos", "techo_casas_m2", "techo_pisos_m2", "techo_m2",
+            "aprovechamiento_pct", "plazas", "plazas_necesarias", "plazas_casas", "plazas_bolsa", "plazas_accesibles",
+            "huella_m2", "ocupacion_B_pct", "fondo_saco_m", "beneficio_eur", "margen_sobre_ventas_pct"]
+    with open(ruta, "w", newline="", encoding="utf-8-sig") as f:
+        w = csv.writer(f, delimiter=";")
+        w.writerow(cols)
+        for r in rs:
+            fila = dict(r)
+            fila["mix_pisos"] = " ".join(f"{k}:{v}" for k, v in sorted(r["mix_pisos"].items()))
+            fila["beneficio_eur"] = r["economia"].get("beneficio_eur", "FALTA DATO")
+            fila["margen_sobre_ventas_pct"] = r["economia"].get("margen_sobre_ventas_pct", "FALTA DATO")
+            w.writerow([str(fila.get(c, "")).replace(".", ",") if isinstance(fila.get(c), float) else fila.get(c, "")
+                        for c in cols])
+
+
 def publico(r):
     return {k: v for k, v in r.items() if not k.startswith("_")}
 
@@ -712,6 +886,8 @@ def main(argv=None) -> int:
     p.add_argument("--top", type=int, default=9, help="Variantes en la lámina (por defecto 9)")
     p.add_argument("--salida", type=Path, default=None, help="Carpeta (por defecto planos/variantes/<nombre>)")
     p.add_argument("--dxf", default=None, help="Exportar a DXF la variante indicada (p. ej. V001)")
+    p.add_argument("--objetivo", default="ranking", choices=sorted(OBJETIVOS),
+                   help="Criterio de orden tras el cumplimiento (por defecto: ranking)")
     p.add_argument("--parametros", default=None,
                    help="JSON con una variante concreta (lo copia el visor): "
                         '{"ang":0.5,"pct":60,"uni_en":"abajo","remate":"martillo","acera":true,"hipotesis":{...}}. '
@@ -728,6 +904,7 @@ def main(argv=None) -> int:
     if args.parametros:
         q = json.loads(args.parametros)
         ctx["hip"].update(q.get("hipotesis") or {})
+        ctx["economia"].update({k: v for k, v in (q.get("economia") or {}).items() if v is not None})
         if "separacion_edificios_m" in q:
             ctx["comun"]["separacion_edificios_m"] = q["separacion_edificios_m"]
         r = variante(ctx, float(q["ang"]), float(q["pct"]), q.get("uni_en", "abajo"), q.get("remate", "fondo_saco"),
@@ -740,7 +917,7 @@ def main(argv=None) -> int:
         print("PENDIENTE DE VALIDAR POR EL ARQUITECTO")
         return 0
 
-    rs = barrer(ctx)
+    rs = barrer(ctx, args.objetivo)
     top = rs[: args.top]
     (carpeta / "lamina.svg").write_text(svg_lamina(top, ctx), encoding="utf-8")
     for r in top:
@@ -758,6 +935,7 @@ def main(argv=None) -> int:
         "variantes": [publico(r) for r in rs], "aviso": "PENDIENTE DE VALIDAR POR EL ARQUITECTO",
     }, ensure_ascii=False, indent=2), encoding="utf-8")
 
+    escribir_csv(rs, carpeta / "ranking.csv")
     lineas = [f"VARIANTES DE ORDENACIÓN (reglas fijas, sin IA) — {ctx['nombre']}",
               f"Superficie {ctx['sup']:.0f} m² · edificabilidad {ctx['sup'] * ctx['comun']['edificabilidad_m2m2']:.0f} m²c"
               f" · máx. {ctx['comun']['viviendas_max']} viv · {len(rs)} variantes generadas", "",

@@ -138,3 +138,15 @@ Salidas en `planos/variantes/<nombre>/`: `ranking.txt`, `ranking.json`, `lamina.
 - Los linderos curvos se tratan como cuerdas.
 
 PENDIENTE DE VALIDAR POR EL ARQUITECTO
+
+## Mejoras inspiradas en TestFit (motor de implantación v2)
+
+- **Programa de pisos por portales.** Los bloques se llenan con portales: un núcleo de escalera y ascensor (`nucleo_ancho_m`) y una vivienda pasante a cada lado. Cada tipo (`tipos_piso`: m² construidos sin núcleo) ocupa el frente que le corresponde (m² / fondo de bloque). El reparto sigue el porcentaje objetivo (`mix_pisos_pct`) y la salida da el reparto conseguido. Todas las plantas son iguales: los pisos son múltiplo del número de plantas.
+- **Edificio y aparcamiento a la vez.** Para cada reparto casas/pisos se reserva primero el aparcamiento junto al acceso y después se encajan los portales en el suelo que queda. Gana el reparto con más viviendas, y después más techo, que cabe entero (pisos y plazas). Quitar casas nunca deja hileras por debajo de `casas_min_hilera`.
+- **Aparcamiento.** Bandas de doble crujía (plaza + calle + plaza) o de simple crujía donde no cabe la doble. Se conectan al acceso o a la calle de casas. Las plazas accesibles (`plazas_accesibles`, decisión del arquitecto) van por parejas con una franja de transferencia de 1,20 m compartida (DB-SUA, Anejo A).
+- **Cuenta de resultados.** Bloque opcional `economia` en el JSON: `precio_venta_casa_eur_m2c`, `precio_venta_piso_eur_m2c`, `coste_construccion_casa_eur_m2c`, `coste_construccion_piso_eur_m2c`, `coste_urbanizacion_eur_m2` (sobre suelo no edificado), `coste_plaza_superficie_eur`, `coste_suelo_eur` y `gastos_generales_pct`. Si falta alguno: `FALTA DATO`. **No hay valores por defecto.**
+- **Objetivo.** `--objetivo ranking|viviendas|techo|casas|ocupacion|beneficio`. Las que cumplen todo van siempre primero.
+- **Mediciones.** `ranking.csv` (separador `;` y decimales con coma, para Excel) con viviendas, reparto por tipos, portales, techos, plazas, ocupación y beneficio.
+- **DXF.** Capas nuevas: `PISOS`, `NUCLEOS` y `PLAZAS_ACCESIBLES`.
+
+PENDIENTE DE VALIDAR POR EL ARQUITECTO
