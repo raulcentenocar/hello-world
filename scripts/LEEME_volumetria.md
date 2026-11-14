@@ -85,3 +85,56 @@ DXF por tipología en `planos/volumetrias/` con las capas `PARCELA`, `ZONA_EDIFI
 Instalación: `pip install -r scripts/requirements.txt`
 
 PENDIENTE DE VALIDAR POR EL ARQUITECTO
+
+---
+
+# Generador de variantes de ordenación (`scripts/variantes_generador.py`)
+
+Explora muchas ordenaciones de la misma parcela y las ordena de mejor a peor. Es lo más parecido a Hektar, pero con reglas fijas y sin inventar parámetros.
+
+```bash
+python3 scripts/variantes_generador.py planos/variantes/entrada_UA-03-01.json            # ranking + lámina
+python3 scripts/variantes_generador.py planos/variantes/entrada_UA-03-01.json --top 12   # más variantes en la lámina
+python3 scripts/variantes_generador.py planos/variantes/entrada_UA-03-01.json --dxf V005 # DXF de una variante
+```
+
+Salidas en `planos/variantes/<nombre>/`: `ranking.txt`, `ranking.json`, `lamina.svg` y `Vnnn.svg`.
+
+**Qué combina cada variante** (bloque `barrido` del JSON; si no se indica, se usan los valores por defecto):
+
+| Parámetro | Valores por defecto | Qué controla |
+|---|---|---|
+| `angulo_hileras` | `"fachadas"` | Hileras paralelas a cada fachada |
+| `pct_zona_unifamiliar` | 0, 30 … 100 | Porcentaje de la parcela para casas. El resto va a bloques. Las dos zonas quedan separadas por la separación entre edificios |
+| `unifamiliar_en` | abajo / arriba | En qué lado del corte van las casas (la salida lo traduce a N, S, E u O) |
+| `remate` | fondo_saco / martillo / lazo | Final de la calle de casas |
+| `acera` | no / sí | Acera entre las plazas y las casas |
+
+**Reglas:**
+- **Calle de casas.** Cada módulo tiene una calzada con plazas en batería delante de cada casa y casas a uno o a los dos lados. La calzada arranca de un lado de `accesos` y debe tener el ancho completo en todo su recorrido. Solo se colocan casas con frente a la calzada.
+- **Hileras.** Entre `casas_min_hilera` y `casas_max_hilera` casas, separadas por la separación entre edificios. Las casas tienen que caber enteras dentro de los retranqueos.
+- **Bloques.** Van en la zona multifamiliar y se ajustan a los pisos que caben por techo restante y por número de viviendas.
+- **Reparto.** Si quitar casas del fondo de la calle permite más viviendas en total, se quitan. Se maximizan primero las viviendas y después el techo.
+- **Bolsa de aparcamiento.** Recoge las plazas que faltan, fuera de retranqueos y a `distancia_aparcamiento_edificio_m` de los edificios, conectada con un acceso.
+- **Comprobaciones:**
+  - hay viviendas;
+  - viviendas y techo dentro del máximo;
+  - plazas suficientes;
+  - ocupación (lectura A: cada uso sobre su zona);
+  - calle sin salida de ≤ 20 m o con martillo o lazo (DB-SI SI 5);
+  - acera para el itinerario peatonal (DB-SUA 9).
+
+**Bloques del JSON:**
+- `comun`, `unifamiliar` y `multifamiliar` son datos urbanísticos de la ficha. **No tienen valor por defecto**: si falta uno, sale `FALTA DATO`.
+- `fachadas` y `accesos` son índices de lado (`volumetria_generador.py --lados`).
+- `hipotesis` son parámetros de diseño, con valores por defecto, y se listan siempre.
+
+**Validación con la UA-03-01:** la variante «60 % S, fondo de saco, sin acera» da 24 casas + 10 pisos, 5.094 m²c, 26,3 % de ocupación, 48 plazas delante de las casas y un fondo de saco de 98 m. Son las mismas cifras de la V1 calculada a mano en F2. En la bolsa salen 16 plazas frente a las 22 de F2, porque el generador deja las plazas fuera del retranqueo y a 2 m de los bloques.
+
+**Límites actuales:**
+- Corte de zonas recto y paralelo a las hileras.
+- Bloques paralelos a las hileras.
+- No hay topografía ni soleamiento.
+- Los linderos curvos se tratan como cuerdas.
+
+PENDIENTE DE VALIDAR POR EL ARQUITECTO

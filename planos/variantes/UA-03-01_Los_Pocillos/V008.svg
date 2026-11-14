@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135.3 122.7" width="1082" height="981" font-family="sans-serif">
+<rect width="100%" height="100%" fill="#fff"/>
+<g><path d="M129.30,56.44 L22.70,57.32 L6.00,6.00 L34.98,9.59 L109.35,25.61 L129.30,29.14 L129.30,56.44 Z" fill="#f3efe2" stroke="none" stroke-width="0"/>
+<path d="M129.30,101.90 L37.45,102.66 L22.70,57.32 L129.30,56.44 L129.30,101.90 Z" fill="#e7eef5" stroke="none" stroke-width="0"/>
+<path d="M14.26,31.38 L121.99,30.50 L122.04,36.50 L16.21,37.37 L14.26,31.38 Z" fill="#bdbdbd" stroke="#888" stroke-width="0.08"/>
+<path d="M122.06,39.50 L116.06,39.55 L115.96,27.55 L120.12,27.52 L121.97,27.84 L122.06,39.50 Z" fill="#bdbdbd" stroke="#888" stroke-width="0.08"/>
+<path d="M26.09,67.75 L34.98,67.68 L35.02,73.68 L28.04,73.74 L26.09,67.75 Z" fill="#bdbdbd" stroke="#888" stroke-width="0.08"/>
+<path d="M77.56,78.33 L77.43,62.33 L34.93,62.68 L35.07,78.68 L77.56,78.33 Z" fill="#e2e2e2" stroke="#999" stroke-width="0.06"/>
+<path d="M22.49,31.32 L22.45,26.32 L15.95,26.37 L15.99,31.37 L22.49,31.32 Z" fill="#e2e2e2" stroke="#999" stroke-width="0.06"/>
+<path d="M31.58,42.24 L31.54,37.24 L25.04,37.30 L25.08,42.30 L31.58,42.24 Z" fill="#e2e2e2" stroke="#999" stroke-width="0.06"/>
+<path d="M28.99,31.26 L28.95,26.26 L22.45,26.32 L22.49,31.32 L28.99,31.26 Z" fill="#e2e2e2" stroke="#999" stroke-width="0.06"/>
+<path d="M38.08,42.19 L38.04,37.19 L31.54,37.24 L31.58,42.24 L38.08,42.19 Z" fill="#e2e2e2" stroke="#999" stroke-width="0.06"/>
+<path d="M35.49,31.21 L35.45,26.21 L28.95,26.26 L28.99,31.26 L35.49,31.21 Z" fill="#e2e2e2" stroke="#999" stroke-width="0.06"/>
+<path d="M44.58,42.14 L44.54,37.14 L38.04,37.19 L38.08,42.19 L44.58,42.14 Z" fill="#e2e2e2" stroke="#999" stroke-width="0.06"/>
+<path d="M41.99,31.16 L41.95,26.16 L35.45,26.21 L35.49,31.21 L41.99,31.16 Z" fill="#e2e2e2" stroke="#999" stroke-width="0.06"/>
+<path d="M51.08,42.08 L51.04,37.08 L44.54,37.14 L44.58,42.14 L51.08,42.08 Z" fill="#e2e2e2" stroke="#999" stroke-width="0.06"/>
+<path d="M57.58,42.03 L57.54,37.03 L51.04,37.08 L51.08,42.08 L57.58,42.03 Z" fill="#e2e2e2" stroke="#999" stroke-width="0.06"/>
+<path d="M64.08,41.98 L64.04,36.98 L57.54,37.03 L57.58,42.03 L64.08,41.98 Z" fill="#e2e2e2" stroke="#999" stroke-width="0.06"/>
+<path d="M70.58,41.92 L70.54,36.92 L64.04,36.98 L64.08,41.98 L70.58,41.92 Z" fill="#e2e2e2" stroke="#999" stroke-width="0.06"/>
+<path d="M77.08,41.87 L77.04,36.87 L70.54,36.92 L70.58,41.92 L77.08,41.87 Z" fill="#e2e2e2" stroke="#999" stroke-width="0.06"/>
+<path d="M89.58,41.77 L89.54,36.77 L83.04,36.82 L83.08,41.82 L89.58,41.77 Z" fill="#e2e2e2" stroke="#999" stroke-width="0.06"/>
+<path d="M96.08,41.71 L96.04,36.71 L89.54,36.77 L89.58,41.77 L96.08,41.71 Z" fill="#e2e2e2" stroke="#999" stroke-width="0.06"/>
+<path d="M102.58,41.66 L102.54,36.66 L96.04,36.71 L96.08,41.71 L102.58,41.66 Z" fill="#e2e2e2" stroke="#999" stroke-width="0.06"/>
+<path d="M109.08,41.61 L109.04,36.61 L102.54,36.66 L102.58,41.66 L109.08,41.61 Z" fill="#e2e2e2" stroke="#999" stroke-width="0.06"/>
+<path d="M115.58,41.55 L115.54,36.55 L109.04,36.61 L109.08,41.61 L115.58,41.55 Z" fill="#e2e2e2" stroke="#999" stroke-width="0.06"/>
+<path d="M22.45,26.32 L22.35,14.32 L15.85,14.37 L15.95,26.37 L22.45,26.32 Z" fill="#e6cfa6" stroke="#5a4630" stroke-width="0.12"/>
+<path d="M31.68,54.24 L31.58,42.24 L25.08,42.30 L25.18,54.30 L31.68,54.24 Z" fill="#e6cfa6" stroke="#5a4630" stroke-width="0.12"/>
+<path d="M28.95,26.26 L28.85,14.26 L22.35,14.32 L22.45,26.32 L28.95,26.26 Z" fill="#e6cfa6" stroke="#5a4630" stroke-width="0.12"/>
+<path d="M38.18,54.19 L38.08,42.19 L31.58,42.24 L31.68,54.24 L38.18,54.19 Z" fill="#e6cfa6" stroke="#5a4630" stroke-width="0.12"/>
+<path d="M35.45,26.21 L35.35,14.21 L28.85,14.26 L28.95,26.26 L35.45,26.21 Z" fill="#e6cfa6" stroke="#5a4630" stroke-width="0.12"/>
+<path d="M44.68,54.14 L44.58,42.14 L38.08,42.19 L38.18,54.19 L44.68,54.14 Z" fill="#e6cfa6" stroke="#5a4630" stroke-width="0.12"/>
+<path d="M41.95,26.16 L41.85,14.16 L35.35,14.21 L35.45,26.21 L41.95,26.16 Z" fill="#e6cfa6" stroke="#5a4630" stroke-width="0.12"/>
+<path d="M51.18,54.08 L51.08,42.08 L44.58,42.14 L44.68,54.14 L51.18,54.08 Z" fill="#e6cfa6" stroke="#5a4630" stroke-width="0.12"/>
+<path d="M57.68,54.03 L57.58,42.03 L51.08,42.08 L51.18,54.08 L57.68,54.03 Z" fill="#e6cfa6" stroke="#5a4630" stroke-width="0.12"/>
+<path d="M64.18,53.98 L64.08,41.98 L57.58,42.03 L57.68,54.03 L64.18,53.98 Z" fill="#e6cfa6" stroke="#5a4630" stroke-width="0.12"/>
+<path d="M70.68,53.92 L70.58,41.92 L64.08,41.98 L64.18,53.98 L70.68,53.92 Z" fill="#e6cfa6" stroke="#5a4630" stroke-width="0.12"/>
+<path d="M77.18,53.87 L77.08,41.87 L70.58,41.92 L70.68,53.92 L77.18,53.87 Z" fill="#e6cfa6" stroke="#5a4630" stroke-width="0.12"/>
+<path d="M89.68,53.77 L89.58,41.77 L83.08,41.82 L83.18,53.82 L89.68,53.77 Z" fill="#e6cfa6" stroke="#5a4630" stroke-width="0.12"/>
+<path d="M96.18,53.71 L96.08,41.71 L89.58,41.77 L89.68,53.77 L96.18,53.71 Z" fill="#e6cfa6" stroke="#5a4630" stroke-width="0.12"/>
+<path d="M102.68,53.66 L102.58,41.66 L96.08,41.71 L96.18,53.71 L102.68,53.66 Z" fill="#e6cfa6" stroke="#5a4630" stroke-width="0.12"/>
+<path d="M109.18,53.61 L109.08,41.61 L102.58,41.66 L102.68,53.66 L109.18,53.61 Z" fill="#e6cfa6" stroke="#5a4630" stroke-width="0.12"/>
+<path d="M115.68,53.55 L115.58,41.55 L109.08,41.61 L109.18,53.61 L115.68,53.55 Z" fill="#e6cfa6" stroke="#5a4630" stroke-width="0.12"/>
+<path d="M122.18,53.50 L122.08,41.50 L115.58,41.55 L115.68,53.55 L122.18,53.50 Z" fill="#e6cfa6" stroke="#5a4630" stroke-width="0.12"/>
+<path d="M79.68,92.81 L79.58,80.81 L39.59,81.14 L39.68,93.14 L79.68,92.81 Z" fill="#9fb4cc" stroke="#2c3e55" stroke-width="0.15"/>
+<path d="M105.68,92.60 L105.58,80.60 L85.58,80.76 L85.68,92.76 L105.68,92.60 Z" fill="#9fb4cc" stroke="#2c3e55" stroke-width="0.15"/>
+<path d="M108.72,28.54 L108.77,28.55 L108.83,28.56 L126.30,31.66 L126.30,53.47 L24.87,54.30 L10.31,9.56 L34.48,12.55 L108.72,28.54 Z" fill="none" stroke="#8a6d3b" stroke-width="0.15" stroke-dasharray="1,0.8"/>
+<path d="M41.07,97.63 L28.91,60.26 L124.30,59.48 L124.30,96.94 L41.07,97.63 Z" fill="none" stroke="#3b5f8a" stroke-width="0.15" stroke-dasharray="1,0.8"/>
+<path d="M129.30,29.14 L129.30,101.90 L37.45,102.66 L6.00,6.00 L34.98,9.59 L109.35,25.61 L129.30,29.14 Z" fill="none" stroke="#222" stroke-width="0.35"/></g>
+<text x="6" y="111.66000000014901" font-size="2.6" font-weight="bold">V008 ✘ · 18 casas + 16 pisos = 34 viv</text>
+<text x="6" y="115.66000000014901" font-size="2.1">4968 m²c (97.4 %) · plazas 68/68 · ocup. 24.0 %</text>
+<text x="6" y="119.16000000014901" font-size="2.1">uni 50 % (N) · remate martillo · acera no</text>
+</svg>
