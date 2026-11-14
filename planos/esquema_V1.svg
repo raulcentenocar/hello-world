@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  UA-03-01 Los Pocillos - Variante V1 "Calle de casas" - Esquema de planta de conjunto (apoyo a la PAUSA F3).
+  Diseño preliminar (F2). No es plano de F4.
+  Unidades del dibujo: metros. Coordenadas locales de F2 (02_diseno.md, 1.3): origen en el vértice 3
+  (UTM 414.896,93 ; 4.478.781,24), x al este, y al norte. Geometría en el grupo "local" con
+  transform = translate(0 110) scale(1 -1), es decir, y' = 110 - y (norte arriba). Textos en y' directo.
+  Impreso a 476 x 304 mm = escala 1:500.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     version="1.1" width="476mm" height="304mm" viewBox="-48 -12 238 152">
+  <title>UA-03-01 V1 Calle de casas - esquema de planta de conjunto</title>
+  <style>
+    text{font-family:"DejaVu Sans",Arial,Helvetica,sans-serif;fill:#222}
+    .t12{font-size:1.2px}
+    .t13{font-size:1.3px}
+    .t15{font-size:1.5px}
+    .t18{font-size:1.8px}
+    .b{font-weight:bold}
+    .mid{text-anchor:middle}
+    .end{text-anchor:end}
+    .gris{fill:#555}
+    .mor{fill:#7a3fa0}
+    .rojo{fill:#c00000}
+    .parc{fill:#f1f4ea;stroke:#1a1a1a;stroke-width:0.4}
+    .ext{fill:#e4e4e4;stroke:none}
+    .zv{fill:#cfe2bd;stroke:none}
+    .r3{fill:none;stroke:#555;stroke-width:0.18;stroke-dasharray:1.2 0.8}
+    .r5{fill:none;stroke:#8a5a2b;stroke-width:0.18;stroke-dasharray:2.4 0.8 0.4 0.8}
+    .casa{fill:#ead9bd;stroke:#333;stroke-width:0.15}
+    .med{stroke:#111;stroke-width:0.24}
+    .jd{fill:#111;stroke:none}
+    .blq{fill:#d8d0c0;stroke:#222;stroke-width:0.3}
+    .eje{fill:none;stroke:#2f5d9a;stroke-width:0.07;stroke-dasharray:0.8 0.3 0.15 0.3}
+    .ejeb{fill:#fff;stroke:#2f5d9a;stroke-width:0.1}
+    .ejet{fill:#2f5d9a}
+    .pil{fill:#111;stroke:none}
+    .vial{fill:#cfcfcf;stroke:#999;stroke-width:0.08}
+    .plz{fill:#ececec;stroke:#8c8c8c;stroke-width:0.06}
+    .plzx{fill:#ececec;stroke:#7a3fa0;stroke-width:0.06;stroke-dasharray:0.4 0.25}
+    .jpr{fill:#d6e6c0;stroke:#8aa070;stroke-width:0.06}
+    .jl{stroke:#8aa070;stroke-width:0.06}
+    .pea{fill:#f2e7d3;stroke:none}
+    .apx{fill:none;stroke:#7a3fa0;stroke-width:0.14;stroke-dasharray:0.6 0.35}
+    .apxf{fill:#eadcf3;stroke:#7a3fa0;stroke-width:0.12;stroke-dasharray:0.6 0.35}
+    .punz{fill:none;stroke:#c00000;stroke-width:0.07;stroke-dasharray:0.25 0.25}
+    .cf{fill:#fff;stroke:#c00000;stroke-width:0.3}
+    .cota{fill:none;stroke:#444;stroke-width:0.08}
+  </style>
+  <defs>
+    <marker id="fl" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+    <marker id="flm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#7a3fa0"/>
+    </marker>
+    <pattern id="rayado" width="0.6" height="0.6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="0.6" height="0.6" fill="#eadcf3"/>
+      <line x1="0" y1="0" x2="0" y2="0.6" stroke="#7a3fa0" stroke-width="0.12"/>
+    </pattern>
+    <!-- Vivienda U-V1: 6,50 x 12,00 m (02_diseno 2.2) -->
+    <rect id="casa" class="casa" x="0" y="0" width="6.5" height="12"/>
+    <!-- Frente de una casa: 2 plazas de 2,50 x 5,00 + paso de 1,50 m (02_diseno 2.5). Orden dentro del frente: posición aproximada -->
+    <g id="frente">
+      <rect class="plzx" x="0" y="0" width="2.5" height="5"/>
+      <rect class="plzx" x="2.5" y="0" width="2.5" height="5"/>
+      <rect class="pea" x="5" y="0" width="1.5" height="5"/>
+    </g>
+  </defs>
+
+  <!-- =========================== GEOMETRÍA EN COORDENADAS LOCALES (y hacia el norte) =========================== -->
+  <g id="local" transform="translate(0 110) scale(1 -1)">
+
+    <!-- Fuera de parcela (indicativo, sin ancho real): vías públicas y ZV-02 -->
+    <polygon class="ext" points="0,0 91.85,0.76 91.85,-7.24 0,-8"/>
+    <polygon class="ext" points="0,0 -31.45,96.66 -39.06,94.19 -7.61,-2.48"/>
+    <polygon class="ext" points="0,0 -7.61,-2.48 -7.61,-8 0,-8"/>
+    <polygon class="zv" points="-31.45,96.66 -2.47,93.07 71.9,77.05 91.85,73.52 91.85,81.5 72.9,85 -1.5,101 -31.45,104.66"/>
+
+    <!-- Parcela: polígono de vértices de la cédula (01_urbanismo 1.4), V1..V6 en locales de F2 -->
+    <polygon class="parc" points="91.85,73.52 91.85,0.76 0,0 -31.45,96.66 -2.47,93.07 71.9,77.05"/>
+
+    <!-- Viario: calle de casas y fondo de saco (y = 26-32, hasta x = 88) -->
+    <polygon class="vial" points="-8.46,26 88,26 88,32 -10.41,32"/>
+    <!-- Bolsa del bloque: calle de maniobra (y = 62-68, hasta x = 13,5) -->
+    <polygon class="vial" points="-20.17,62 13.5,62 13.5,68 -22.12,68"/>
+
+    <!-- Pasos peatonales entre hileras (6,0 m) -->
+    <polygon class="pea" points="54,0.447 60,0.496 60,26 54,26"/>
+    <rect class="pea" x="23.5" y="32" width="6" height="23"/>
+    <rect class="pea" x="55.5" y="32" width="6" height="23"/>
+
+    <!-- Jardines privados banda A (al sur, hasta la Avda. de la Dehesa) -->
+    <polygon class="jpr" points="2,0.017 54,0.447 54,9 2,9"/>
+    <polygon class="jpr" points="60,0.496 86,0.712 86,9 60,9"/>
+    <line class="jl" x1="8.5" y1="0.07" x2="8.5" y2="9"/>
+    <line class="jl" x1="15" y1="0.124" x2="15" y2="9"/>
+    <line class="jl" x1="21.5" y1="0.178" x2="21.5" y2="9"/>
+    <line class="jl" x1="28" y1="0.232" x2="28" y2="9"/>
+    <line class="jl" x1="34.5" y1="0.285" x2="34.5" y2="9"/>
+    <line class="jl" x1="41" y1="0.339" x2="41" y2="9"/>
+    <line class="jl" x1="47.5" y1="0.393" x2="47.5" y2="9"/>
+    <line class="jl" x1="66.5" y1="0.55" x2="66.5" y2="9"/>
+    <line class="jl" x1="73" y1="0.604" x2="73" y2="9"/>
+    <line class="jl" x1="79.5" y1="0.658" x2="79.5" y2="9"/>
+    <!-- Jardines privados banda B (al norte, 6 m) -->
+    <rect class="jpr" x="-2.5" y="49" width="26" height="6"/>
+    <rect class="jpr" x="29.5" y="49" width="26" height="6"/>
+    <rect class="jpr" x="61.5" y="49" width="26" height="6"/>
+    <line class="jl" x1="4" y1="49" x2="4" y2="55"/>
+    <line class="jl" x1="10.5" y1="49" x2="10.5" y2="55"/>
+    <line class="jl" x1="17" y1="49" x2="17" y2="55"/>
+    <line class="jl" x1="36" y1="49" x2="36" y2="55"/>
+    <line class="jl" x1="42.5" y1="49" x2="42.5" y2="55"/>
+    <line class="jl" x1="49" y1="49" x2="49" y2="55"/>
+    <line class="jl" x1="68" y1="49" x2="68" y2="55"/>
+    <line class="jl" x1="74.5" y1="49" x2="74.5" y2="55"/>
+    <line class="jl" x1="81" y1="49" x2="81" y2="55"/>
+
+    <!-- Plazas delante de cada casa: banda A (y = 21-26) -->
+    <use xlink:href="#frente" x="2" y="21"/>
+    <use xlink:href="#frente" x="8.5" y="21"/>
+    <use xlink:href="#frente" x="15" y="21"/>
+    <use xlink:href="#frente" x="21.5" y="21"/>
+    <use xlink:href="#frente" x="28" y="21"/>
+    <use xlink:href="#frente" x="34.5" y="21"/>
+    <use xlink:href="#frente" x="41" y="21"/>
+    <use xlink:href="#frente" x="47.5" y="21"/>
+    <use xlink:href="#frente" x="60" y="21"/>
+    <use xlink:href="#frente" x="66.5" y="21"/>
+    <use xlink:href="#frente" x="73" y="21"/>
+    <use xlink:href="#frente" x="79.5" y="21"/>
+    <!-- Plazas delante de cada casa: banda B (y = 32-37) -->
+    <use xlink:href="#frente" x="-2.5" y="32"/>
+    <use xlink:href="#frente" x="4" y="32"/>
+    <use xlink:href="#frente" x="10.5" y="32"/>
+    <use xlink:href="#frente" x="17" y="32"/>
+    <use xlink:href="#frente" x="29.5" y="32"/>
+    <use xlink:href="#frente" x="36" y="32"/>
+    <use xlink:href="#frente" x="42.5" y="32"/>
+    <use xlink:href="#frente" x="49" y="32"/>
+    <use xlink:href="#frente" x="61.5" y="32"/>
+    <use xlink:href="#frente" x="68" y="32"/>
+    <use xlink:href="#frente" x="74.5" y="32"/>
+    <use xlink:href="#frente" x="81" y="32"/>
+
+    <!-- Bolsa del bloque: fila sur y = 57-62 (9 plazas + 1 accesible), fila norte y = 68-73 (12 plazas) -->
+    <rect class="plz" x="-13.3" y="57" width="2.5" height="5"/>
+    <rect class="plz" x="-10.8" y="57" width="2.5" height="5"/>
+    <rect class="plz" x="-8.3" y="57" width="2.5" height="5"/>
+    <rect class="plz" x="-5.8" y="57" width="2.5" height="5"/>
+    <rect class="plz" x="-3.3" y="57" width="2.5" height="5"/>
+    <rect class="plz" x="-0.8" y="57" width="2.5" height="5"/>
+    <rect class="plz" x="1.7" y="57" width="2.5" height="5"/>
+    <rect class="plz" x="4.2" y="57" width="2.5" height="5"/>
+    <rect class="plz" x="6.7" y="57" width="2.5" height="5"/>
+    <!-- Plaza accesible 2,50 x 5,00 + transferencia 1,20 (posición aproximada: extremo este, según 03_normativa) -->
+    <rect x="9.8" y="57" width="1.2" height="5" fill="url(#rayado)" stroke="#7a3fa0" stroke-width="0.12" stroke-dasharray="0.6 0.35"/>
+    <rect class="apxf" x="11" y="57" width="2.5" height="5"/>
+    <rect class="plz" x="-16.9" y="68" width="2.5" height="5"/>
+    <rect class="plz" x="-14.4" y="68" width="2.5" height="5"/>
+    <rect class="plz" x="-11.9" y="68" width="2.5" height="5"/>
+    <rect class="plz" x="-9.4" y="68" width="2.5" height="5"/>
+    <rect class="plz" x="-6.9" y="68" width="2.5" height="5"/>
+    <rect class="plz" x="-4.4" y="68" width="2.5" height="5"/>
+    <rect class="plz" x="-1.9" y="68" width="2.5" height="5"/>
+    <rect class="plz" x="0.6" y="68" width="2.5" height="5"/>
+    <rect class="plz" x="3.1" y="68" width="2.5" height="5"/>
+    <rect class="plz" x="5.6" y="68" width="2.5" height="5"/>
+    <rect class="plz" x="8.1" y="68" width="2.5" height="5"/>
+    <rect class="plz" x="10.6" y="68" width="2.5" height="5"/>
+
+    <!-- Casas banda A (y = 9-21): hilera A-oeste 1-8 (x = 2-54) y A-este 9-12 (x = 60-86) -->
+    <use xlink:href="#casa" x="2" y="9"/>
+    <use xlink:href="#casa" x="8.5" y="9"/>
+    <use xlink:href="#casa" x="15" y="9"/>
+    <use xlink:href="#casa" x="21.5" y="9"/>
+    <use xlink:href="#casa" x="28" y="9"/>
+    <use xlink:href="#casa" x="34.5" y="9"/>
+    <use xlink:href="#casa" x="41" y="9"/>
+    <use xlink:href="#casa" x="47.5" y="9"/>
+    <use xlink:href="#casa" x="60" y="9"/>
+    <use xlink:href="#casa" x="66.5" y="9"/>
+    <use xlink:href="#casa" x="73" y="9"/>
+    <use xlink:href="#casa" x="79.5" y="9"/>
+    <!-- Casas banda B (y = 37-49): B-oeste 13-16, B-centro 17-20, B-este 21-24 -->
+    <use xlink:href="#casa" x="-2.5" y="37"/>
+    <use xlink:href="#casa" x="4" y="37"/>
+    <use xlink:href="#casa" x="10.5" y="37"/>
+    <use xlink:href="#casa" x="17" y="37"/>
+    <use xlink:href="#casa" x="29.5" y="37"/>
+    <use xlink:href="#casa" x="36" y="37"/>
+    <use xlink:href="#casa" x="42.5" y="37"/>
+    <use xlink:href="#casa" x="49" y="37"/>
+    <use xlink:href="#casa" x="61.5" y="37"/>
+    <use xlink:href="#casa" x="68" y="37"/>
+    <use xlink:href="#casa" x="74.5" y="37"/>
+    <use xlink:href="#casa" x="81" y="37"/>
+
+    <!-- Medianeras portantes de 24 cm cada 6,50 m (03_estructura 2.1) -->
+    <g class="med">
+      <line x1="8.5" y1="9" x2="8.5" y2="21"/>
+      <line x1="15" y1="9" x2="15" y2="21"/>
+      <line x1="21.5" y1="9" x2="21.5" y2="21"/>
+      <line x1="34.5" y1="9" x2="34.5" y2="21"/>
+      <line x1="41" y1="9" x2="41" y2="21"/>
+      <line x1="47.5" y1="9" x2="47.5" y2="21"/>
+      <line x1="66.5" y1="9" x2="66.5" y2="21"/>
+      <line x1="73" y1="9" x2="73" y2="21"/>
+      <line x1="79.5" y1="9" x2="79.5" y2="21"/>
+      <line x1="4" y1="37" x2="4" y2="49"/>
+      <line x1="10.5" y1="37" x2="10.5" y2="49"/>
+      <line x1="17" y1="37" x2="17" y2="49"/>
+      <line x1="36" y1="37" x2="36" y2="49"/>
+      <line x1="42.5" y1="37" x2="42.5" y2="49"/>
+      <line x1="49" y1="37" x2="49" y2="49"/>
+      <line x1="68" y1="37" x2="68" y2="49"/>
+      <line x1="74.5" y1="37" x2="74.5" y2="49"/>
+      <line x1="81" y1="37" x2="81" y2="49"/>
+    </g>
+    <!-- Junta de dilatación entre viviendas 4 y 5 (x = 28,0): doble muro 2 x 0,24 + 0,03 = 0,51 m -->
+    <rect x="27.745" y="9" width="0.51" height="12" fill="#fff" stroke="none"/>
+    <rect class="jd" x="27.745" y="9" width="0.24" height="12"/>
+    <rect class="jd" x="28.015" y="9" width="0.24" height="12"/>
+
+    <!-- Bloque M-V1: 12,00 x 37,50 m, x = 19,5-57,0, y = 61,0-73,0 -->
+    <rect class="blq" x="19.5" y="61" width="37.5" height="12"/>
+    <!-- Núcleos entre ejes 2-3 y 5-6: POSICIÓN APROXIMADA (≈ 28 m² por planta, sin cotas en F2) -->
+    <rect class="apxf" x="25.917" y="64.75" width="6.166" height="4.5"/>
+    <rect class="apxf" x="44.417" y="64.75" width="6.166" height="4.5"/>
+    <!-- Patinillos PB-1 a PB-4 (1,00 x 0,60): POSICIÓN APROXIMADA, previsiblemente sobre los ejes 2, 3, 5 y 6 -->
+    <rect x="25.417" y="68.1" width="1" height="0.6" fill="#b48fd0" stroke="#7a3fa0" stroke-width="0.08"/>
+    <rect x="31.583" y="68.1" width="1" height="0.6" fill="#b48fd0" stroke="#7a3fa0" stroke-width="0.08"/>
+    <rect x="43.917" y="68.1" width="1" height="0.6" fill="#b48fd0" stroke="#7a3fa0" stroke-width="0.08"/>
+    <rect x="50.083" y="68.1" width="1" height="0.6" fill="#b48fd0" stroke="#7a3fa0" stroke-width="0.08"/>
+    <!-- Zona 6d ≈ 1,50 m desde la cara de los pilares B2, B3, B5, B6 (03_estructura 4.2 y E4) -->
+    <rect class="punz" x="24.217" y="65.3" width="3.4" height="3.4"/>
+    <rect class="punz" x="30.383" y="65.3" width="3.4" height="3.4"/>
+    <rect class="punz" x="42.717" y="65.3" width="3.4" height="3.4"/>
+    <rect class="punz" x="48.883" y="65.3" width="3.4" height="3.4"/>
+    <!-- Ejes de la retícula ajustada (03_estructura 2.2): A y = 61,25 / B 67,00 / C 72,75; 1-7 cada ≈ 6,17 m de x = 19,75 a 56,75 -->
+    <g class="eje">
+      <line x1="18.6" y1="61.25" x2="57.9" y2="61.25"/>
+      <line x1="18.6" y1="67" x2="57.9" y2="67"/>
+      <line x1="18.6" y1="72.75" x2="57.9" y2="72.75"/>
+      <line x1="19.75" y1="59.8" x2="19.75" y2="74.2"/>
+      <line x1="25.917" y1="59.8" x2="25.917" y2="74.2"/>
+      <line x1="32.083" y1="59.8" x2="32.083" y2="74.2"/>
+      <line x1="38.25" y1="59.8" x2="38.25" y2="74.2"/>
+      <line x1="44.417" y1="59.8" x2="44.417" y2="74.2"/>
+      <line x1="50.583" y1="59.8" x2="50.583" y2="74.2"/>
+      <line x1="56.75" y1="59.8" x2="56.75" y2="74.2"/>
+    </g>
+    <!-- Pilares (03_estructura 4.2): esquina 30x30, fachada 30x40, testero 40x30, interior 40x40 -->
+    <g class="pil">
+      <rect x="19.6" y="61.1" width="0.3" height="0.3"/>
+      <rect x="56.6" y="61.1" width="0.3" height="0.3"/>
+      <rect x="19.6" y="72.6" width="0.3" height="0.3"/>
+      <rect x="56.6" y="72.6" width="0.3" height="0.3"/>
+      <rect x="25.767" y="61.05" width="0.3" height="0.4"/>
+      <rect x="31.933" y="61.05" width="0.3" height="0.4"/>
+      <rect x="38.1" y="61.05" width="0.3" height="0.4"/>
+      <rect x="44.267" y="61.05" width="0.3" height="0.4"/>
+      <rect x="50.433" y="61.05" width="0.3" height="0.4"/>
+      <rect x="25.767" y="72.55" width="0.3" height="0.4"/>
+      <rect x="31.933" y="72.55" width="0.3" height="0.4"/>
+      <rect x="38.1" y="72.55" width="0.3" height="0.4"/>
+      <rect x="44.267" y="72.55" width="0.3" height="0.4"/>
+      <rect x="50.433" y="72.55" width="0.3" height="0.4"/>
+      <rect x="19.55" y="66.85" width="0.4" height="0.3"/>
+      <rect x="56.55" y="66.85" width="0.4" height="0.3"/>
+      <rect x="25.717" y="66.8" width="0.4" height="0.4"/>
+      <rect x="31.883" y="66.8" width="0.4" height="0.4"/>
+      <rect x="38.05" y="66.8" width="0.4" height="0.4"/>
+      <rect x="44.217" y="66.8" width="0.4" height="0.4"/>
+      <rect x="50.383" y="66.8" width="0.4" height="0.4"/>
+    </g>
+    <!-- Portales (posición aproximada: F2 solo dice "uno en cada mitad"; NC-1) -->
+    <line x1="29" y1="57.4" x2="29" y2="60.6" stroke="#7a3fa0" stroke-width="0.25" stroke-dasharray="0.6 0.35" marker-end="url(#flm)"/>
+    <line x1="47.5" y1="57.4" x2="47.5" y2="60.6" stroke="#7a3fa0" stroke-width="0.25" stroke-dasharray="0.6 0.35" marker-end="url(#flm)"/>
+
+    <!-- Puntos de residuos junto a cada acceso (H-APA-4): POSICIÓN APROXIMADA -->
+    <rect class="apxf" x="-6.5" y="22.5" width="3" height="1.5"/>
+    <rect class="apxf" x="-15.5" y="74" width="3" height="1.5"/>
+
+    <!-- Esquina SE: elemento sin identificar (FALTA DATO) y posible CT 2,5 x 4-6 m (I-8): POSICIÓN APROXIMADA -->
+    <rect class="apxf" x="89.3" y="1" width="2" height="2"/>
+    <rect class="apx" x="86.3" y="1.2" width="2.5" height="5"/>
+
+    <!-- Líneas de retranqueo (offset interior del polígono; cálculo manual sobre las cuerdas) -->
+    <polygon class="r3" points="88.85,3.735 2.173,3.018 -27.139,93.102 -2.932,90.101 71.33,74.104 88.85,71.004"/>
+    <polygon class="r5" points="86.85,5.719 3.622,5.03 -24.264,90.731 -3.271,88.128 70.94,72.142 86.85,69.327"/>
+  </g>
+
+  <!-- =========================== TEXTOS Y SÍMBOLOS (y' = 110 - y) =========================== -->
+
+  <!-- Título -->
+  <text class="t18 b" x="-46" y="-8.3">UA-03-01 · Los Pocillos · Variante V1 «Calle de casas» — Esquema de planta de conjunto</text>
+  <text class="t12" x="-46" y="-5.8">Apoyo a las decisiones de la PAUSA F3 · Diseño preliminar (F2) · No es plano de F4 · Escala 1:500 impreso a 476 × 304 mm (unidades del dibujo: metros)</text>
+  <text class="t12 gris" x="-46" y="-3.6">Coordenadas locales de F2: origen en el vértice 3 (UTM 414.896,93 ; 4.478.781,24), x al este, y al norte; en el dibujo y' = 110 − y. Fuentes: 01_urbanismo (1.4, 1.5), 02_diseno (V1), 03_estructura, 03_instalaciones, 03_normativa, conflictos.md</text>
+
+  <!-- Linderos -->
+  <text class="t15 b mid" x="-18.2" y="62.47" transform="rotate(72 -18.2 62.47)">CALLE FLORISTAS (fachada)</text>
+  <text class="t15 b mid" x="34.91" y="23.96" transform="rotate(12.16 34.91 23.96)">ZONA VERDE ZV-02 · lindero con retranqueo (3 m / 5 m) · tramos curvos R 100 / 669,75 / 500</text>
+  <text class="t15 b mid" x="46" y="114.6">AVENIDA DE LA DEHESA · fachada (retranqueo 3 m / 5 m) · lindero curvo R 433 (se dibuja la cuerda)</text>
+  <text class="t15 b mid" x="93.0" y="60" transform="rotate(90 93.0 60)">UA-03-02 · lindero este (retranqueo 3 m / 5 m)</text>
+  <text class="t12" x="10" y="22.35" transform="rotate(12.16 10 22.35)">retranqueo 3 m</text>
+  <text class="t12" x="10" y="24.4" transform="rotate(12.16 10 24.4)" style="fill:#8a5a2b">retranqueo 5 m</text>
+
+  <!-- Accesos rodados desde Floristas -->
+  <line x1="-16.5" y1="81" x2="-9" y2="81" stroke="#333" stroke-width="0.35" marker-end="url(#fl)"/>
+  <text class="t12 b end" x="-17" y="81.4">acceso rodado 1</text>
+  <line x1="-28" y1="45" x2="-21" y2="45" stroke="#333" stroke-width="0.35" marker-end="url(#fl)"/>
+  <text class="t12 b end" x="-28.6" y="45.4">acceso rodado 2</text>
+
+  <!-- Rótulos de viario, bolsa y bloque -->
+  <text class="t13 b mid" x="47" y="81.45">CALLE DE CASAS · calzada 6,0 m · fondo de saco ≈ 98 m · sin acera</text>
+  <text class="t12 b mid" x="-3.5" y="45.4">BOLSA · 22 plazas · maniobra 6,0 m</text>
+  <text class="t12 b mid" x="12.25" y="51.3" style="fill:#7a3fa0">PMR</text>
+  <text class="t13 b mid" x="38.25" y="32.2">BLOQUE M-V1 · 12,00 × 37,50 m · 3 pl. · 10 pisos · 2 portales</text>
+  <text class="t12 mid mor" x="29" y="45.0">núcleo 1</text>
+  <text class="t12 mid mor" x="47.5" y="45.0">núcleo 2</text>
+  <text class="t12 mor" x="29.8" y="52.2">portal 1</text>
+  <text class="t12 mor" x="48.3" y="52.2">portal 2</text>
+  <text class="t12 mid mor" x="-5" y="87.6">R</text>
+  <text class="t12 mid mor" x="-14" y="36.1">R</text>
+  <text class="t12 mid gris" x="75" y="46">jardín común</text>
+  <text class="t12 mid gris" x="-14" y="30">espacio libre común</text>
+
+  <!-- Ejes del bloque -->
+  <g>
+    <circle class="ejeb" cx="19.75" cy="34.8" r="1"/><text class="t12 mid ejet" x="19.75" y="35.25">1</text>
+    <circle class="ejeb" cx="25.917" cy="34.8" r="1"/><text class="t12 mid ejet" x="25.917" y="35.25">2</text>
+    <circle class="ejeb" cx="32.083" cy="34.8" r="1"/><text class="t12 mid ejet" x="32.083" y="35.25">3</text>
+    <circle class="ejeb" cx="38.25" cy="34.8" r="1"/><text class="t12 mid ejet" x="38.25" y="35.25">4</text>
+    <circle class="ejeb" cx="44.417" cy="34.8" r="1"/><text class="t12 mid ejet" x="44.417" y="35.25">5</text>
+    <circle class="ejeb" cx="50.583" cy="34.8" r="1"/><text class="t12 mid ejet" x="50.583" y="35.25">6</text>
+    <circle class="ejeb" cx="56.75" cy="34.8" r="1"/><text class="t12 mid ejet" x="56.75" y="35.25">7</text>
+    <circle class="ejeb" cx="17.4" cy="48.75" r="1"/><text class="t12 mid ejet" x="17.4" y="49.2">A</text>
+    <circle class="ejeb" cx="17.4" cy="43" r="1"/><text class="t12 mid ejet" x="17.4" y="43.45">B</text>
+    <circle class="ejeb" cx="17.4" cy="37.25" r="1"/><text class="t12 mid ejet" x="17.4" y="37.7">C</text>
+  </g>
+
+  <!-- Numeración de viviendas (convención de este esquema, de oeste a este) -->
+  <g class="t18 b mid">
+    <text x="5.25" y="95.6">1</text><text x="11.75" y="95.6">2</text><text x="18.25" y="95.6">3</text><text x="24.75" y="95.6">4</text>
+    <text x="31.25" y="95.6">5</text><text x="37.75" y="95.6">6</text><text x="44.25" y="95.6">7</text><text x="50.75" y="95.6">8</text>
+    <text x="63.25" y="95.6">9</text><text x="69.75" y="95.6">10</text><text x="76.25" y="95.6">11</text><text x="82.75" y="95.6">12</text>
+    <text x="0.75" y="67.6">13</text><text x="7.25" y="67.6">14</text><text x="13.75" y="67.6">15</text><text x="20.25" y="67.6">16</text>
+    <text x="32.75" y="67.6">17</text><text x="39.25" y="67.6">18</text><text x="45.75" y="67.6">19</text><text x="52.25" y="67.6">20</text>
+    <text x="64.75" y="67.6">21</text><text x="71.25" y="67.6">22</text><text x="77.75" y="67.6">23</text><text x="84.25" y="67.6">24</text>
+  </g>
+  <text class="t12 b mid" x="28" y="103">JD x = 28,0</text>
+  <!-- Agrupaciones (H-AGR) -->
+  <text class="t12 mid" x="28" y="106.2">Ag-1 · hilera A-oeste · 8 casas · 52,0 m</text>
+  <text class="t12 mid" x="73" y="106.2">Ag-3 · A-este · 4 casas · 26,0 m</text>
+  <text class="t12 mid" x="10.5" y="58.4">Ag-2 · 4 casas · 26,0 m</text>
+  <text class="t12 mid" x="42.5" y="58.4">Ag-2 · 4 casas · 26,0 m</text>
+  <text class="t12 mid" x="74.5" y="58.4">Ag-3 · 4 casas · 26,0 m</text>
+  <text class="t12 mid gris" x="57.5" y="101" transform="rotate(-90 57.5 101)">paso peatonal 6,0 m</text>
+  <text class="t12 mid gris" x="27.1" y="64" transform="rotate(-90 27.1 64)">paso 6,0 m</text>
+  <text class="t12 mid gris" x="59.1" y="64" transform="rotate(-90 59.1 64)">paso 6,0 m</text>
+
+  <!-- Cotas de F2 -->
+  <g class="cota">
+    <line x1="54" y1="90.5" x2="60" y2="90.5"/><line x1="54" y1="89.9" x2="54" y2="91.1"/><line x1="60" y1="89.9" x2="60" y2="91.1"/>
+    <line x1="23.5" y1="72" x2="29.5" y2="72"/><line x1="23.5" y1="71.4" x2="23.5" y2="72.6"/><line x1="29.5" y1="71.4" x2="29.5" y2="72.6"/>
+    <line x1="90" y1="89" x2="90" y2="73"/><line x1="89.4" y1="89" x2="90.6" y2="89"/><line x1="89.4" y1="73" x2="90.6" y2="73"/>
+    <line x1="52.5" y1="61" x2="52.5" y2="49"/><line x1="51.9" y1="61" x2="53.1" y2="61"/><line x1="51.9" y1="49" x2="53.1" y2="49"/>
+  </g>
+  <text class="t12 mid" x="57" y="89.9">6,0</text>
+  <text class="t12 mid" x="26.5" y="71.4">6,0</text>
+  <text class="t12 mid" x="89.5" y="81" transform="rotate(-90 89.5 81)">16,0 (A–B)</text>
+  <text class="t12" x="53.2" y="55.4">12,0</text>
+
+  <!-- Elemento SE y CT: rótulo con línea de referencia -->
+  <line x1="90.3" y1="108.6" x2="90.3" y2="116.4" stroke="#7a3fa0" stroke-width="0.1"/>
+  <text class="t12 end mor" x="92" y="117.8">elemento SE sin identificar (FALTA DATO) · posible CT (I-8) · posición aproximada</text>
+
+  <!-- Marcas de conflicto (círculo rojo numerado) -->
+  <g>
+    <circle class="cf" cx="85" cy="81" r="1.6"/><text class="t15 cft rojo b mid" x="85" y="81.55">1</text>
+    <text class="t12 rojo end" x="83.1" y="81.45">N-1</text>
+    <circle class="cf" cx="14" cy="81" r="1.6"/><text class="t15 rojo b mid" x="14" y="81.55">2</text>
+    <text class="t12 rojo" x="16.1" y="81.45">N-2</text>
+    <circle class="cf" cx="28" cy="98" r="1.6"/><text class="t15 rojo b mid" x="28" y="98.55">3</text>
+    <text class="t12 rojo" x="30.1" y="98.45">E1</text>
+    <circle class="cf" cx="66.5" cy="98" r="1.6"/><text class="t15 rojo b mid" x="66.5" y="98.55">4</text>
+    <text class="t12 rojo" x="68.6" y="98.45">N-3 / E2</text>
+    <circle class="cf" cx="44" cy="86.5" r="1.6"/><text class="t15 rojo b mid" x="44" y="87.05">5</text>
+    <text class="t12 rojo" x="46.1" y="86.95">E6</text>
+    <circle class="cf" cx="61" cy="43" r="1.6"/><text class="t15 rojo b mid" x="61" y="43.55">6</text>
+    <text class="t12 rojo" x="63.1" y="43.45">E3</text>
+    <circle class="cf" cx="29" cy="38.7" r="1.6"/><text class="t15 rojo b mid" x="29" y="39.25">7</text>
+    <text class="t12 rojo" x="31.1" y="39.15">E4/I-3/N-4</text>
+    <circle class="cf" cx="47.5" cy="38.7" r="1.6"/><text class="t15 rojo b mid" x="47.5" y="39.25">7</text>
+    <text class="t12 rojo" x="49.6" y="39.15">E4/I-3/N-4</text>
+    <circle class="cf" cx="25.5" cy="51.2" r="1.6"/><text class="t15 rojo b mid" x="25.5" y="51.75">8</text>
+    <text class="t12 rojo end" x="23.4" y="51.65">NC-1</text>
+    <circle class="cf" cx="56.5" cy="52.2" r="1.6"/><text class="t15 rojo b mid" x="56.5" y="52.75">9</text>
+    <text class="t12 rojo" x="58.6" y="52.65">I-9</text>
+    <circle class="cf" cx="16.3" cy="52.5" r="1.6"/><text class="t15 rojo b mid" x="16.3" y="53.05">10</text>
+    <text class="t12 rojo mid" x="16.3" y="55.8">NC-5</text>
+    <circle class="cf" cx="89.5" cy="99.5" r="1.6"/><text class="t15 rojo b mid" x="89.5" y="100.05">11</text>
+    <text class="t12 rojo mid" x="89.5" y="96.9">I-8</text>
+  </g>
+
+  <!-- Flecha de norte -->
+  <path d="M -42 21 L -40.2 31 L -42 29 L -43.8 31 Z" fill="#222"/>
+  <text class="t18 b mid" x="-42" y="19.6">N</text>
+
+  <!-- Escala gráfica 0-10-20 m -->
+  <text class="t12" x="-44" y="122.6">Escala gráfica (m)</text>
+  <rect x="-44" y="124" width="10" height="1.2" fill="#222" stroke="#222" stroke-width="0.1"/>
+  <rect x="-34" y="124" width="10" height="1.2" fill="#fff" stroke="#222" stroke-width="0.1"/>
+  <rect x="-44" y="125.2" width="5" height="0.6" fill="#fff" stroke="#222" stroke-width="0.08"/>
+  <rect x="-39" y="125.2" width="5" height="0.6" fill="#222" stroke="#222" stroke-width="0.08"/>
+  <text class="t12 mid" x="-44" y="127.6">0</text>
+  <text class="t12 mid" x="-39" y="127.6">5</text>
+  <text class="t12 mid" x="-34" y="127.6">10</text>
+  <text class="t12 mid" x="-24" y="127.6">20 m</text>
+
+  <!-- =========================== LEYENDA =========================== -->
+  <text class="t15 b" x="100" y="2">LEYENDA</text>
+  <g>
+    <rect class="parc" x="100" y="3.8" width="4.5" height="1.6" style="stroke-width:0.15"/>
+    <text class="t12" x="106" y="5.0">Parcela: polígono de 6 vértices de la cédula (cuerdas; los 4 linderos curvos no se representan)</text>
+    <line class="r3" x1="100" y1="7.2" x2="104.5" y2="7.2"/>
+    <text class="t12" x="106" y="7.6">Línea de retranqueo 3 m (unifamiliar: fachadas, UA-03-02 y ZV-02)</text>
+    <line class="r5" x1="100" y1="9.8" x2="104.5" y2="9.8"/>
+    <text class="t12" x="106" y="10.2">Línea de retranqueo 5 m (multifamiliar)</text>
+    <rect class="casa" x="100" y="11.6" width="4.5" height="1.6"/>
+    <text class="t12" x="106" y="12.8">Vivienda U-V1 de 6,50 × 12,00 m, 2 pl. (nº 1-24: numeración de este esquema, de oeste a este)</text>
+    <line class="med" x1="102.25" y1="14.2" x2="102.25" y2="15.8"/>
+    <text class="t12" x="106" y="15.4">Medianera portante de 24 cm cada 6,50 m · JD = junta de dilatación, doble muro ≈ 0,51 m (x = 28,0)</text>
+    <rect class="blq" x="100" y="16.8" width="4.5" height="1.6" style="stroke-width:0.15"/>
+    <text class="t12" x="106" y="18.0">Bloque M-V1; ejes y pilares de la retícula ajustada de 03_estructura (2 × 5,75 m; 6 × ≈ 6,17 m)</text>
+    <rect class="vial" x="100" y="19.4" width="4.5" height="1.6"/>
+    <text class="t12" x="106" y="20.6">Calzada: calle de casas y calle de maniobra de la bolsa, 6,0 m (F2 no prevé acera)</text>
+    <rect class="plz" x="100" y="22.0" width="4.5" height="1.6"/>
+    <text class="t12" x="106" y="23.2">Plazas en batería de 2,50 × 5,00 m (48 delante de las casas + 22 en la bolsa)</text>
+    <rect class="jpr" x="100" y="24.6" width="4.5" height="1.6"/>
+    <text class="t12" x="106" y="25.8">Jardín privado (banda A: ≈ 8,3 m al sur; banda B: 6,0 m al norte)</text>
+    <rect class="pea" x="100" y="27.2" width="4.5" height="1.6" style="stroke:#999;stroke-width:0.06"/>
+    <text class="t12" x="106" y="28.4">Paso peatonal entre hileras (6,0 m) y paso de 1,50 m hasta cada puerta</text>
+    <rect x="100" y="29.8" width="4.5" height="1.6" fill="#f1f4ea" stroke="#999" stroke-width="0.06"/>
+    <text class="t12" x="106" y="31.0">Espacio libre común (jardines comunes)</text>
+    <rect class="zv" x="100" y="32.4" width="2.2" height="1.6"/><rect class="ext" x="102.3" y="32.4" width="2.2" height="1.6"/>
+    <text class="t12" x="106" y="33.6">Fuera de la parcela: ZV-02 y vías públicas (ancho indicativo, no a escala)</text>
+    <rect class="apxf" x="100" y="35.0" width="4.5" height="1.6"/>
+    <text class="t12 mor b" x="106" y="36.2">POSICIÓN APROXIMADA: elemento sin cota o sin posición en los entregables (trazo morado discontinuo)</text>
+    <rect class="punz" x="100" y="37.6" width="4.5" height="1.6"/>
+    <text class="t12" x="106" y="38.8">Zona 6d ≈ 1,50 m sin huecos alrededor de los pilares B2, B3, B5 y B6 (03_estructura, E4)</text>
+    <circle class="cf" cx="102.25" cy="41.0" r="0.9"/>
+    <text class="t12" x="106" y="41.4">Conflicto de F3 con ubicación en planta (número del plano, ver lista)</text>
+  </g>
+
+  <!-- Lista de conflictos -->
+  <text class="t15 b" x="100" y="45.6">CONFLICTOS ABIERTOS (fases/conflictos.md y 03_normativa.md)</text>
+  <g class="t12">
+    <circle class="cf" cx="101.2" cy="48.1" r="0.9" style="stroke-width:0.2"/><text class="rojo b mid" x="101.2" y="48.5">1</text>
+    <text x="103" y="48.5"><tspan class="b">N-1 / NC-3</tspan> · Fondo de saco de ≈ 98 m sin espacio de maniobra (SI 5); propuesta: lazo con la calle de la bolsa</text>
+    <circle class="cf" cx="101.2" cy="50.5" r="0.9" style="stroke-width:0.2"/><text class="rojo b mid" x="101.2" y="50.9">2</text>
+    <text x="103" y="50.9"><tspan class="b">N-2 / NC-2</tspan> · Calle de casas sin acera: itinerario accesible por la calzada compartida con 48 plazas (SUA 9)</text>
+    <circle class="cf" cx="101.2" cy="52.9" r="0.9" style="stroke-width:0.2"/><text class="rojo b mid" x="101.2" y="53.3">3</text>
+    <text x="103" y="53.3"><tspan class="b">E1</tspan> · Junta obligatoria en la hilera de 52 m, entre las viviendas 4 y 5 (x = 28,0): doble muro de 0,51 m</text>
+    <circle class="cf" cx="101.2" cy="55.3" r="0.9" style="stroke-width:0.2"/><text class="rojo b mid" x="101.2" y="55.7">4</text>
+    <text x="103" y="55.7"><tspan class="b">N-3 / E2</tspan> · Medianera portante única (DB-HR, DB-SI) y falta de arriostramiento E-O; afecta a todas las casas</text>
+    <circle class="cf" cx="101.2" cy="57.7" r="0.9" style="stroke-width:0.2"/><text class="rojo b mid" x="101.2" y="58.1">5</text>
+    <text x="103" y="58.1"><tspan class="b">E6</tspan> · Morro de los coches contra fachadas y arranques de medianeras (impacto 50 kN); bandas A y B</text>
+    <circle class="cf" cx="101.2" cy="60.1" r="0.9" style="stroke-width:0.2"/><text class="rojo b mid" x="101.2" y="60.5">6</text>
+    <text x="103" y="60.5"><tspan class="b">E3</tspan> · Cota de PB y forjado sanitario: la cornisa del bloque puede superar 10 m (margen de F2 ≈ 0,3 m)</text>
+    <circle class="cf" cx="101.2" cy="62.5" r="0.9" style="stroke-width:0.2"/><text class="rojo b mid" x="101.2" y="62.9">7</text>
+    <text x="103" y="62.9"><tspan class="b">E4 / I-3 / N-4</tspan> · Patinillos PB-1 a PB-4 en la zona de punzonamiento de B2, B3, B5 y B6, junto a la meseta de evacuación</text>
+    <circle class="cf" cx="101.2" cy="64.9" r="0.9" style="stroke-width:0.2"/><text class="rojo b mid" x="101.2" y="65.3">8</text>
+    <text x="103" y="65.3"><tspan class="b">NC-1</tspan> · Entrada accesible del bloque sin resolver (PB a +0,30 m sin rampa; portales sin ubicar)</text>
+    <circle class="cf" cx="101.2" cy="67.3" r="0.9" style="stroke-width:0.2"/><text class="rojo b mid" x="101.2" y="67.7">9</text>
+    <text x="103" y="67.7"><tspan class="b">I-9</tspan> · Armario de contadores eléctricos en el portal, que es recorrido de evacuación (DB-SI 3)</text>
+    <circle class="cf" cx="101.2" cy="69.7" r="0.9" style="stroke-width:0.2"/><text class="rojo b mid" x="101.2" y="70.1">10</text>
+    <text x="103" y="70.1"><tspan class="b">NC-5</tspan> · El trazado tiene 1 plaza accesible y se aprobaron 2 (propuesta: 2 contiguas en la fila sur, 26,2 m)</text>
+    <circle class="cf" cx="101.2" cy="72.1" r="0.9" style="stroke-width:0.2"/><text class="rojo b mid" x="101.2" y="72.5">11</text>
+    <text x="103" y="72.5"><tspan class="b">I-8</tspan> · Posible CT (≈ 2,5 × 4-6 m) sin reserva; elemento SE sin identificar (FALTA DATO); alternativa junto a Floristas</text>
+    <text class="gris" x="100" y="75.3">Sin ubicación en la planta de conjunto: I-1, I-2 y E5 (patinillo de las casas), I-4 (colectores), I-5 (alturas libres),</text>
+    <text class="gris" x="100" y="77.3">I-6 (equipos en cubierta), I-7 (aerotermia de los pisos), NC-4 (rampa, antepechos, escaleras) y NC-6 (cuarto de residuos).</text>
+  </g>
+
+  <!-- Cuadro resumen -->
+  <rect x="99.5" y="80" width="89" height="27" fill="#fff" stroke="#222" stroke-width="0.15"/>
+  <text class="t15 b" x="101" y="82.4">CUADRO RESUMEN V1 (cifras de 02_diseno.md)</text>
+  <g class="t12">
+    <text x="101" y="84.9">Viviendas: 24 casas U-V1 + 10 pisos M-V1 = 34 (máx. 34) ✔</text>
+    <text x="101" y="87.2">Casas: 24 × 156,0 = 3.744,0 m²c · Bloque: 3 × 450,0 = 1.350,0 m²c (viviendas 1.100 + comunes 250)</text>
+    <text x="101" y="89.5" class="b">Total construido computable: 5.094,0 m²c de 5.100 (99,9 %) ✔ · no computable: 0 (H-COM)</text>
+    <text x="101" y="91.8">Huella: 1.872 + 450 = 2.322 m²</text>
+    <text x="101" y="94.1">Ocupación lectura B (toda la parcela, 8.839 m²): 26,3 % ≤ 45 % ✔ · lectura A: 34,7 % ≤ 60 % y 13,1 % ≤ 45 % ✔</text>
+    <text x="101" y="96.4">Con viario y aparcamiento (≈ 1.650 m²): ≈ 44,9 %, al límite (cómputo del aparcamiento: FALTA DATO)</text>
+    <text x="101" y="98.7">Plazas: 48 junto a las casas + 22 en la bolsa = 70 ≥ 68 ✔ (1 accesible dibujada; 2 aprobadas → NC-5)</text>
+    <text x="101" y="101.0">Alturas: casas 2 pl., cornisa ≈ 6,6 m (≤ 7,5) · bloque 3 pl., cornisa ≈ 9,7 m (≤ 10)</text>
+    <text x="101" y="103.3">Agrupaciones: Ag-1 = 1-8 · Ag-2 = 13-20 · Ag-3 = 9-12 + 21-24 · bloque de 10</text>
+    <text x="101" y="105.6">Separaciones: 6,0 m entre hileras (justo) · 16,0 m A–B · 12,0 m B–bloque</text>
+  </g>
+
+  <!-- Notas -->
+  <text class="t15 b" x="100" y="111">NOTAS</text>
+  <g class="t12">
+    <text x="100" y="113.5">1. Posición aproximada (morado): núcleos, patinillos y portales del bloque; plaza accesible; orden de plaza, plaza y paso en</text>
+    <text x="100" y="115.5">   cada frente de casa; elemento SE y posible CT; puntos de residuos (R). Ninguno tiene cota en los entregables.</text>
+    <text x="100" y="118.0">2. El encargo cita el origen (414.800 ; 4.478.780), que no es el de F2. Se usa el de F2 para no alterar ninguna cota.</text>
+    <text x="100" y="120.0">   Conversión: X = 414.896,93 + x ; Y = 4.478.781,24 + y (en el origen del encargo: x' = x + 96,93 ; y' = y + 1,24).</text>
+    <text x="100" y="122.5">3. Sin definir o fuera de escala: anchos de las vías y de la ZV-02, topografía y rasantes (FALTA DATO), geometría</text>
+    <text x="100" y="124.5">   de los arcos (flecha de hasta ≈ 2,4 m en la Dehesa). Retranqueos y separaciones medidos sobre las cuerdas.</text>
+    <text x="100" y="127.0">4. Esquema de apoyo a la decisión, no plano de proyecto. Retícula del bloque: la ajustada de 03_estructura (envolvente F2</text>
+    <text x="100" y="129.0">   de 12,00 × 37,50 m a cara exterior). Patinillos de las casas (0,80 × 0,40 m) no dibujados: van en la tipología.</text>
+  </g>
+
+  <text class="t12 b" x="100" y="134">PENDIENTE DE VALIDAR POR EL ARQUITECTO</text>
+</svg>
