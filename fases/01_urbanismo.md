@@ -323,7 +323,7 @@ CÁLCULO URBANÍSTICO (reglas fijas, sin IA)
 | 10 | Cómputo de superficies edificadas (porches, terrazas, bajo cubierta, etc.) | Normativa del Plan Parcial | Pendiente |
 | 11 | Áticos, bajo cubierta, castilletes, construcciones entre cornisa y coronación | Normativa del Plan Parcial | Pendiente |
 | 12 | Condiciones estéticas (materiales, cubiertas, cerramientos de parcela, vuelos) | Normativa del Plan Parcial | Pendiente |
-| 13 | **Aparcamiento sobre rasante**: si se admite al aire libre; si consume ocupación o edificabilidad (en superficie o cubierto); plazas de visitantes / PMR; dimensiones de plaza y calles de rodadura | Normativa del Plan Parcial | Pendiente |
+| 13 | **Aparcamiento en superficie** (forma confirmada en la rev. 2): si la normativa lo admite; si consume ocupación o edificabilidad; si puede ir en la banda de retranqueo; plazas de visitantes / PMR; dimensiones de plaza y calles de rodadura | Normativa del Plan Parcial | Pendiente |
 | 14 | Topografía (levantamiento con cotas y rasantes de las calles) | Arquitecto / topógrafo | Pendiente |
 | 15 | **Estudio geotécnico** | Arquitecto / laboratorio | **El arquitecto indica que no se hará** (decisión del arquitecto (PAUSA F1)). Riesgo para F3 (CTE DB SE-C) |
 | 16 | Programa del cliente (superficies objetivo por tipo, presupuesto) | Cliente | **No hay** (decisión del arquitecto (PAUSA F1)). F2 trabajará con el reparto entre tipos como hipótesis |
@@ -331,16 +331,34 @@ CÁLCULO URBANÍSTICO (reglas fijas, sin IA)
 | 18 | **Naturaleza del elemento de la esquina SE** y servidumbres | Proyecto de reparcelación / urbanización | Sigue sin identificar (decisión del arquitecto (PAUSA F1)) |
 | 19 | Geometría exacta de los linderos curvos (centros, sentido de la curvatura) y explicación de la diferencia 71,30 / 72,76 m del lindero este | Proyecto de reparcelación (DXF/GML) o Catastro | Pendiente. Mientras tanto, polígono aproximado + superficie oficial |
 | 20 | Referencia catastral (para descargar el GML con `scripts/catastro_parcela.py`) | Arquitecto / Catastro | Pendiente |
+| 21 | Alcance de la regla de agrupación de 8 en 8: ¿exactamente 8 o al menos 8?, ¿solo unifamiliar o también multifamiliar?, ¿cómo se reparten las 2 viviendas que quedan fuera de 4 × 8? | Arquitecto / normativa del Plan Parcial | **Pendiente de confirmar** (riesgo 4.15) |
 
-Datos de la versión anterior que **ya están resueltos** por decisión del arquitecto (PAUSA F1): tipología (mezcla), nº de viviendas (34), tratamiento de la ZV-02 (lindero con retranqueo), superficie de cálculo (8.839 m²) y bajo rasante (no se proyecta).
+Datos de la revisión 1 que **ya están resueltos** por decisión del arquitecto (PAUSA F1): tipología (mezcla), nº de viviendas (34), tratamiento de la ZV-02 (lindero con retranqueo), superficie de cálculo (8.839 m²) y bajo rasante (no se proyecta).
+
+Resueltos o cubiertos provisionalmente en la **rev. 2** (decisión / dato provisional del arquitecto (PAUSA F1, rev. 2)):
+- separación entre edificios: 6 m **provisional**, pendiente de confirmar con la normativa;
+- nº de promociones: una sola;
+- aparcamiento: en superficie;
+- interpretación de la agrupación de viviendas: de 8 en 8, partible en hileras;
+- reparto unifamiliar / multifamiliar: lo propone F2 en variantes.
 
 ### 5.2 Decisiones que necesita el arquitecto
 
-1. **Reparto entre unifamiliar y multifamiliar.** Opciones: (a) que F2 proponga el reparto de suelo, techo (5.100 m²c) y viviendas (34) como hipótesis, que es lo previsto al no haber programa; (b) que el arquitecto fije de antemano un reparto (por ejemplo, nº de viviendas de cada tipo o zona de la parcela para cada uno).
-2. **Nº de promociones**: una sola promoción mixta o dos promociones (cada una con ≥ 8 viviendas, según la cédula).
-3. **Forma del aparcamiento sobre rasante**: (a) plazas al aire libre en superficie; (b) plazas cubiertas (marquesinas o pérgolas); (c) garaje en planta baja de las viviendas o del bloque; (d) combinación. El efecto en ocupación y edificabilidad queda pendiente de la normativa (FALTA DATO).
+Ya cerradas en la rev. 2 (decisión del arquitecto (PAUSA F1, rev. 2)):
+- antigua 1: **reparto**, que F2 propondrá en varias variantes;
+- antigua 2: **nº de promociones**, una sola sobre la parcela completa;
+- antigua 3: **forma del aparcamiento**, en superficie.
+
+Siguen abiertas o son nuevas:
+
+1. **Agrupación de 8 en 8** (riesgo 4.15):
+   - (a) ¿Las agrupaciones son de exactamente 8 o de al menos 8?
+   - (b) ¿La regla se aplica solo a las unifamiliares adosadas o también a la parte multifamiliar?
+   - (c) Con 34 viviendas (4 × 8 + 2), ¿cómo se tratan las 2 restantes? Por ejemplo, ¿una agrupación mayor de 8, o que vayan en la parte multifamiliar? Si no se responde antes de F2, F2 tendrá que declarar su lectura como hipótesis en cada variante.
+2. **Alcance de la separación de 6 m** (riesgo 4.16): ¿se aplica igual entre agrupaciones, entre hileras de una misma agrupación (por ejemplo, 4 + 4), entre bloques multifamiliares y entre la parte unifamiliar y la multifamiliar?
+3. **Aparcamiento en superficie: bolsa común o junto a cada vivienda.** El arquitecto lo deja como **decisión de diseño de F2**. Se recomienda que F2 lo plantee en sus variantes. ¿Hay alguna preferencia, o F2 propone libremente?
 4. **Geotecnia**: el arquitecto indica que no se hará estudio. ¿Confirma que F3 trabaje sin datos del terreno, marcando la cimentación como FALTA DATO, sabiendo que el CTE DB SE-C exige el reconocimiento del terreno? ¿O se reconsidera?
-5. **Normativa del Plan Parcial**: ¿cuándo se aporta? Hasta entonces F2 trabajará con parámetros incompletos (sin separación entre edificios, fondo, longitud de hilera, cómputo ni áticos), y es posible que haya que revisar F1 y F2.
+5. **Normativa del Plan Parcial**: ¿cuándo se aporta? Hasta entonces F2 trabajará con parámetros incompletos: sin fondo, longitud de hilera, cómputo, áticos ni regla de ocupación en la mezcla, y con una separación entre edificios provisional. Es posible que haya que revisar F1 y F2.
 6. **Topografía y elemento de la esquina SE**: ¿cuándo se aportan o identifican?
 7. **Referencia catastral o geometría exacta** de la reparcelación, para sustituir el polígono aproximado.
 
