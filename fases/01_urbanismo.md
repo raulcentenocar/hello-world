@@ -1,8 +1,17 @@
 # F1 — Análisis urbanístico · Parcela UA-03-01, Sector-1 "Los Pocillos" (Villanueva de la Cañada, Madrid)
 
-Agente: urbanismo · Fecha de redacción: 2026-11-13 · **Revisión 1** (relanzamiento de F1 con las decisiones del arquitecto tomadas en la PAUSA F1)
+Agente: urbanismo · Fecha de redacción: 2026-11-13 · **Revisión 2**: 2026-11-14 (segundo relanzamiento de F1 con nuevas respuestas del arquitecto en la PAUSA F1)
 
-> **Cambios de esta revisión.** Se han incorporado las decisiones del arquitecto (apartado 1.7): mezcla de unifamiliar y multifamiliar, 34 viviendas, ZV-02 tratada como lindero con retranqueo, superficie oficial para todos los cálculos, aparcamiento sobre rasante sin sótano, sin estudio geotécnico y sin programa del cliente. También se han actualizado las secciones 2, 4, 5 y 6. Las decisiones aparecen marcadas como **"decisión del arquitecto (PAUSA F1)"**. La salida del script de la sección 3, ejecutado por el coordinador, se conserva sin cambios.
+> **Cambios de la revisión 2.** Se incorporan cinco respuestas nuevas del arquitecto (apartado 1.7, tabla B), marcadas como **"decisión / dato provisional del arquitecto (PAUSA F1, rev. 2)"**:
+> 1. separación entre edificios de **6 m**, como dato **PROVISIONAL**. **No procede de la cédula**; falta confirmarlo con la normativa del Plan Parcial;
+> 2. su interpretación de la agrupación de viviendas (de 8 en 8, que pueden partirse en hileras);
+> 3. **una sola promoción** sobre la parcela completa;
+> 4. aparcamiento **en superficie** (confirmado). Bolsa común o plazas junto a cada vivienda: lo decide F2;
+> 5. reparto unifamiliar / multifamiliar **no fijado**: F2 propondrá varias variantes.
+>
+> Se han actualizado los apartados 1.7, 2.x, 4, 5.1, 5.2 y 6. Se conserva todo lo demás de la revisión 1. Las decisiones de la revisión 1 siguen marcadas como "decisión del arquitecto (PAUSA F1)". La sección 3 (salida del script, ejecutado por el coordinador) no cambia: ninguna de las respuestas nuevas modifica la superficie, la edificabilidad, la ocupación ni las plantas.
+>
+> **Cambios de la revisión 1** (se mantienen): mezcla de unifamiliar y multifamiliar, 34 viviendas, ZV-02 tratada como lindero con retranqueo, superficie oficial para todos los cálculos, aparcamiento sobre rasante sin sótano, sin estudio geotécnico y sin programa del cliente.
 
 ---
 
@@ -19,7 +28,9 @@ Agente: urbanismo · Fecha de redacción: 2026-11-13 · **Revisión 1** (relanza
 | BOCM relacionado con la Modificación del Plan Parcial: [BOCM-20220105-68](https://www.bocm.es/boletin/CM_Orden_BOCM/2022/01/05/BOCM-20220105-68.PDF) | NO consultado (dominio no accesible desde la sesión anterior; pendiente de la normativa que aporte el arquitecto) | — |
 | Anuncio de la aprobación definitiva de la reparcelación: [ayto-villacanada.es (julio de 2025)](https://www.ayto-villacanada.es/wp-content/uploads/2025/07/Publicación-anuncio-Aprobación-definitiva-reparcelacion.pdf) | NO consultado | — |
 
-> Ningún parámetro de este documento procede de fuentes distintas de la cédula. Todo lo que no figura en ella sigue como **FALTA DATO** hasta que el arquitecto aporte la normativa del Plan Parcial.
+| Respuestas del arquitecto en la PAUSA F1 (rev. 1 y rev. 2), transmitidas por el coordinador | Recibidas | Decisiones de proyecto y **un dato provisional**: separación entre edificios = 6 m |
+
+> Ningún parámetro urbanístico de este documento procede de fuentes distintas de la cédula, **con una excepción**: la **separación entre edificios de 6 m**. Es un **dato provisional del arquitecto (PAUSA F1, rev. 2)**, no figura en la cédula y está pendiente de confirmar con la normativa del Plan Parcial. Todo lo demás que no figura en la cédula sigue como **FALTA DATO** hasta que el arquitecto aporte esa normativa.
 
 ### 1.2 Identificación (transcripción de la cédula)
 
@@ -83,25 +94,37 @@ Posibles causas: (a) los segmentos circulares de los arcos, del orden de ±150 m
 
 **Decisión del arquitecto (PAUSA F1): todos los cálculos se hacen con la superficie oficial de 8.839 m². El polígono de vértices se usa solo como geometría aproximada.** En el JSON del generador se indica con la clave `parcela.superficie_oficial_m2` (sección 6).
 
-### 1.7 Decisiones del arquitecto (PAUSA F1) incorporadas en esta revisión
+### 1.7 Decisiones del arquitecto (PAUSA F1) incorporadas
+
+**A. Revisión 1** (se mantienen; las filas 1, 6 y 9 se completan con la tabla B)
 
 | # | Decisión del arquitecto (PAUSA F1) | Efecto en este documento |
 |---|-------------------------------|--------------------------|
-| 1 | **Tipología: mezcla** de unifamiliar y multifamiliar en la parcela | Cada parte usa sus parámetros de la cédula (sección 2.3). La compatibilidad de la mezcla **no está confirmada** (riesgo 4.1) |
+| 1 | **Tipología: mezcla** de unifamiliar y multifamiliar en la parcela | Cada parte usa sus parámetros de la cédula (sección 2.3). La compatibilidad de la mezcla **no está confirmada** (riesgo 4.1). El reparto queda para F2 (B-5) |
 | 2 | **Nº de viviendas: el máximo, 34** | 34 viviendas en total, entre las dos partes |
 | 3 | La **normativa del Plan Parcial** la aportará el arquitecto más adelante | Solo se usa la cédula. Lo que no figura en ella sigue como FALTA DATO |
 | 4 | **ZV-02 = lindero con retranqueo**: 3 m unifamiliar / 5 m multifamiliar. Índices: 0 = UA-03-02 (E), 1 = Avda. de la Dehesa (S), 2 = Calle Floristas (O), 3-5 = ZV-02 (N). `fachadas` = [1, 2] | Lados 3, 4 y 5 con `retranqueo_linderos_m` |
 | 5 | **Superficie oficial, 8.839 m²**, para todos los cálculos. Polígono (9.022,15 m²) solo como geometría aproximada | `superficie_oficial_m2` = 8839 |
-| 6 | **Aparcamiento sin planta bajo rasante.** 68 plazas (2 × 34) sobre rasante | Riesgo de consumo de ocupación o edificabilidad (riesgo 4.5) |
+| 6 | **Aparcamiento sin planta bajo rasante.** 68 plazas (2 × 34) sobre rasante | Riesgo de consumo de ocupación o edificabilidad (riesgo 4.5). En la rev. 2 se concreta que va **en superficie** (B-4) |
 | 7 | **No se hará estudio geotécnico** | FALTA DATO y riesgo para F3 (CTE DB SE-C) (riesgo 4.6) |
 | 8 | Elemento de la esquina SE sin identificar | FALTA DATO |
-| 9 | **No hay programa del cliente** | F2 trabajará con el reparto entre tipos como hipótesis |
+| 9 | **No hay programa del cliente** | F2 trabajará con el reparto entre tipos como hipótesis, en varias variantes (B-5) |
+
+**B. Revisión 2**: decisión / dato provisional del arquitecto (PAUSA F1, rev. 2)
+
+| # | Decisión / dato provisional del arquitecto (PAUSA F1, rev. 2) | Efecto en este documento |
+|---|----------------------------------------------------------------|--------------------------|
+| B-1 | **Separación entre edificios = 6 m.** Es un dato **PROVISIONAL** del arquitecto, a falta de la normativa del Plan Parcial. **No procede de la cédula.** | `separacion_edificios_m: 6` en los dos bloques JSON (sección 6). Sale de la lista de FALTA DATO y pasa a "**pendiente de confirmar con la normativa**" (5.1). Hay que precisar a qué separaciones se aplica (riesgo 4.16) |
+| B-2 | **Agrupación de viviendas.** La condición de adosamiento de la cédula ("mínimo de 8 viviendas por promoción") la interpreta así el arquitecto: **las viviendas se agrupan de 8 en 8, pero cada agrupación no tiene que ser una sola hilera de 8. Puede partirse en hileras, por ejemplo 4 + 4 o 5 + 3.** | Se transcribe tal cual (sección 2.5). No se deduce ningún mínimo ni máximo de viviendas por hilera. La longitud máxima de hilera sigue como FALTA DATO |
+| B-3 | **Promoción: UNA sola promoción, sobre la parcela completa.** | Cumple el "mínimo de 8 viviendas por promoción" de la cédula (34 ≥ 8). Se cierra la antigua pregunta 5.2-2 |
+| B-4 | **Aparcamiento: en superficie (confirmado).** No se ha concretado si va en bolsa común o junto a cada vivienda. | Las 68 plazas van en superficie. **Bolsa común o junto a cada vivienda: decisión de diseño para F2.** El cómputo y la posición respecto de los retranqueos siguen como FALTA DATO (riesgo 4.5) |
+| B-5 | **Reparto unifamiliar / multifamiliar: el arquitecto no lo ha fijado.** | **F2 propondrá varias variantes de reparto** de suelo, techo (5.100 m²c) y viviendas (34) |
 
 ---
 
 ## 2. Tabla principal de parámetros
 
-La cédula fija valores distintos para **uso unifamiliar** y **uso multifamiliar**. Por decisión del arquitecto (PAUSA F1), la parcela tendrá una **mezcla de los dos**. En F1, la columna "Propuesto" recoge el máximo aprovechable o el valor que se aplica a cada parte. El reparto de suelo, techo y viviendas entre las dos partes se hará en F2.
+La cédula fija valores distintos para **uso unifamiliar** y **uso multifamiliar**. Por decisión del arquitecto (PAUSA F1), la parcela tendrá una **mezcla de los dos**. En F1, la columna "Propuesto" recoge el máximo aprovechable o el valor que se aplica a cada parte. El reparto de suelo, techo y viviendas entre las dos partes no lo ha fijado el arquitecto. **F2 lo propondrá en varias variantes** (decisión del arquitecto (PAUSA F1, rev. 2)).
 
 ### 2.1 Parámetros comunes a toda la parcela (se reparten entre las dos partes)
 
@@ -115,16 +138,17 @@ La cédula fija valores distintos para **uso unifamiliar** y **uso multifamiliar
 | Edificabilidad asociada | 0 m²c | 0 m²c | Cédula |
 | Edificabilidad unitaria derivada | 5.100 / 8.839 = 0,5769884 m²/m² (derivada, no figura en la cédula) | 0,5769884 m²/m² sobre la parcela completa | Derivado de la cédula |
 | Nº máximo de viviendas | 34 viviendas | **34 viviendas en total** (decisión del arquitecto (PAUSA F1)); ≈150 m²c por vivienda de media (derivado: 5.100 / 34) | Cédula |
-| Plazas de aparcamiento | 2 plazas por vivienda | **68 plazas** (34 × 2), **todas sobre rasante** (decisión del arquitecto (PAUSA F1)) | Cédula |
-| Condiciones de adosamiento | "Según proyecto. Mínimo de 8 viviendas por promoción" | ≥ 8 viviendas por promoción. Nº de promociones: **pendiente** (decisión 5.2) | Cédula |
+| Plazas de aparcamiento | 2 plazas por vivienda | **68 plazas** (34 × 2), **todas en superficie** (decisión del arquitecto (PAUSA F1); en superficie confirmado en rev. 2). Bolsa común o junto a cada vivienda: **decisión de diseño de F2** | Cédula + decisión del arquitecto (PAUSA F1, rev. 2) |
+| Condiciones de adosamiento | "Según proyecto. Mínimo de 8 viviendas por promoción" | **Una sola promoción** de 34 viviendas, que cumple el mínimo de 8. Interpretación del arquitecto sobre la agrupación: ver 2.5 | Cédula + decisión del arquitecto (PAUSA F1, rev. 2) |
+| Nº de promociones | No lo regula la cédula | **1 promoción sobre la parcela completa** | Decisión del arquitecto (PAUSA F1, rev. 2) |
 | Parcela mínima | **FALTA DATO** | — | No figura en la cédula |
 | Frente mínimo | **FALTA DATO** | — | No figura en la cédula |
 | Fondo edificable | **FALTA DATO** | — | No figura en la cédula |
-| Separación entre edificios / hileras / bloques (y entre la parte unifamiliar y la multifamiliar) | **FALTA DATO** | — | No figura en la cédula |
-| Longitud máxima de hilera / bloque | **FALTA DATO** | — | No figura en la cédula |
+| Separación entre edificios / hileras / bloques | No figura en la cédula | **6 m, PROVISIONAL**. Pendiente de confirmar con la normativa del Plan Parcial. A qué separaciones se aplica (entre agrupaciones, entre hileras de una misma agrupación, entre la parte unifamiliar y la multifamiliar): **pendiente de confirmar** (riesgo 4.16) | **Dato provisional del arquitecto (PAUSA F1, rev. 2)**, no de la cédula |
+| Longitud máxima de hilera / bloque | **FALTA DATO** | — (la agrupación de 8 en 8 del arquitecto **no fija** una longitud ni un nº máximo de viviendas por hilera; ver 2.5) | No figura en la cédula |
 | Condiciones estéticas | **FALTA DATO** | — | No figura en la cédula |
 | Áticos / bajo cubierta / cómputo de superficies | **FALTA DATO** | — | No figura en la cédula |
-| Cómputo del aparcamiento sobre rasante (en superficie o cubierto) en ocupación y edificabilidad | **FALTA DATO** | — | No figura en la cédula |
+| Cómputo del aparcamiento en superficie en ocupación y edificabilidad; si las plazas pueden ir en la banda de retranqueo | **FALTA DATO** | — | No figura en la cédula |
 | Usos prohibidos | **FALTA DATO** | — | No figura en la cédula |
 | Obligaciones y servidumbres | Casilla en blanco | — | Cédula. Conviene confirmar que no hay servidumbres (ver el elemento de la esquina SE, FALTA DATO) |
 
@@ -148,14 +172,14 @@ Decisión del arquitecto (PAUSA F1): mezcla de unifamiliar y multifamiliar en la
 
 | Parte | Parámetros propios (cédula) | Parámetros compartidos con la otra parte |
 |-------|-----------------------------|------------------------------------------|
-| **Unifamiliar** (adosada en hileras) | 2 plantas; cornisa 7,5 m; coronación 10,5 m; ocupación 60 %; retranqueo de 3 m a alineación exterior (Avda. de la Dehesa, Calle Floristas), a UA-03-02 y a ZV-02; 0 m entre viviendas de la misma hilera y 3 m en extremos de hilera y testeros; usos compatibles de "vivienda unifamiliar" (o de "unifamiliar en régimen de división horizontal", si se organiza así) | 5.100 m²c; 34 viviendas; 2 plazas por vivienda; ≥ 8 viviendas por promoción |
+| **Unifamiliar** (adosada en hileras) | 2 plantas; cornisa 7,5 m; coronación 10,5 m; ocupación 60 %; retranqueo de 3 m a alineación exterior (Avda. de la Dehesa, Calle Floristas), a UA-03-02 y a ZV-02; 0 m entre viviendas de la misma hilera y 3 m en extremos de hilera y testeros; usos compatibles de "vivienda unifamiliar" (o de "unifamiliar en régimen de división horizontal", si se organiza así); agrupación de 8 en 8 partible en hileras, según el arquitecto (2.5) | 5.100 m²c; 34 viviendas; 2 plazas por vivienda en superficie; una sola promoción (≥ 8 viviendas); separación entre edificios 6 m (provisional) |
 | **Multifamiliar** | 3 plantas; cornisa 10 m; coronación 13 m; ocupación 45 %; retranqueo de 5 m a alineación exterior, a UA-03-02 y a ZV-02 (linderos y testeros); usos compatibles de "vivienda multifamiliar" | Ídem |
 
 Puntos que la cédula **no resuelve** y que quedan como FALTA DATO (no se suponen):
 
 - **Aplicación de la ocupación en la mezcla.** La cédula da el porcentaje "sobre parcela" para cada uso, pero no dice cómo se aplica si conviven los dos: si cada porcentaje se aplica a la superficie que se asigne a cada parte, si la parcela debe dividirse o no, o si hay otra regla. Como referencia numérica, sin que sea una interpretación adoptada: 45 % de 8.839 m² = 3.977,55 m² y 60 % = 5.303,40 m² (sección 3). Cualquier reparto estará entre esos dos valores si se ponderan las superficies asignadas, pero esa regla de ponderación **no figura en la cédula**.
-- **Retranqueo o separación entre la parte unifamiliar y la multifamiliar** dentro de la misma parcela. Si no hay división de parcela, no existe lindero entre ellas y se aplicaría la separación entre edificios: **FALTA DATO**.
-- **Reparto de la edificabilidad (5.100 m²c) y de las 34 viviendas** entre las dos partes: es **decisión de diseño de F2** (hipótesis, al no haber programa del cliente).
+- **Retranqueo o separación entre la parte unifamiliar y la multifamiliar** dentro de la misma parcela. Al ser una sola promoción sobre la parcela completa (decisión del arquitecto (PAUSA F1, rev. 2)) y sin división de parcela, no existe lindero entre ellas. Lo coherente sería aplicar la separación entre edificios, que hoy es el **dato provisional de 6 m**. **Que los 6 m valgan también entre un edificio unifamiliar y uno multifamiliar está pendiente de confirmar** con el arquitecto y con la normativa (riesgo 4.16).
+- **Reparto de la edificabilidad (5.100 m²c) y de las 34 viviendas** entre las dos partes: el arquitecto no lo ha fijado. **F2 lo propondrá en varias variantes** (decisión del arquitecto (PAUSA F1, rev. 2)), como hipótesis de diseño, al no haber programa del cliente.
 
 ### 2.4 Usos compatibles (transcripción de la cédula)
 
@@ -167,7 +191,23 @@ Puntos que la cédula **no resuelve** y que quedan como FALTA DATO (no se supone
 | Usos prohibidos | **FALTA DATO**. La cédula no los enumera. Se entiende, sin confirmar, que lo que no es principal ni compatible no está permitido, pero hay que verificarlo en la normativa del Plan Parcial. |
 
 - Con 5.100 m²c de edificabilidad asociada a 0 m²c, el uso compatible terciario (oficina, educativo, sanitario) **no dispone de techo propio**. Si se implanta, consumiría techo de los 5.100 m²c. Esto es una interpretación y está **por confirmar**.
-- La cédula sitúa el garaje-aparcamiento "en planta baja, semisótano y sótano". **No menciona el aparcamiento al aire libre en superficie.** Con la decisión de no hacer planta bajo rasante, las 68 plazas pueden ir en planta baja (cubiertas) o en superficie. Si la segunda opción está admitida y cómo computa: **FALTA DATO** (riesgo 4.5).
+- La cédula sitúa el garaje-aparcamiento "en planta baja, semisótano y sótano". **No menciona el aparcamiento al aire libre en superficie.** El arquitecto ha confirmado que las 68 plazas van **en superficie** (decisión del arquitecto (PAUSA F1, rev. 2)). Que la normativa lo admita, cómo computa y si puede ocupar la banda de retranqueo: **FALTA DATO** (riesgo 4.5). Bolsa común o plazas junto a cada vivienda: decisión de diseño de F2.
+
+### 2.5 Agrupación de viviendas: interpretación del arquitecto
+
+**Texto de la cédula** (condiciones de adosamiento): "Según proyecto. Mínimo de 8 viviendas por promoción".
+
+**Decisión del arquitecto (PAUSA F1, rev. 2), transcrita tal cual:** "las viviendas se agrupan de 8 en 8, pero cada agrupación no tiene que ser una sola hilera de 8. Puede partirse en hileras, por ejemplo 4 + 4 o 5 + 3."
+
+**Promoción:** una sola, sobre la parcela completa (decisión del arquitecto (PAUSA F1, rev. 2)).
+
+Lo que **no** se deduce aquí (queda pendiente):
+
+- **No se fija ningún mínimo ni máximo de viviendas por hilera.** 4 + 4 y 5 + 3 son ejemplos del arquitecto, no una lista cerrada.
+- **Longitud máxima de hilera: FALTA DATO** (normativa del Plan Parcial).
+- Si "de 8 en 8" significa agrupaciones de exactamente 8 o de al menos 8: **pendiente de confirmar** (riesgo 4.15).
+- Si la regla de agrupación se aplica solo a la parte unifamiliar adosada o también a la multifamiliar: **pendiente de confirmar** (riesgo 4.15).
+- Qué separación hay entre las hileras de una misma agrupación (por ejemplo, entre la de 4 y la de 4) y entre agrupaciones distintas. Si son los 6 m provisionales en los dos casos: **pendiente de confirmar** (riesgo 4.16).
 
 ---
 
@@ -230,17 +270,17 @@ CÁLCULO URBANÍSTICO (reglas fijas, sin IA)
 
 > Comprobación de superficie (coordinador, `python3 scripts/volumetria_generador.py <entrada> --lados`): polígono de vértices = **9.022,15 m²** (+2,1 % sobre la oficial), lo que confirma el cálculo manual de la sección 1.6.
 
-**Para la mezcla** (decisión del arquitecto (PAUSA F1)), las dos ejecuciones anteriores son las envolventes de "toda la parcela unifamiliar" y "toda la parcela multifamiliar". El techo máximo de la mezcla sigue siendo **5.100 m²c** en cualquier reparto, porque es un valor absoluto de la cédula. La huella máxima de la mezcla depende de cómo se aplique la ocupación a cada parte (**FALTA DATO**, sección 2.3). Cuando F2 fije un reparto de suelo como hipótesis, podrá ejecutar el script por separado para cada parte con su superficie asignada. Esas ejecuciones serán de F2, no de F1.
+**Para la mezcla** (decisión del arquitecto (PAUSA F1)), las dos ejecuciones anteriores son las envolventes de "toda la parcela unifamiliar" y "toda la parcela multifamiliar". El techo máximo de la mezcla sigue siendo **5.100 m²c** en cualquier reparto, porque es un valor absoluto de la cédula. La huella máxima de la mezcla depende de cómo se aplique la ocupación a cada parte (**FALTA DATO**, sección 2.3). Cuando F2 fije un reparto de suelo como hipótesis (en cada una de las variantes que proponga, según la decisión del arquitecto (PAUSA F1, rev. 2)), podrá ejecutar el script por separado para cada parte con su superficie asignada. Esas ejecuciones serán de F2, no de F1. En la rev. 2 no se ha vuelto a ejecutar el script: las respuestas nuevas no cambian ninguno de sus datos de entrada.
 
 ---
 
 ## 4. Riesgos y ambigüedades de interpretación
 
 1. **Mezcla de unifamiliar y multifamiliar en una ordenanza "UA" (NO RESUELTO).** La cédula define la ordenanza como **"Residencial Unifamiliar Adosada (UA)"** y describe la parcela como "calificada como residencial unifamiliar adosada", pero da parámetros para **multifamiliar** (3 plantas, 45 %, retranqueos de 5 m) y usos compatibles para "vivienda multifamiliar". La decisión del arquitecto (PAUSA F1) es mezclar los dos tipos. **Hay que confirmar con la normativa del Plan Parcial** (a) si el multifamiliar está admitido en esta parcela, (b) si se pueden mezclar unifamiliar y multifamiliar en una misma parcela o promoción, y (c) con qué condiciones (división de parcela, proporciones, separaciones). No se da por resuelto.
-2. **Aplicación de la ocupación, la separación y los retranqueos en la mezcla.** La cédula no dice cómo se aplican los porcentajes de ocupación (60 % / 45 %) cuando conviven los dos usos ni qué separación debe haber entre la parte unifamiliar y la multifamiliar (sección 2.3). FALTA DATO.
-3. **Mínimo de 8 viviendas por promoción.** Si la parte unifamiliar y la multifamiliar fueran promociones distintas, cada una tendría que tener al menos 8 viviendas. El nº de promociones no está decidido (5.2).
+2. **Aplicación de la ocupación, la separación y los retranqueos en la mezcla.** La cédula no dice cómo se aplican los porcentajes de ocupación (60 % / 45 %) cuando conviven los dos usos (FALTA DATO). Para la separación entre la parte unifamiliar y la multifamiliar se aplicarían los 6 m provisionales, pero está pendiente de confirmar (sección 2.3 y riesgo 4.16).
+3. **Mínimo de 8 viviendas por promoción.** *Resuelto en rev. 2*: una sola promoción sobre la parcela completa (decisión del arquitecto (PAUSA F1, rev. 2)), así que con 34 viviendas se cumple la lectura literal de la cédula. La interpretación del arquitecto sobre la agrupación abre otras dudas (riesgo 4.15).
 4. **ZV-02 como lindero con retranqueo** (decisión del arquitecto (PAUSA F1)). La cédula no dice si el borde con la zona verde es alineación exterior o lindero. En esta parcela los valores coinciden (3 m / 5 m en ambos casos), así que la decisión no cambia la distancia. Sí cambia los índices de `fachadas` y, por tanto, la orientación de las hileras en el generador y la definición de "frente" a efectos de un posible fondo edificable (FALTA DATO). Hay que confirmarlo con la normativa del Plan Parcial.
-5. **Aparcamiento sobre rasante (NO RESUELTO).** Por decisión del arquitecto (PAUSA F1) no hay planta bajo rasante y las 68 plazas van sobre rasante. La cédula **no aclara si el aparcamiento en superficie o cubierto consume ocupación o edificabilidad**, y solo cita el garaje-aparcamiento "en planta baja, semisótano y sótano". **FALTA DATO, pendiente de la normativa.** Si el aparcamiento cubierto computa, reduce el techo disponible para vivienda (5.100 m²c) o la huella. Si va al aire libre, consume suelo libre de parcela que compite con los retranqueos (3 m / 5 m), los espacios libres y la huella edificable.
+5. **Aparcamiento en superficie (forma confirmada; cómputo NO RESUELTO).** Por decisión del arquitecto (PAUSA F1) no hay planta bajo rasante, y la rev. 2 confirma que las 68 plazas van **en superficie**. La cédula solo cita el garaje-aparcamiento "en planta baja, semisótano y sótano", **no menciona el aparcamiento en superficie** y no aclara si consume ocupación o edificabilidad. **FALTA DATO, pendiente de la normativa.** Las 68 plazas al aire libre, con sus calles de rodadura, consumen suelo libre de parcela que compite con los retranqueos (3 m / 5 m), con la separación entre edificios (6 m provisionales), con los espacios libres y con la huella edificable. Tampoco consta si las plazas pueden ir en la banda de retranqueo (FALTA DATO). Bolsa común o plazas junto a cada vivienda: decisión de diseño de F2 (decisión del arquitecto (PAUSA F1, rev. 2)). El generador de volumetrías **no modela el aparcamiento**, así que F2 tendrá que comprobar a mano que las plazas caben.
 6. **Geotecnia (NO RESUELTO, riesgo para F3).** Por decisión del arquitecto (PAUSA F1) no se hará estudio geotécnico. **El CTE DB SE-C (apartado 3, "Estudio geotécnico") exige el reconocimiento del terreno** como base del proyecto de cimentación. Sin él, el agente de estructura de F3 no tendrá datos del terreno (tensión admisible, nivel freático, agresividad, expansividad). Queda como FALTA DATO y se traslada a F3. Este documento no lo resuelve.
 7. **Categorías de vivienda 1ª y 2ª.** No se definen en la cédula. No se supone a qué tipología corresponde cada una.
 8. **"Linderos" y "testeros".** En unifamiliar, la cédula da 0 m a linderos (3 m en extremo de hilera) y 3 m a testeros. El significado de "testero" no viene en la cédula. Como en unifamiliar el extremo de hilera y el testero valen 3 m, y en multifamiliar todo vale 5 m, las dos lecturas dan el mismo valor en el generador (sección 6). El 0 m solo se aplica a la medianera entre viviendas de la misma hilera. Esto es una interpretación por confirmar.
@@ -249,7 +289,19 @@ CÁLCULO URBANÍSTICO (reglas fijas, sin IA)
 11. **Altura de cornisa y coronación.** La cédula da dos alturas (7,5 m / 10,5 m y 10 m / 13 m). Lo que puede ir entre cornisa y coronación (cubierta, bajo cubierta habitable o no, castilletes, áticos) depende de la normativa del Plan Parcial: **FALTA DATO**.
 12. **Edificabilidad unitaria.** La cédula fija la edificabilidad en **m²c absolutos (5.100)**, no en m²/m². El 0,5769884 m²/m² se deriva de la superficie oficial. Si en F2 se trabaja con subparcelas para cada parte, **prevalece el valor absoluto de 5.100 m²c para el conjunto**.
 13. **Elemento en la esquina SE** (posible CT): FALTA DATO. Si es una servidumbre o una superficie excluida, afecta a la ocupación, a los retranqueos y a la ubicación de accesos y aparcamiento.
-14. **Normativa no consultada.** Este análisis se basa solo en la cédula. La ordenanza completa del Plan Parcial, que aportará el arquitecto, puede tener condiciones que no aparecen en ella y que obliguen a revisar F1 y F2.
+14. **Normativa no consultada.** Este análisis se basa solo en la cédula y en las respuestas del arquitecto. La ordenanza completa del Plan Parcial, que aportará el arquitecto, puede tener condiciones que no aparecen en ella y que obliguen a revisar F1 y F2. Esto incluye la **separación de 6 m**, que es provisional.
+15. **Agrupación de 8 en 8 (rev. 2).** La interpretación del arquitecto (2.5) va más allá de la letra de la cédula, que solo exige "mínimo de 8 viviendas por promoción" y ya se cumple con una promoción de 34. Quedan abiertas varias dudas, que **no se resuelven aquí**:
+    - (a) **34 no es múltiplo de 8** (34 = 4 × 8 + 2). Si todas las viviendas tuvieran que ir en agrupaciones de exactamente 8, sobrarían 2. No consta si "de 8 en 8" significa agrupaciones de exactamente 8 o de al menos 8.
+    - (b) No consta si la regla afecta solo a la parte unifamiliar adosada o también a la multifamiliar. Esto condiciona las variantes de reparto que proponga F2.
+    - (c) No se fija ningún mínimo ni máximo de viviendas por hilera (los ejemplos 4 + 4 y 5 + 3 no son una regla), y la longitud máxima de hilera sigue como FALTA DATO.
+    - (d) El generador de volumetrías (`unifamiliar_adosada`) genera hileras paralelas a la fachada más larga, con longitud ÷ ancho de vivienda, y **no conoce las agrupaciones de 8**. Con `longitud_max_bloque_m: null` puede generar hileras de cualquier número de viviendas. F2 tendrá que comprobar la agrupación a mano.
+16. **Separación entre edificios de 6 m: provisional y de alcance no precisado (rev. 2).** Es un dato provisional del arquitecto que **no figura en la cédula** y que hay que confirmar con la normativa. No consta si se aplica igual entre:
+    - (a) agrupaciones distintas;
+    - (b) hileras de una misma agrupación (por ejemplo, entre las dos hileras de un 4 + 4);
+    - (c) bloques multifamiliares;
+    - (d) un edificio unifamiliar y uno multifamiliar.
+
+    Tampoco consta si es una distancia fija o depende de la altura. En el generador es un único valor para todos los casos. Si la normativa da otro valor, habrá que revisar F2.
 
 ---
 
@@ -264,8 +316,8 @@ CÁLCULO URBANÍSTICO (reglas fijas, sin IA)
 | 3 | Regla de aplicación de la ocupación (60 % / 45 %) en la mezcla; si hace falta dividir la parcela | Normativa del Plan Parcial | Pendiente |
 | 4 | Parcela mínima y frente mínimo (de parcela y de vivienda adosada) | Normativa del Plan Parcial | Pendiente |
 | 5 | Fondo edificable | Normativa del Plan Parcial | Pendiente |
-| 6 | Separación mínima entre edificios / hileras / bloques, incluida la separación entre la parte unifamiliar y la multifamiliar | Normativa del Plan Parcial | Pendiente |
-| 7 | Longitud máxima de hilera / bloque | Normativa del Plan Parcial | Pendiente |
+| 6 | Separación mínima entre edificios / hileras / bloques, incluida la separación entre la parte unifamiliar y la multifamiliar | Normativa del Plan Parcial | **Ya no es FALTA DATO: hay un dato provisional de 6 m** (dato provisional del arquitecto (PAUSA F1, rev. 2)). **Pendiente de confirmar con la normativa**, junto con su alcance (riesgo 4.16) |
+| 7 | Longitud máxima de hilera / bloque (y nº máximo de viviendas por hilera, si lo hay) | Normativa del Plan Parcial | **FALTA DATO**. La agrupación de 8 en 8 del arquitecto no lo fija (2.5) |
 | 8 | Definición de las categorías de vivienda 1ª y 2ª | Normativa del Plan Parcial | Pendiente |
 | 9 | Usos prohibidos | Normativa del Plan Parcial | Pendiente |
 | 10 | Cómputo de superficies edificadas (porches, terrazas, bajo cubierta, etc.) | Normativa del Plan Parcial | Pendiente |
