@@ -1,0 +1,84 @@
+{
+  "parcela": {
+    "nombre": "UA-03-01 F2 V2 - parte MULTIFAMILIAR (18 viv)",
+    "superficie_calculo_m2": 3762.96,
+    "superficie_poligono_m2": 3840.98
+  },
+  "lados": [
+    {
+      "indice": 0,
+      "longitud_m": 21.52,
+      "mira_a": "E",
+      "rumbo_normal_grados": 90.0
+    },
+    {
+      "indice": 1,
+      "longitud_m": 108.77,
+      "mira_a": "S",
+      "rumbo_normal_grados": 180.0
+    },
+    {
+      "indice": 2,
+      "longitud_m": 46.96,
+      "mira_a": "O",
+      "rumbo_normal_grados": 252.0
+    },
+    {
+      "indice": 3,
+      "longitud_m": 29.2,
+      "mira_a": "N",
+      "rumbo_normal_grados": 7.1
+    },
+    {
+      "indice": 4,
+      "longitud_m": 76.08,
+      "mira_a": "N",
+      "rumbo_normal_grados": 12.2
+    },
+    {
+      "indice": 5,
+      "longitud_m": 20.26,
+      "mira_a": "N",
+      "rumbo_normal_grados": 10.0
+    }
+  ],
+  "hipotesis": {
+    "altura_planta_m": 3.0,
+    "fondo_bloque_m": 13.0,
+    "longitud_min_bloque_m": 15.0,
+    "lado_torre_m": 20.0,
+    "fondo_adosada_m": 10.0,
+    "ancho_adosada_m": 6.0,
+    "plantas_unifamiliar": 2,
+    "sup_construida_vivienda_m2": 133.0,
+    "paso_rejilla_m": 0.5,
+    "paso_angulo_grados": 5
+  },
+  "resultados": [
+    {
+      "tipologia": "bloque_abierto",
+      "estado": "OK",
+      "huella_m2": 806.0,
+      "ocupacion_pct": 21.42,
+      "plantas": 3,
+      "atico_m2": 0,
+      "sup_construida_geometrica_m2": 2418.0,
+      "sup_construida_materializable_m2": 2402.41,
+      "sup_computable_m2": 2402.41,
+      "sup_no_computable_m2": 0.0,
+      "factor_computo": 1.0,
+      "desglose_no_computables": [],
+      "techo_materializable_m2": 2402.41,
+      "aprovechamiento_pct": 100.0,
+      "viviendas_estimadas": 18,
+      "criterio_viviendas": "sup. construida / 133.0 m² construidos por vivienda (hipótesis)",
+      "orientacion_bloques_grados": 35,
+      "n_edificios": 3,
+      "notas": [
+        "Ático: no regulado en la entrada (no se genera). Si la ficha lo permite, añada 'atico'.",
+        "La superficie computable geométrica (2418 m²) supera la edificabilidad (2402 m²): sobran 16 m² construidos (reducir ático, plantas o fondo)."
+      ]
+    }
+  ],
+  "aviso": "PENDIENTE DE VALIDAR POR EL ARQUITECTO"
+}

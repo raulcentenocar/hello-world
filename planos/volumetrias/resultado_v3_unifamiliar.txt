@@ -1,0 +1,26 @@
+GENERADOR DE VOLUMETRÍAS (reglas fijas, sin IA)
+  Parcela: UA-03-01 F2 V3 - parte UNIFAMILIAR (8 viv) — superficie de cálculo 2217.27 m² (polígono 2263.22 m²)
+  AVISO: El polígono mide 2263.22 m² y la superficie oficial 2217.27 m² (+2.1 %). Los parámetros se calculan sobre la oficial; la geometría, sobre el polígono.
+
+  Tipología             Estado        Huella m²  Ocup.%  Pl.  Ático m²  Constr. m²  Comput. m²  Aprov.%  Viv.
+  -----------------------------------------------------------------------------------------------------------
+  unifamiliar_adosada   OK               1081.2    48.8    2       0.0      1500.0      1500.0    100.0     8
+
+  · unifamiliar_adosada: Ático: no regulado en la entrada (no se genera). Si la ficha lo permite, añada 'atico'.
+  · unifamiliar_adosada: La superficie computable geométrica (2162 m²) supera la edificabilidad (1500 m²): sobran 662 m² construidos (reducir ático, plantas o fondo).
+  · unifamiliar_adosada: Viviendas limitadas por la ficha: 11 → 8.
+  · unifamiliar_adosada: DXF → planos/volumetrias/UA-03-01_F2_V3_-_parte_UNIFAMILIAR_8_viv_unifamiliar_adosada.dxf
+
+  Hipótesis de diseño usadas (modificables en 'hipotesis'):
+    - altura_planta_m = 3.0
+    - fondo_bloque_m = 12.0
+    - longitud_min_bloque_m = 15.0
+    - lado_torre_m = 20.0
+    - fondo_adosada_m = 12.5
+    - ancho_adosada_m = 7.5
+    - plantas_unifamiliar = 2
+    - sup_construida_vivienda_m2 = 100.0
+    - paso_rejilla_m = 0.5
+    - paso_angulo_grados = 5
+
+PENDIENTE DE VALIDAR POR EL ARQUITECTO

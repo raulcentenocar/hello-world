@@ -1,0 +1,35 @@
+{
+  "nombre": "UA-03-01 F2 V1 - parte UNIFAMILIAR (24 viv)",
+  "nota_f2": "Subparcela sur de la variante V1 (corte en Y = 4478836.24, local y = 55 m). Lados: 0 = UA-03-02 (E), 1 = Avda. de la Dehesa (S), 2 = Calle Floristas (O), 3 = linea interior de reparto (hipotesis F2, tratada como lindero). Superficie oficial = poligono 5508.96 m2 x (8839 / 9022.15). Edificabilidad = 3744 m2c asignados / 5397.13 m2. viviendas_max = 24 (reparto de F2). Resto de valores urbanisticos sin cambios respecto a F1 6.1.",
+  "parcela": {
+    "coordenadas": [
+      [414988.78, 4478836.24],
+      [414988.78, 4478782.00],
+      [414896.93, 4478781.24],
+      [414879.03, 4478836.24]
+    ],
+    "superficie_oficial_m2": 5397.13
+  },
+  "fachadas": [1, 2],
+  "urbanismo": {
+    "edificabilidad_m2m2": 0.693702,
+    "ocupacion_pct": 60,
+    "plantas_max": 2,
+    "altura_max_m": 7.5,
+    "retranqueo_fachada_m": 3,
+    "retranqueo_linderos_m": 3,
+    "fondo_edificable_m": null,
+    "separacion_edificios_m": 6,
+    "longitud_max_bloque_m": null,
+    "viviendas_max": 24,
+    "atico": null,
+    "computo": null
+  },
+  "hipotesis": {
+    "altura_planta_m": 3.0,
+    "fondo_adosada_m": 12.0,
+    "ancho_adosada_m": 6.5,
+    "plantas_unifamiliar": 2
+  },
+  "tipologias": ["unifamiliar_adosada"]
+}

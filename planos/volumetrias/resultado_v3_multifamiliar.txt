@@ -1,0 +1,25 @@
+GENERADOR DE VOLUMETRÍAS (reglas fijas, sin IA)
+  Parcela: UA-03-01 F2 V3 - parte MULTIFAMILIAR (26 viv) — superficie de cálculo 6621.73 m² (polígono 6758.99 m²)
+  AVISO: El polígono mide 6758.99 m² y la superficie oficial 6621.73 m² (+2.1 %). Los parámetros se calculan sobre la oficial; la geometría, sobre el polígono.
+
+  Tipología             Estado        Huella m²  Ocup.%  Pl.  Ático m²  Constr. m²  Comput. m²  Aprov.%  Viv.
+  -----------------------------------------------------------------------------------------------------------
+  bloque_abierto        OK               2431.0    36.7    3       0.0      3595.8      3595.8    100.0    26
+
+  · bloque_abierto: Ático: no regulado en la entrada (no se genera). Si la ficha lo permite, añada 'atico'.
+  · bloque_abierto: La superficie computable geométrica (7293 m²) supera la edificabilidad (3596 m²): sobran 3697 m² construidos (reducir ático, plantas o fondo).
+  · bloque_abierto: DXF → planos/volumetrias/UA-03-01_F2_V3_-_parte_MULTIFAMILIAR_26_viv_bloque_abierto.dxf
+
+  Hipótesis de diseño usadas (modificables en 'hipotesis'):
+    - altura_planta_m = 3.0
+    - fondo_bloque_m = 13.0
+    - longitud_min_bloque_m = 15.0
+    - lado_torre_m = 20.0
+    - fondo_adosada_m = 10.0
+    - ancho_adosada_m = 6.0
+    - plantas_unifamiliar = 2
+    - sup_construida_vivienda_m2 = 138.0
+    - paso_rejilla_m = 0.5
+    - paso_angulo_grados = 5
+
+PENDIENTE DE VALIDAR POR EL ARQUITECTO

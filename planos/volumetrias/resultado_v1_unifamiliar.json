@@ -1,0 +1,73 @@
+{
+  "parcela": {
+    "nombre": "UA-03-01 F2 V1 - parte UNIFAMILIAR (24 viv)",
+    "superficie_calculo_m2": 5397.13,
+    "superficie_poligono_m2": 5509.1
+  },
+  "lados": [
+    {
+      "indice": 0,
+      "longitud_m": 54.24,
+      "mira_a": "E",
+      "rumbo_normal_grados": 90.0
+    },
+    {
+      "indice": 1,
+      "longitud_m": 91.85,
+      "mira_a": "S",
+      "rumbo_normal_grados": 179.5
+    },
+    {
+      "indice": 2,
+      "longitud_m": 57.84,
+      "mira_a": "O",
+      "rumbo_normal_grados": 252.0
+    },
+    {
+      "indice": 3,
+      "longitud_m": 109.75,
+      "mira_a": "N",
+      "rumbo_normal_grados": 0.0
+    }
+  ],
+  "hipotesis": {
+    "altura_planta_m": 3.0,
+    "fondo_bloque_m": 12.0,
+    "longitud_min_bloque_m": 15.0,
+    "lado_torre_m": 20.0,
+    "fondo_adosada_m": 12.0,
+    "ancho_adosada_m": 6.5,
+    "plantas_unifamiliar": 2,
+    "sup_construida_vivienda_m2": 100.0,
+    "paso_rejilla_m": 0.5,
+    "paso_angulo_grados": 5
+  },
+  "resultados": [
+    {
+      "tipologia": "unifamiliar_adosada",
+      "estado": "OK",
+      "huella_m2": 2250.0,
+      "ocupacion_pct": 41.69,
+      "plantas": 2,
+      "atico_m2": 0,
+      "sup_construida_geometrica_m2": 4500.0,
+      "sup_construida_materializable_m2": 3744.0,
+      "sup_computable_m2": 3744.0,
+      "sup_no_computable_m2": 0.0,
+      "factor_computo": 1.0,
+      "desglose_no_computables": [],
+      "techo_materializable_m2": 3744.0,
+      "aprovechamiento_pct": 100.0,
+      "viviendas_estimadas": 24,
+      "criterio_viviendas": "longitud de hilera / 6.5 m (hipótesis)",
+      "orientacion_bloques_grados": 0.5,
+      "n_edificios": 2,
+      "notas": [
+        "Ático: no regulado en la entrada (no se genera). Si la ficha lo permite, añada 'atico'.",
+        "La superficie computable geométrica (4500 m²) supera la edificabilidad (3744 m²): sobran 756 m² construidos (reducir ático, plantas o fondo).",
+        "Viviendas limitadas por la ficha: 27 → 24."
+      ]
+    }
+  ],
+  "aviso": "PENDIENTE DE VALIDAR POR EL ARQUITECTO"
+}

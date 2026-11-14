@@ -1,0 +1,36 @@
+{
+  "nombre": "UA-03-01 F2 V3 - parte MULTIFAMILIAR (26 viv)",
+  "nota_f2": "Resto de la parcela en la variante V3 (corte en Y = 4478805.24, local y = 24 m). Lados: 0 = UA-03-02 (E), 1 = linea interior de reparto (hipotesis F2), 2 = Calle Floristas (O), 3-5 = ZV-02 (N). Superficie oficial = 8839 - 2217.27 = 6621.73 m2. Edificabilidad = 3595.8 m2c asignados / 6621.73 m2. viviendas_max = 26. Resto de valores urbanisticos sin cambios respecto a F1 6.2. El generador no modela la bolsa de aparcamiento que ocupa parte de esta subparcela.",
+  "parcela": {
+    "coordenadas": [
+      [414988.78, 4478854.76],
+      [414988.78, 4478805.24],
+      [414889.12, 4478805.24],
+      [414865.48, 4478877.90],
+      [414894.46, 4478874.31],
+      [414968.83, 4478858.29]
+    ],
+    "superficie_oficial_m2": 6621.73
+  },
+  "fachadas": [2],
+  "urbanismo": {
+    "edificabilidad_m2m2": 0.54303,
+    "ocupacion_pct": 45,
+    "plantas_max": 3,
+    "altura_max_m": 10.0,
+    "retranqueo_fachada_m": 5,
+    "retranqueo_linderos_m": 5,
+    "fondo_edificable_m": null,
+    "separacion_edificios_m": 6,
+    "longitud_max_bloque_m": null,
+    "viviendas_max": 26,
+    "atico": null,
+    "computo": null
+  },
+  "hipotesis": {
+    "altura_planta_m": 3.0,
+    "fondo_bloque_m": 13.0,
+    "sup_construida_vivienda_m2": 138.0
+  },
+  "tipologias": ["bloque_abierto"]
+}
