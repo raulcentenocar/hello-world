@@ -285,6 +285,7 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
     </div>
     <p class="pista" id="pista-casa"></p>
     <ul class="chk" id="checks"></ul>
+    <div id="criterios"></div>
     <div id="programa-res"></div>
     <div id="pro-forma"></div>
     <ul class="notas" id="notas"></ul>
@@ -309,6 +310,8 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
         <option value="casas">Más casas</option>
         <option value="ocupacion">Menor ocupación</option>
         <option value="beneficio">Mayor beneficio</option>
+        <option value="orientacion">Más jardines a sur</option>
+        <option value="viario">Menos viario por vivienda</option>
       </select>
       <button type="button" class="boton" id="generar">Generar variantes</button>
     </div>
@@ -319,8 +322,8 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
   <h2>Comparación</h2>
   <div class="tabla-wrap">
     <table id="comparar">
-      <thead><tr><th>Variante</th><th>Casas</th><th>Pisos</th><th>Viv.</th><th>m²c</th><th>Plazas</th><th>Ocup. %</th><th>F. saco</th><th>Beneficio €</th><th>Cumple</th><th></th></tr></thead>
-      <tbody><tr><td colspan="11" class="vacio" style="font-family:var(--f-ui)">Fija variantes con «Fijar para comparar».</td></tr></tbody>
+      <thead><tr><th>Variante</th><th>Casas</th><th>Pisos</th><th>Viv.</th><th>m²c</th><th>Plazas</th><th>Ocup. %</th><th>F. saco</th><th>Jardín S %</th><th>Viario m²/viv</th><th>Beneficio €</th><th>Cumple</th><th></th></tr></thead>
+      <tbody><tr><td colspan="13" class="vacio" style="font-family:var(--f-ui)">Fija variantes con «Fijar para comparar».</td></tr></tbody>
     </table>
   </div>
 </section>
@@ -678,6 +681,14 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
     $("c-techo").textContent = fmt(r.techo_m2); $("c-techo2").textContent = fmt(r.aprovechamiento_pct, 1) + " % de " + fmt(Emax);
     $("c-plazas").textContent = r.plazas + "/" + r.plazas_necesarias; $("c-plazas2").textContent = r.plazas_casas + " en calle + " + r.plazas_bolsa + " en bolsa";
     $("c-ocup").textContent = fmt(r.ocupacion_B_pct, 1) + " %"; $("c-ocup2").textContent = "casas " + fmt(r.ocupacion_A_uni_pct, 1) + " % · bloques " + fmt(r.ocupacion_A_multi_pct, 1) + " %";
+    var zcTxt = r.estrategia === "perimetral"
+      ? fmt(r.zona_comun_m2) + " / " + fmt(r.zona_comun_programa_m2) + " m²"
+      : "no se reserva · programa " + fmt(r.zona_comun_programa_m2) + " m²";
+    var orient = Object.keys(r.orientacion_jardines || {}).map(function (k) { return k + " " + r.orientacion_jardines[k]; }).join(" · ");
+    $("criterios").innerHTML = '<div class="tabla-min">' +
+      "<div><span>Jardines a S, SE o SO</span><span class=\"num\">" + fmt(r.jardines_a_sur_pct) + " %" + (orient ? " (" + orient + ")" : "") + "</span></div>" +
+      "<div><span>Viario por vivienda</span><span class=\"num\">" + fmt(r.viario_m2_por_vivienda, 1) + " m²</span></div>" +
+      "<div><span>Zona común / programa tipo</span><span class=\"num\">" + zcTxt + "</span></div></div>";
     var obj = ctx.hip.mix_pisos_pct, totObj = Object.keys(obj).reduce(function (s2, k) { return s2 + (obj[k] || 0); }, 0) || 1;
     $("programa-res").innerHTML = r.pisos ? '<div class="tabla-min">' +
       '<div><span>Portales · pisos por planta</span><span class="num">' + r.portales + " · " + r.pisos_por_planta + " × " + r.plantas_bloque + " pl.</span></div>" +
@@ -734,7 +745,9 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
     var o = $("orden").value;
     var f = { viviendas: function (a, b) { return b.viviendas - a.viviendas || b.techo_m2 - a.techo_m2; }, techo: function (a, b) { return b.techo_m2 - a.techo_m2; },
       casas: function (a, b) { return b.casas - a.casas || b.viviendas - a.viviendas; }, ocupacion: function (a, b) { return a.ocupacion_B_pct - b.ocupacion_B_pct; },
-      beneficio: function (a, b) { var x = a.economia.beneficio_eur, y = b.economia.beneficio_eur; return (y === undefined ? -1e18 : y) - (x === undefined ? -1e18 : x) || b.viviendas - a.viviendas; } }[o];
+      beneficio: function (a, b) { var x = a.economia.beneficio_eur, y = b.economia.beneficio_eur; return (y === undefined ? -1e18 : y) - (x === undefined ? -1e18 : x) || b.viviendas - a.viviendas; },
+      orientacion: function (a, b) { return b.jardines_a_sur_pct - a.jardines_a_sur_pct || b.viviendas - a.viviendas; },
+      viario: function (a, b) { return (a.viviendas ? a.viario_m2_por_vivienda : 1e9) - (b.viviendas ? b.viario_m2_por_vivienda : 1e9) || b.viviendas - a.viviendas; } }[o];
     if (f) lista = lista.slice().sort(function (a, b) { return (a.cumple === b.cumple ? 0 : a.cumple ? -1 : 1) || f(a, b); });
     var v = vb(ctx, 4);
     gal.innerHTML = lista.slice(0, 48).map(function (r) {
@@ -743,7 +756,7 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
         '<span class="t1"><b>' + r.id + '</b><span class="tag ' + (r.cumple ? "si" : "no") + '">' + (r.cumple ? "cumple" : "no cumple") + "</span></span>" +
         '<span class="t1"><span>' + r.casas + "+" + r.pisos + " = " + r.viviendas + " viv</span><span>" + fmt(r.techo_m2) + " m²c</span></span>" +
         (r.estrategia === "perimetral" ? '<span class="t2">Perimetral + anillo · acceso ' + fmt(100 * r.acceso_pos) + " % · interior " + r.interior.replace("_", " ") + " · acera "
-          : '<span class="t2">' + fmt(r.pct_zona_unifamiliar) + " % casas " + r.unifamiliar_en + " · " + r.remate.replace("_", " ") + " · acera ") + (r.acera ? "sí" : "no") + " · plazas " + r.plazas + "/" + r.plazas_necesarias + (r.economia.estado === "OK" ? " · " + fmt(r.economia.beneficio_eur / 1000) + " k€" : "") + "</span></button>";
+          : '<span class="t2">' + fmt(r.pct_zona_unifamiliar) + " % casas " + r.unifamiliar_en + " · " + r.remate.replace("_", " ") + " · acera ") + (r.acera ? "sí" : "no") + " · plazas " + r.plazas + "/" + r.plazas_necesarias + " · jardín S " + fmt(r.jardines_a_sur_pct) + " % · viario " + fmt(r.viario_m2_por_vivienda) + " m²/viv" + (r.economia.estado === "OK" ? " · " + fmt(r.economia.beneficio_eur / 1000) + " k€" : "") + "</span></button>";
     }).join("") + (lista.length > 48 ? '<p class="vacio">Se muestran 48 de ' + lista.length + '.</p>' : "") + (!lista.length ? '<p class="vacio">Ninguna variante cumple todas las comprobaciones.</p>' : "");
   }
   $("galeria").addEventListener("click", function (e) {
@@ -762,10 +775,10 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
   function sameParams(a, b) { return !!a && !!b && JSON.stringify(a) === JSON.stringify(b); }
   function pintarComparacion() {
     var tb = $("comparar").querySelector("tbody");
-    if (!fijadas.length) { tb.innerHTML = '<tr><td colspan="11" class="vacio" style="font-family:var(--f-ui)">Fija variantes con «Fijar para comparar».</td></tr>'; return; }
+    if (!fijadas.length) { tb.innerHTML = '<tr><td colspan="13" class="vacio" style="font-family:var(--f-ui)">Fija variantes con «Fijar para comparar».</td></tr>'; return; }
     tb.innerHTML = fijadas.map(function (r, i) {
       return "<tr><td style=\"font-family:var(--f-ui)\">" + r.etiqueta + " · " + (r.estrategia === "perimetral" ? "perimetral" : fmt(r.pct_zona_unifamiliar) + " % " + r.unifamiliar_en + ", " + r.remate.replace("_", " ")) + "</td><td>" + r.casas + "</td><td>" + r.pisos + "</td><td>" + r.viviendas +
-        "</td><td>" + fmt(r.techo_m2) + "</td><td>" + r.plazas + "/" + r.plazas_necesarias + "</td><td>" + fmt(r.ocupacion_B_pct, 1) + "</td><td>" + fmt(r.fondo_saco_m) +
+        "</td><td>" + fmt(r.techo_m2) + "</td><td>" + r.plazas + "/" + r.plazas_necesarias + "</td><td>" + fmt(r.ocupacion_B_pct, 1) + "</td><td>" + fmt(r.fondo_saco_m) + "</td><td>" + fmt(r.jardines_a_sur_pct) + "</td><td>" + fmt(r.viario_m2_por_vivienda, 1) +
         "</td><td>" + (r.economia.estado === "OK" ? fmt(r.economia.beneficio_eur) : "—") + "</td><td>" + (r.cumple ? "sí" : "no") + '</td><td><button type="button" data-i="' + i + '" data-a="ver">Ver</button> · <button type="button" data-i="' + i + '" data-a="quitar">Quitar</button></td></tr>';
     }).join("");
   }

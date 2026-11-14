@@ -45,7 +45,39 @@
     "paso_rejilla_m": 0.5,
     "paso_fase_m": 2.0,
     "zona_comun_min_m2": 400.0,
-    "tolerancia_frente_grados": 15.0
+    "tolerancia_frente_grados": 15.0,
+    "programa_zona_comun": [
+      [
+        "piscina adultos + playa",
+        150,
+        1
+      ],
+      [
+        "piscina infantil",
+        30,
+        1
+      ],
+      [
+        "juegos infantiles",
+        80,
+        1
+      ],
+      [
+        "estancia ajardinada",
+        200,
+        1
+      ],
+      [
+        "sala comunitaria o gimnasio",
+        80,
+        40
+      ],
+      [
+        "pista de pádel",
+        230,
+        80
+      ]
+    ]
   },
   "barrido": {
     "angulo_hileras": "fachadas",
@@ -154,6 +186,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 4
+      },
+      "viario_m2": 349.2,
+      "viario_m2_por_vivienda": 10.3,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 10 por planta × 3 plantas en 7 portales (2D 9, 3D 15, 4D 6).",
@@ -227,6 +272,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 13
+      },
+      "viario_m2": 883.6,
+      "viario_m2_por_vivienda": 26.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Se colocan 13 de 14 casas posibles para maximizar viviendas y techo.",
@@ -297,6 +355,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 50.0,
+      "orientacion_jardines": {
+        "N": 12,
+        "S": 12
+      },
+      "viario_m2": 995.1,
+      "viario_m2_por_vivienda": 30.2,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Se colocan 24 de 25 casas posibles para maximizar viviendas y techo.",
@@ -367,6 +439,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 50.0,
+      "orientacion_jardines": {
+        "N": 12,
+        "S": 12
+      },
+      "viario_m2": 963.8,
+      "viario_m2_por_vivienda": 29.2,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Se colocan 24 de 26 casas posibles para maximizar viviendas y techo.",
@@ -441,6 +527,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 12
+      },
+      "viario_m2": 793.5,
+      "viario_m2_por_vivienda": 24.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 7 por planta × 3 plantas en 4 portales (2D 6, 3D 12, 4D 3).",
@@ -518,6 +617,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 95.3,
+      "viario_m2_por_vivienda": 2.9,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 11 por planta × 3 plantas en 7 portales (2D 9, 3D 18, 4D 6).",
@@ -594,6 +704,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 96.3,
+      "viario_m2_por_vivienda": 2.9,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 11 por planta × 3 plantas en 7 portales (2D 9, 3D 18, 4D 6).",
@@ -670,6 +791,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 96.3,
+      "viario_m2_por_vivienda": 2.9,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 11 por planta × 3 plantas en 7 portales (2D 9, 3D 18, 4D 6).",
@@ -746,6 +878,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 96.3,
+      "viario_m2_por_vivienda": 2.9,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 11 por planta × 3 plantas en 7 portales (2D 9, 3D 18, 4D 6).",
@@ -822,6 +965,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 96.3,
+      "viario_m2_por_vivienda": 2.9,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 11 por planta × 3 plantas en 7 portales (2D 9, 3D 18, 4D 6).",
@@ -898,6 +1052,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 96.3,
+      "viario_m2_por_vivienda": 2.9,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 11 por planta × 3 plantas en 7 portales (2D 9, 3D 18, 4D 6).",
@@ -974,6 +1139,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 96.3,
+      "viario_m2_por_vivienda": 2.9,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 11 por planta × 3 plantas en 7 portales (2D 9, 3D 18, 4D 6).",
@@ -1039,6 +1215,22 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 25.0,
+      "orientacion_jardines": {
+        "E": 3,
+        "N": 14,
+        "O": 7,
+        "S": 8
+      },
+      "viario_m2": 1391.4,
+      "viario_m2_por_vivienda": 43.5,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Se colocan 32 de 34 casas posibles (edificabilidad / nº máximo de viviendas).",
@@ -1105,6 +1297,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 46.2,
+      "orientacion_jardines": {
+        "N": 14,
+        "S": 12
+      },
+      "viario_m2": 963.6,
+      "viario_m2_por_vivienda": 30.1,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 2 por planta × 3 plantas en 1 portales (2D 3, 3D 3).",
@@ -1171,6 +1377,22 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 25.8,
+      "orientacion_jardines": {
+        "E": 4,
+        "N": 11,
+        "O": 8,
+        "S": 8
+      },
+      "viario_m2": 1418.4,
+      "viario_m2_por_vivienda": 45.8,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Zona común: 962 m². Calle interior en anillo con un acceso.",
@@ -1241,6 +1463,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 13
+      },
+      "viario_m2": 841.2,
+      "viario_m2_por_vivienda": 27.1,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 6 por planta × 3 plantas en 4 portales (2D 6, 3D 9, 4D 3).",
@@ -1310,6 +1545,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 66.7,
+      "orientacion_jardines": {
+        "N": 7,
+        "S": 14
+      },
+      "viario_m2": 1050.0,
+      "viario_m2_por_vivienda": 35.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 3 por planta × 3 plantas en 2 portales (2D 3, 3D 3, 4D 3).",
@@ -1386,6 +1635,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 10 por planta × 3 plantas en 6 portales (2D 9, 3D 15, 4D 6)."
@@ -1460,6 +1720,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 10 por planta × 3 plantas en 6 portales (2D 9, 3D 15, 4D 6)."
@@ -1534,6 +1805,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 10 por planta × 3 plantas en 6 portales (2D 9, 3D 15, 4D 6)."
@@ -1608,6 +1890,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 10 por planta × 3 plantas en 6 portales (2D 9, 3D 15, 4D 6)."
@@ -1682,6 +1975,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 10 por planta × 3 plantas en 6 portales (2D 9, 3D 15, 4D 6)."
@@ -1756,6 +2060,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 10 por planta × 3 plantas en 6 portales (2D 9, 3D 15, 4D 6)."
@@ -1827,6 +2142,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 8
+      },
+      "viario_m2": 554.0,
+      "viario_m2_por_vivienda": 19.1,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 7 por planta × 3 plantas en 4 portales (2D 6, 3D 12, 4D 3).",
@@ -1902,6 +2230,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 47.1,
+      "viario_m2_por_vivienda": 1.7,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 9 por planta × 3 plantas en 6 portales (2D 9, 3D 12, 4D 6).",
@@ -1976,6 +2315,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 47.1,
+      "viario_m2_por_vivienda": 1.7,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 9 por planta × 3 plantas en 6 portales (2D 9, 3D 12, 4D 6).",
@@ -2050,6 +2400,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 47.1,
+      "viario_m2_por_vivienda": 1.7,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 9 por planta × 3 plantas en 6 portales (2D 9, 3D 12, 4D 6).",
@@ -2122,6 +2483,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 7 por planta × 3 plantas en 4 portales (2D 6, 3D 12, 4D 3)."
@@ -2193,6 +2565,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 7 por planta × 3 plantas en 4 portales (2D 6, 3D 12, 4D 3)."
@@ -2264,6 +2647,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 7 por planta × 3 plantas en 4 portales (2D 6, 3D 12, 4D 3)."
@@ -2335,6 +2729,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 7 por planta × 3 plantas en 4 portales (2D 6, 3D 12, 4D 3)."
@@ -2406,6 +2811,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 7 por planta × 3 plantas en 4 portales (2D 6, 3D 12, 4D 3)."
@@ -2477,6 +2893,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 7 por planta × 3 plantas en 4 portales (2D 6, 3D 12, 4D 3)."
@@ -2548,6 +2975,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 7 por planta × 3 plantas en 4 portales (2D 6, 3D 12, 4D 3)."
@@ -2619,6 +3057,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 7 por planta × 3 plantas en 4 portales (2D 6, 3D 12, 4D 3)."
@@ -2690,6 +3139,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 7 por planta × 3 plantas en 4 portales (2D 6, 3D 12, 4D 3)."
@@ -2761,6 +3221,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 7 por planta × 3 plantas en 4 portales (2D 6, 3D 12, 4D 3)."
@@ -2832,6 +3303,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 7 por planta × 3 plantas en 4 portales (2D 6, 3D 12, 4D 3)."
@@ -2903,6 +3385,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 7 por planta × 3 plantas en 4 portales (2D 6, 3D 12, 4D 3)."
@@ -2970,6 +3463,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 3 por planta × 3 plantas en 2 portales (2D 3, 3D 3, 4D 3)."
@@ -3037,6 +3541,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 3 por planta × 3 plantas en 2 portales (2D 3, 3D 3, 4D 3)."
@@ -3104,6 +3619,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 3 por planta × 3 plantas en 2 portales (2D 3, 3D 3, 4D 3)."
@@ -3171,6 +3697,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 3 por planta × 3 plantas en 2 portales (2D 3, 3D 3, 4D 3)."
@@ -3238,6 +3775,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 3 por planta × 3 plantas en 2 portales (2D 3, 3D 3, 4D 3)."
@@ -3305,6 +3853,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 3 por planta × 3 plantas en 2 portales (2D 3, 3D 3, 4D 3)."
@@ -3372,6 +3931,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 3 por planta × 3 plantas en 2 portales (2D 3, 3D 3, 4D 3)."
@@ -3439,6 +4009,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 3 por planta × 3 plantas en 2 portales (2D 3, 3D 3, 4D 3)."
@@ -3506,6 +4087,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 3 por planta × 3 plantas en 2 portales (2D 3, 3D 3, 4D 3)."
@@ -3573,6 +4165,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 3 por planta × 3 plantas en 2 portales (2D 3, 3D 3, 4D 3)."
@@ -3640,6 +4243,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 3 por planta × 3 plantas en 2 portales (2D 3, 3D 3, 4D 3)."
@@ -3707,6 +4321,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [],
       "notas": [
         "Pisos: 3 por planta × 3 plantas en 2 portales (2D 3, 3D 3, 4D 3)."
@@ -3777,6 +4402,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 75.0,
+      "orientacion_jardines": {
+        "N": 4,
+        "S": 12
+      },
+      "viario_m2": 725.8,
+      "viario_m2_por_vivienda": 21.3,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
       ],
@@ -3856,6 +4495,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 4
+      },
+      "viario_m2": 319.4,
+      "viario_m2_por_vivienda": 9.4,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 36 m sin espacio de maniobra (DB-SI SI 5, revisar)."
       ],
@@ -3934,6 +4586,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 4
+      },
+      "viario_m2": 330.2,
+      "viario_m2_por_vivienda": 9.7,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
       ],
@@ -4012,6 +4677,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 7
+      },
+      "viario_m2": 644.8,
+      "viario_m2_por_vivienda": 19.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
       ],
@@ -4088,6 +4766,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 13
+      },
+      "viario_m2": 855.3,
+      "viario_m2_por_vivienda": 25.2,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 107 m sin espacio de maniobra (DB-SI SI 5, revisar)."
       ],
@@ -4160,6 +4851,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 50.0,
+      "orientacion_jardines": {
+        "N": 12,
+        "S": 12
+      },
+      "viario_m2": 959.1,
+      "viario_m2_por_vivienda": 29.1,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 100 m sin espacio de maniobra (DB-SI SI 5, revisar)."
       ],
@@ -4232,6 +4937,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 50.0,
+      "orientacion_jardines": {
+        "N": 12,
+        "S": 12
+      },
+      "viario_m2": 687.1,
+      "viario_m2_por_vivienda": 20.8,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
       ],
@@ -4304,6 +5023,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 50.0,
+      "orientacion_jardines": {
+        "N": 12,
+        "S": 12
+      },
+      "viario_m2": 927.8,
+      "viario_m2_por_vivienda": 28.1,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 97 m sin espacio de maniobra (DB-SI SI 5, revisar)."
       ],
@@ -4376,6 +5109,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 50.0,
+      "orientacion_jardines": {
+        "N": 12,
+        "S": 12
+      },
+      "viario_m2": 670.4,
+      "viario_m2_por_vivienda": 20.3,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
       ],
@@ -4446,6 +5193,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 48.1,
+      "orientacion_jardines": {
+        "N": 14,
+        "S": 13
+      },
+      "viario_m2": 685.6,
+      "viario_m2_por_vivienda": 20.8,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
       ],
@@ -4525,6 +5286,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -4602,6 +5374,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -4679,6 +5462,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -4756,6 +5550,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -4833,6 +5638,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -4910,6 +5726,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -4987,6 +5814,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -5064,6 +5902,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -5141,6 +5990,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -5218,6 +6078,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -5295,6 +6166,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -5372,6 +6254,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -5445,6 +6338,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 12
+      },
+      "viario_m2": 757.5,
+      "viario_m2_por_vivienda": 23.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 94 m sin espacio de maniobra (DB-SI SI 5, revisar)."
       ],
@@ -5520,6 +6426,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 12
+      },
+      "viario_m2": 647.8,
+      "viario_m2_por_vivienda": 19.6,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
       ],
@@ -5599,6 +6518,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 3 plazas."
       ],
@@ -5676,6 +6606,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -5753,6 +6694,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -5830,6 +6782,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -5907,6 +6870,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -5984,6 +6958,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -6061,6 +7046,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -6138,6 +7134,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -6215,6 +7222,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -6292,6 +7310,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 66 plazas."
       ],
@@ -6353,6 +7382,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 59.4,
+      "orientacion_jardines": {
+        "N": 13,
+        "S": 19
+      },
+      "viario_m2": 1301.2,
+      "viario_m2_por_vivienda": 40.7,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 97 m sin espacio de maniobra (DB-SI SI 5, revisar)."
       ],
@@ -6415,6 +7458,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 59.4,
+      "orientacion_jardines": {
+        "N": 13,
+        "S": 19
+      },
+      "viario_m2": 1367.9,
+      "viario_m2_por_vivienda": 42.7,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 4 plazas."
       ],
@@ -6483,6 +7540,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 46.2,
+      "orientacion_jardines": {
+        "N": 14,
+        "S": 12
+      },
+      "viario_m2": 927.6,
+      "viario_m2_por_vivienda": 29.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 97 m sin espacio de maniobra (DB-SI SI 5, revisar)."
       ],
@@ -6554,6 +7625,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 63.6,
+      "orientacion_jardines": {
+        "N": 8,
+        "S": 14
+      },
+      "viario_m2": 723.1,
+      "viario_m2_por_vivienda": 23.3,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
       ],
@@ -6628,6 +7713,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 13
+      },
+      "viario_m2": 805.2,
+      "viario_m2_por_vivienda": 26.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 101 m sin espacio de maniobra (DB-SI SI 5, revisar)."
       ],
@@ -6702,6 +7800,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 13
+      },
+      "viario_m2": 685.6,
+      "viario_m2_por_vivienda": 22.1,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
       ],
@@ -6769,6 +7880,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 48.1,
+      "orientacion_jardines": {
+        "N": 14,
+        "S": 13
+      },
+      "viario_m2": 992.0,
+      "viario_m2_por_vivienda": 33.1,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 5 plazas."
       ],
@@ -6836,6 +7961,22 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 40.0,
+      "orientacion_jardines": {
+        "E": 3,
+        "N": 8,
+        "O": 7,
+        "S": 12
+      },
+      "viario_m2": 1179.2,
+      "viario_m2_por_vivienda": 39.3,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle interior sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
       ],
@@ -6897,6 +8038,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 60.0,
+      "orientacion_jardines": {
+        "N": 12,
+        "S": 18
+      },
+      "viario_m2": 1541.9,
+      "viario_m2_por_vivienda": 51.4,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 4 plazas."
       ],
@@ -6966,6 +8121,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 66.7,
+      "orientacion_jardines": {
+        "N": 7,
+        "S": 14
+      },
+      "viario_m2": 1014.0,
+      "viario_m2_por_vivienda": 33.8,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 107 m sin espacio de maniobra (DB-SI SI 5, revisar)."
       ],
@@ -7034,6 +8203,22 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 41.4,
+      "orientacion_jardines": {
+        "E": 3,
+        "N": 8,
+        "O": 6,
+        "S": 12
+      },
+      "viario_m2": 1179.2,
+      "viario_m2_por_vivienda": 40.7,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle interior sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
       ],
@@ -7107,6 +8292,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 8
+      },
+      "viario_m2": 518.0,
+      "viario_m2_por_vivienda": 17.9,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 62 m sin espacio de maniobra (DB-SI SI 5, revisar)."
       ],
@@ -7182,6 +8380,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 8
+      },
+      "viario_m2": 456.1,
+      "viario_m2_por_vivienda": 15.7,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
       ],
@@ -7250,6 +8461,22 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 30.8,
+      "orientacion_jardines": {
+        "E": 3,
+        "N": 8,
+        "O": 7,
+        "S": 8
+      },
+      "viario_m2": 1179.2,
+      "viario_m2_por_vivienda": 45.4,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle interior sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
       ],
@@ -7316,6 +8543,22 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 32.0,
+      "orientacion_jardines": {
+        "E": 3,
+        "N": 8,
+        "O": 6,
+        "S": 8
+      },
+      "viario_m2": 1179.2,
+      "viario_m2_por_vivienda": 47.2,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle interior sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
       ],
@@ -7389,6 +8632,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 42 plazas."
       ],
@@ -7462,6 +8716,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 42 plazas."
       ],
@@ -7535,6 +8800,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 42 plazas."
       ],
@@ -7607,6 +8883,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 36 plazas."
       ],
@@ -7679,6 +8966,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 36 plazas."
       ],
@@ -7751,6 +9049,17 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 36 plazas."
       ],
@@ -7812,6 +9121,12 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 0.0,
+      "zona_comun_programa": [],
       "avisos": [],
       "notas": [],
       "estrategia": "calles_paralelas",
@@ -7869,6 +9184,12 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 0.0,
+      "zona_comun_programa": [],
       "avisos": [],
       "notas": [],
       "estrategia": "calles_paralelas",
@@ -7926,6 +9247,12 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 0.0,
+      "zona_comun_programa": [],
       "avisos": [],
       "notas": [],
       "estrategia": "calles_paralelas",
@@ -7983,6 +9310,12 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 0.0,
+      "zona_comun_programa": [],
       "avisos": [],
       "notas": [],
       "estrategia": "calles_paralelas",
@@ -8040,6 +9373,12 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 0.0,
+      "zona_comun_programa": [],
       "avisos": [],
       "notas": [],
       "estrategia": "calles_paralelas",
@@ -8097,6 +9436,12 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 0.0,
+      "zona_comun_programa": [],
       "avisos": [],
       "notas": [],
       "estrategia": "calles_paralelas",
@@ -8154,6 +9499,12 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 0.0,
+      "zona_comun_programa": [],
       "avisos": [],
       "notas": [],
       "estrategia": "calles_paralelas",
@@ -8211,6 +9562,12 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 0.0,
+      "zona_comun_programa": [],
       "avisos": [],
       "notas": [],
       "estrategia": "calles_paralelas",
@@ -8268,6 +9625,12 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 0.0,
+      "zona_comun_programa": [],
       "avisos": [],
       "notas": [],
       "estrategia": "calles_paralelas",
@@ -8325,6 +9688,12 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 0.0,
+      "zona_comun_programa": [],
       "avisos": [],
       "notas": [],
       "estrategia": "calles_paralelas",
@@ -8382,6 +9751,12 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 0.0,
+      "zona_comun_programa": [],
       "avisos": [],
       "notas": [],
       "estrategia": "calles_paralelas",
@@ -8439,6 +9814,12 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {},
+      "viario_m2": 0.0,
+      "viario_m2_por_vivienda": 0.0,
+      "zona_comun_programa_m2": 0.0,
+      "zona_comun_programa": [],
       "avisos": [],
       "notas": [],
       "estrategia": "calles_paralelas",
@@ -8507,6 +9888,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 75.0,
+      "orientacion_jardines": {
+        "N": 4,
+        "S": 12
+      },
+      "viario_m2": 690.1,
+      "viario_m2_por_vivienda": 20.3,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 107 m sin espacio de maniobra (DB-SI SI 5, revisar).",
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
@@ -8587,6 +9982,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 4
+      },
+      "viario_m2": 300.1,
+      "viario_m2_por_vivienda": 8.8,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 42 m sin espacio de maniobra (DB-SI SI 5, revisar).",
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
@@ -8666,6 +10074,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 7
+      },
+      "viario_m2": 608.8,
+      "viario_m2_por_vivienda": 17.9,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 93 m sin espacio de maniobra (DB-SI SI 5, revisar).",
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
@@ -8739,6 +10160,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 50.0,
+      "orientacion_jardines": {
+        "N": 12,
+        "S": 12
+      },
+      "viario_m2": 651.1,
+      "viario_m2_por_vivienda": 19.7,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 100 m sin espacio de maniobra (DB-SI SI 5, revisar).",
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
@@ -8812,6 +10247,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 50.0,
+      "orientacion_jardines": {
+        "N": 12,
+        "S": 12
+      },
+      "viario_m2": 634.4,
+      "viario_m2_por_vivienda": 19.2,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 97 m sin espacio de maniobra (DB-SI SI 5, revisar).",
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
@@ -8883,6 +10332,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 48.1,
+      "orientacion_jardines": {
+        "N": 14,
+        "S": 13
+      },
+      "viario_m2": 649.6,
+      "viario_m2_por_vivienda": 19.7,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 100 m sin espacio de maniobra (DB-SI SI 5, revisar).",
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
@@ -8959,6 +10422,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 12
+      },
+      "viario_m2": 611.8,
+      "viario_m2_por_vivienda": 18.5,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 94 m sin espacio de maniobra (DB-SI SI 5, revisar).",
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
@@ -9023,6 +10499,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 62.5,
+      "orientacion_jardines": {
+        "N": 12,
+        "S": 20
+      },
+      "viario_m2": 955.7,
+      "viario_m2_por_vivienda": 29.9,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 97 m sin espacio de maniobra (DB-SI SI 5, revisar).",
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
@@ -9086,6 +10576,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 62.5,
+      "orientacion_jardines": {
+        "N": 12,
+        "S": 20
+      },
+      "viario_m2": 1027.1,
+      "viario_m2_por_vivienda": 32.1,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 4 plazas.",
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
@@ -9149,6 +10653,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 59.4,
+      "orientacion_jardines": {
+        "N": 13,
+        "S": 19
+      },
+      "viario_m2": 1228.7,
+      "viario_m2_por_vivienda": 38.4,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 4 plazas.",
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
@@ -9223,6 +10741,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {
+        "E": 11
+      },
+      "viario_m2": 581.6,
+      "viario_m2_por_vivienda": 18.2,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 44 plazas.",
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
@@ -9298,6 +10829,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {
+        "E": 11
+      },
+      "viario_m2": 581.1,
+      "viario_m2_por_vivienda": 18.2,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 44 plazas.",
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
@@ -9369,6 +10913,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 63.6,
+      "orientacion_jardines": {
+        "N": 8,
+        "S": 14
+      },
+      "viario_m2": 687.1,
+      "viario_m2_por_vivienda": 22.2,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 106 m sin espacio de maniobra (DB-SI SI 5, revisar).",
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
@@ -9444,6 +11002,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 13
+      },
+      "viario_m2": 649.6,
+      "viario_m2_por_vivienda": 21.0,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 100 m sin espacio de maniobra (DB-SI SI 5, revisar).",
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
@@ -9512,6 +11083,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 48.1,
+      "orientacion_jardines": {
+        "N": 14,
+        "S": 13
+      },
+      "viario_m2": 956.0,
+      "viario_m2_por_vivienda": 31.9,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 1 plazas.",
         "Calle sin salida de 100 m sin espacio de maniobra (DB-SI SI 5, revisar)."
@@ -9579,6 +11164,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 48.1,
+      "orientacion_jardines": {
+        "N": 14,
+        "S": 13
+      },
+      "viario_m2": 684.8,
+      "viario_m2_por_vivienda": 22.8,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 5 plazas.",
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
@@ -9653,6 +11252,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {
+        "E": 11
+      },
+      "viario_m2": 583.6,
+      "viario_m2_por_vivienda": 20.1,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 38 plazas.",
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
@@ -9728,6 +11340,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 100.0,
+      "orientacion_jardines": {
+        "S": 8
+      },
+      "viario_m2": 420.1,
+      "viario_m2_por_vivienda": 14.5,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Calle sin salida de 62 m sin espacio de maniobra (DB-SI SI 5, revisar).",
         "Calle de casas sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar)."
@@ -9804,6 +11429,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {
+        "E": 11
+      },
+      "viario_m2": 563.0,
+      "viario_m2_por_vivienda": 17.6,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 42 plazas.",
         "Calle sin salida de 44 m sin espacio de maniobra (DB-SI SI 5, revisar).",
@@ -9880,6 +11518,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {
+        "E": 11
+      },
+      "viario_m2": 562.0,
+      "viario_m2_por_vivienda": 17.6,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 42 plazas.",
         "Calle sin salida de 44 m sin espacio de maniobra (DB-SI SI 5, revisar).",
@@ -9948,6 +11599,20 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 48.1,
+      "orientacion_jardines": {
+        "N": 14,
+        "S": 13
+      },
+      "viario_m2": 648.8,
+      "viario_m2_por_vivienda": 21.6,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 1 plazas.",
         "Calle sin salida de 100 m sin espacio de maniobra (DB-SI SI 5, revisar).",
@@ -10023,6 +11688,19 @@
           "gastos_generales_pct"
         ]
       },
+      "jardines_a_sur_pct": 0.0,
+      "orientacion_jardines": {
+        "E": 11
+      },
+      "viario_m2": 563.8,
+      "viario_m2_por_vivienda": 19.4,
+      "zona_comun_programa_m2": 460.0,
+      "zona_comun_programa": [
+        "piscina adultos + playa",
+        "piscina infantil",
+        "juegos infantiles",
+        "estancia ajardinada"
+      ],
       "avisos": [
         "Faltan 36 plazas.",
         "Calle sin salida de 44 m sin espacio de maniobra (DB-SI SI 5, revisar).",

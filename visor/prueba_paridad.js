@@ -17,7 +17,7 @@ const js = M.barrer(c);
 const t = (Date.now() - t0) / 1000;
 const py = JSON.parse(fs.readFileSync(rankingPy, "utf8")).variantes.map(norm);
 js.forEach(norm);
-const campos = ["casas", "pisos", "plazas", "techo_m2", "cumple", "ocupacion_B_pct", "fondo_saco_m", "portales", "plazas_accesibles", "mix", "zona_comun_m2"];
+const campos = ["casas", "pisos", "plazas", "techo_m2", "cumple", "ocupacion_B_pct", "fondo_saco_m", "portales", "plazas_accesibles", "mix", "zona_comun_m2", "jardines_a_sur_pct", "viario_m2_por_vivienda", "zona_comun_programa_m2"];
 const k = (r) => [r.estrategia, r.angulo_hileras, r.pct_zona_unifamiliar, r.unifamiliar_en, r.remate, r.acera].join("|");
 const pyPor = {};
 py.forEach((r) => (pyPor[k(r)] = pyPor[k(r)] || []).push(r));

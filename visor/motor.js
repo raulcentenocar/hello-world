@@ -20,6 +20,17 @@
   var REQ_USO = ["ocupacion_pct", "plantas_max", "retranqueo_fachada_m", "retranqueo_linderos_m"];
   var REQ_ECONOMIA = ["precio_venta_casa_eur_m2c", "precio_venta_piso_eur_m2c", "coste_construccion_casa_eur_m2c",
     "coste_construccion_piso_eur_m2c", "coste_urbanizacion_eur_m2", "coste_plaza_superficie_eur", "coste_suelo_eur", "gastos_generales_pct"];
+  function rumboVector(dx, dy) { return (Math.atan2(dx, dy) * 180 / Math.PI + 360) % 360; }
+  function indicadores(viv, rumbos, viario, hip) {
+    var n = rumbos.length, sur = rumbos.filter(function (r) { return r >= 112.5 && r < 247.5; }).length, por = {};
+    rumbos.forEach(function (r) { var k = rumboTxt(r); por[k] = (por[k] || 0) + 1; });
+    var orden = {}; Object.keys(por).sort().forEach(function (k) { orden[k] = por[k]; });
+    var prog = hip.programa_zona_comun.filter(function (e) { return viv >= e[2]; });
+    var r1 = function (x) { return Math.round(x * 10) / 10; };
+    return { jardines_a_sur_pct: n ? r1(100 * sur / n) : 0, orientacion_jardines: orden, viario_m2: r1(viario),
+      viario_m2_por_vivienda: viv ? r1(viario / viv) : 0, zona_comun_programa_m2: prog.reduce(function (s, e) { return s + e[1]; }, 0),
+      zona_comun_programa: prog.map(function (e) { return e[0]; }) };
+  }
   function cuentaResultados(eco, techoCasas, techoPisos, plazas, sup, huella) {
     var faltan = REQ_ECONOMIA.filter(function (k) { return !(k in eco); });
     if (faltan.length) return { estado: FALTA, faltan: faltan };
@@ -45,7 +56,9 @@
     plazas_accesibles: 2, transferencia_accesible_m: 1.2, altura_planta_m: 3.0, calzada_m: 6.0, plaza_ancho_m: 2.5, plaza_fondo_m: 5.0,
     paso_peatonal_casa_m: 1.5, acera_m: 1.5, martillo_largo_m: 12.0, fondo_saco_max_m: 20.0,
     distancia_aparcamiento_edificio_m: 2.0, aparcamiento_fuera_retranqueo: true,
-    paso_rejilla_m: 0.5, paso_fase_m: 2.0, zona_comun_min_m2: 400.0, tolerancia_frente_grados: 15.0
+    paso_rejilla_m: 0.5, paso_fase_m: 2.0, zona_comun_min_m2: 400.0, tolerancia_frente_grados: 15.0,
+    programa_zona_comun: [["piscina adultos + playa", 150, 1], ["piscina infantil", 30, 1], ["juegos infantiles", 80, 1],
+      ["estancia ajardinada", 200, 1], ["sala comunitaria o gimnasio", 80, 40], ["pista de pádel", 230, 80]]
   };
   var BARRIDO_DEFECTO = {
     angulo_hileras: "fachadas",
@@ -495,7 +508,7 @@
         lh[1].forEach(function (casa) {
           var b = plazasCasa(casa, lh[0], m.yc, hip), bg = R(b);
           var toca = remG.some(function (r) { return bg.intersects(r); });
-          lista.push({ casa: casa, plazas: toca ? null : b });
+          lista.push({ casa: casa, plazas: toca ? null : b, lado: lh[0] });
         });
       });
       if (acera) {
@@ -648,6 +661,10 @@
     if (largoBolsa > hip.fondo_saco_max_m) notas.push("La bolsa de aparcamiento es un fondo de saco de ≈ " + Math.round(largoBolsa) + " m (revisar).");
     if (hilerasN.length) notas.push("Hileras: " + hilerasN.join(" + ") + " casas.");
 
+    var aR = ang * Math.PI / 180;
+    var rumbos = lista.slice(0, nCasas).map(function (x) { var dy0 = x.lado === "abajo" ? -1 : 1; return rumboVector(-Math.sin(aR) * dy0, Math.cos(aR) * dy0); });
+    var viarioG = mods.map(function (m) { return m.calzada; }).concat(remates, vialesBolsa, aceras.map(R));
+    var ind = indicadores(viv, rumbos, viarioG.length ? union(viarioG).getArea() : 0, hip);
     function back(g) { return rotar(g, ang, c); }
     var geo = {
       parcela: back(poly), zona_uni: back(Zu), zona_multi: back(Zm), edif_uni: back(U), edif_multi: back(M),
@@ -669,6 +686,8 @@
       pisos_por_planta: uPlanta, mix_pisos: mixReal, tipos_pisos_planta: pisosGeo.map(function (p) { return p[1]; }),
       plazas_accesibles: accesibles.length ? nAccR : 0, techo_casas_m2: r1(techoU), techo_pisos_m2: r1(techoM),
       economia: cuentaResultados(ctx.economia, techoU, techoM, plazas, ctx.sup, huellaU + huellaM),
+      jardines_a_sur_pct: ind.jardines_a_sur_pct, orientacion_jardines: ind.orientacion_jardines, viario_m2: ind.viario_m2,
+      viario_m2_por_vivienda: ind.viario_m2_por_vivienda, zona_comun_programa_m2: ind.zona_comun_programa_m2, zona_comun_programa: ind.zona_comun_programa,
       plantas_casa: Math.floor(ctx.uni.plantas_max),
       techo_m2: r1(techo), aprovechamiento_pct: r1(100 * techo / Emax), plazas: plazas, plazas_necesarias: necesarias,
       plazas_casas: nPlazasU, plazas_bolsa: nBolsa, huella_m2: r1(huellaU + huellaM),
@@ -747,7 +766,7 @@
             !pin.intersects(conector) && !pin.intersects(colocadas);
           if (libre) {
             var jardin = limpia(rotar(caja(x1, fe.ye, x2, fe.ye + f.d), -fe.giro, c).intersection(poly));
-            grupo.push({ casa: casa, plaza: plaza, jardin: jardin });
+            grupo.push({ casa: casa, plaza: plaza, jardin: jardin, rumbo: rumboVector(-f.normal[0], -f.normal[1]) });
           } else { grupos.push(grupo); grupo = []; }
         });
         grupos.push(grupo);
@@ -778,7 +797,8 @@
             h.forEach(function (xx) {
               var x1 = xx[0], x2 = xx[1];
               casas.push({ casa: rotar(caja(x1, fe.ye + P, x2, fe.ye + P + F), -fe.giro, c), plaza: rotar(caja(x1, fe.ye, x2, fe.ye + P), -fe.giro, c),
-                jardin: limpia(rotar(caja(x1, fe.ye + P + F, x2, fe.ye + P + F + Jd), -fe.giro, c).intersection(ipoly)), hilera: hid });
+                jardin: limpia(rotar(caja(x1, fe.ye + P + F, x2, fe.ye + P + F + Jd), -fe.giro, c).intersection(ipoly)), hilera: hid,
+                rumbo: rumboVector(f.normal[0], f.normal[1]) });
             });
             colI = union([colI].concat(casas.filter(function (x) { return x.hilera === hid; }).map(function (x) { return x.casa; })));
           });
@@ -822,6 +842,8 @@
     if (hilerasN.length) notas.push("Hileras: " + hilerasN.join(" + ") + " casas.");
     var r1 = function (x) { return Math.round(x * 10) / 10; };
     var ok = Object.keys(chk).every(function (k) { return chk[k]; });
+    var viarioP = [anillo, conector].filter(function (g) { return !g.isEmpty(); }).concat(aceras.filter(function (g) { return !g.isEmpty(); }));
+    var indP = indicadores(n, eleg.map(function (x) { return x.rumbo; }), viarioP.length ? union(viarioP).getArea() : 0, hip);
     return {
       estrategia: "perimetral", angulo_hileras: -1.0, pct_zona_unifamiliar: 100, unifamiliar_en: "perímetro", uni_en_marco: "abajo",
       remate: "anillo", acera: acera, acceso_pos: accesoPos, interior: interior,
@@ -832,6 +854,8 @@
       ocupacion_A_multi_pct: 0, ocupacion_B_pct: r1(100 * huella / ctx.sup), fondo_saco_m: 0, zona_comun_m2: r1(zc),
       comprobaciones: chk, cumple: ok, techo_casas_m2: r1(techo), techo_pisos_m2: 0,
       economia: cuentaResultados(ctx.economia, techo, 0, plazas, ctx.sup, huella),
+      jardines_a_sur_pct: indP.jardines_a_sur_pct, orientacion_jardines: indP.orientacion_jardines, viario_m2: indP.viario_m2,
+      viario_m2_por_vivienda: indP.viario_m2_por_vivienda, zona_comun_programa_m2: indP.zona_comun_programa_m2, zona_comun_programa: indP.zona_comun_programa,
       avisos: avisos, notas: notas, hileras: hilerasN,
       geo: { parcela: poly, zona_uni: poly, zona_multi: vacio(), edif_uni: U, edif_multi: vacio(),
         casas: eleg.map(function (x) { return x.casa; }), plazas_casas: eleg.filter(function (x) { return x.plazas_ok; }).map(function (x) { return x.plaza; }),
@@ -884,7 +908,9 @@
   var OBJETIVOS = {
     viviendas: function (r) { return [-r.viviendas, -r.techo_m2]; }, techo: function (r) { return [-r.techo_m2, -r.viviendas]; },
     casas: function (r) { return [-r.casas, -r.viviendas]; }, ocupacion: function (r) { return [r.ocupacion_B_pct, -r.viviendas]; },
-    beneficio: function (r) { return [-(r.economia.beneficio_eur !== undefined ? r.economia.beneficio_eur : -1e18), -r.viviendas]; }
+    beneficio: function (r) { return [-(r.economia.beneficio_eur !== undefined ? r.economia.beneficio_eur : -1e18), -r.viviendas]; },
+    orientacion: function (r) { return [-r.jardines_a_sur_pct, -r.viviendas]; },
+    viario: function (r) { return [r.viviendas ? r.viario_m2_por_vivienda : 1e9, -r.viviendas]; }
   };
   function ordenar(rs, objetivo) {
     function fallos(r) { return Object.keys(r.comprobaciones).filter(function (k) { return !r.comprobaciones[k]; }).length; }

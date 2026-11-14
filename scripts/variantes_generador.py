@@ -55,6 +55,26 @@ REQ_ECONOMIA = ["precio_venta_casa_eur_m2c", "precio_venta_piso_eur_m2c", "coste
                 "coste_suelo_eur", "gastos_generales_pct"]
 
 
+def indicadores(viv, rumbos_jardin, viario, hip):
+    """Indicadores de proyecto: orientación de jardines, viario por vivienda y programa de zona común."""
+    n = len(rumbos_jardin)
+    sur = sum(1 for r in rumbos_jardin if 112.5 <= r < 247.5)
+    por_rumbo = {}
+    for r in rumbos_jardin:
+        k = _rumbo_txt(r)
+        por_rumbo[k] = por_rumbo.get(k, 0) + 1
+    programa = [e for e in hip["programa_zona_comun"] if viv >= e[2]]
+    return {"jardines_a_sur_pct": round(100 * sur / n, 1) if n else 0.0,
+            "orientacion_jardines": dict(sorted(por_rumbo.items())),
+            "viario_m2": round(viario, 1), "viario_m2_por_vivienda": round(viario / viv, 1) if viv else 0.0,
+            "zona_comun_programa_m2": float(sum(e[1] for e in programa)),
+            "zona_comun_programa": [e[0] for e in programa]}
+
+
+def _rumbo_vector(dx, dy):
+    return (math.degrees(math.atan2(dx, dy)) + 360) % 360
+
+
 def cuenta_resultados(eco, techo_casas, techo_pisos, plazas, sup, huella):
     """Ingresos, costes y beneficio. Devuelve FALTA DATO si falta algún valor."""
     faltan = [k for k in REQ_ECONOMIA if k not in eco]
@@ -110,6 +130,10 @@ HIPOTESIS_DEFECTO = {
     # P02 perimetral
     "zona_comun_min_m2": 400.0,        # hipótesis de producto (piscina, juegos, estancia)
     "tolerancia_frente_grados": 15.0,  # linderos casi alineados se tratan como un solo frente
+    # Programa tipo de zona común [elemento, m², desde nº viviendas] (patrones/CRITERIOS_DE_PROYECTO.md)
+    "programa_zona_comun": [["piscina adultos + playa", 150, 1], ["piscina infantil", 30, 1],
+                            ["juegos infantiles", 80, 1], ["estancia ajardinada", 200, 1],
+                            ["sala comunitaria o gimnasio", 80, 40], ["pista de pádel", 230, 80]],
 }
 
 BARRIDO_DEFECTO = {
@@ -478,12 +502,14 @@ def variante(ctx, ang, pct, uni_en, remate, acera):
             mods = nuevos
 
     lista, aceras, hileras_n = [], [], []      # (casa, banda de plazas o None)
+    lado_de = {}
     for m in mods:
         for lado, h in m["hileras"]:
             hileras_n.append(len(h))
             for casa in h:
                 b = _plazas_casa(casa, lado, m["yc"], hip, acera)
                 lista.append((casa, None if any(b.intersects(r) for r in remates) else b))
+                lado_de[id(casa)] = lado
         if acera:
             lados_con_casas = {lado for lado, h in m["hileras"] if h}
             ab, ar = _aceras(m, hip)
@@ -686,6 +712,14 @@ def variante(ctx, ang, pct, uni_en, remate, acera):
         "bolsas": bolsas, "bloques": bloques, "aceras": aceras,
         "pisos": [g for g, _ in pisos_geo], "nucleos": nucleos, "accesibles": accesibles,
     }
+    # Indicadores: el jardín de las casas 'abajo' mira a -y del marco girado y el de las 'arriba' a +y
+    a_r = math.radians(ang)
+    rumbos = []
+    for casa in casas:
+        dy0 = -1.0 if lado_de.get(id(casa)) == "abajo" else 1.0
+        rumbos.append(_rumbo_vector(-math.sin(a_r) * dy0, math.cos(a_r) * dy0))
+    viario = unary_union(geo["calzadas"] + geo["aceras"]).area if (geo["calzadas"] or geo["aceras"]) else 0.0
+    ind = indicadores(viv, rumbos, viario, hip)
     geo = {k: ([affinity.rotate(g, ang, origin=c) for g in v] if isinstance(v, list)
                else affinity.rotate(v, ang, origin=c)) for k, v in geo.items()}
     return {
@@ -706,6 +740,7 @@ def variante(ctx, ang, pct, uni_en, remate, acera):
         "comprobaciones": chk, "cumple": all(chk.values()),
         "techo_casas_m2": round(techo_u, 1), "techo_pisos_m2": round(techo_m, 1),
         "economia": cuenta_resultados(ctx["economia"], techo_u, techo_m, plazas, ctx["sup"], huella_u + huella_m),
+        **ind,
         "avisos": avisos, "notas": notas, "_geo": geo,
     }
 
@@ -825,7 +860,8 @@ def variante_perimetral(ctx, acceso_pos, interior, acera):
                          and not plaza.buffer(-0.01).intersects(colocadas))
                 if libre:
                     jardin = _limpia(affinity.rotate(box(x1, ye, x2, ye + f["d"]), -giro, origin=c).intersection(poly))
-                    grupo.append({"casa": casa, "plaza": plaza, "jardin": jardin})
+                    grupo.append({"casa": casa, "plaza": plaza, "jardin": jardin,
+                                  "rumbo": _rumbo_vector(-f["normal"][0], -f["normal"][1])})
                 else:
                     grupos.append(grupo)
                     grupo = []
@@ -862,7 +898,8 @@ def variante_perimetral(ctx, acceso_pos, interior, acera):
                         plaza = affinity.rotate(box(x1, ye, x2, ye + P), -giro, origin=c)
                         jardin = _limpia(affinity.rotate(box(x1, ye + P + F, x2, ye + P + F + J), -giro, origin=c)
                                          .intersection(ipoly))
-                        casas.append({"casa": casa, "plaza": plaza, "jardin": jardin, "hilera": hid})
+                        casas.append({"casa": casa, "plaza": plaza, "jardin": jardin, "hilera": hid,
+                                      "rumbo": _rumbo_vector(f["normal"][0], f["normal"][1])})
                     colocadas_i = unary_union([colocadas_i] + [x["casa"] for x in casas if x["hilera"] == hid])
 
     # Plazas dentro de la parcela privada (delante de cada casa)
@@ -945,6 +982,9 @@ def variante_perimetral(ctx, acceso_pos, interior, acera):
         "comprobaciones": chk, "cumple": all(chk.values()),
         "techo_casas_m2": round(techo, 1), "techo_pisos_m2": 0.0,
         "economia": cuenta_resultados(ctx["economia"], techo, 0.0, plazas, ctx["sup"], huella),
+        **indicadores(n, [x["rumbo"] for x in elegidas],
+                      unary_union([g for g in (anillo, conector) if not g.is_empty] + [g for g in aceras if not g.is_empty]).area,
+                      hip),
         "avisos": avisos, "notas": notas, "_geo": geo,
     }
 
@@ -969,6 +1009,8 @@ OBJETIVOS = {
     "casas": lambda r: (-r["casas"], -r["viviendas"]),
     "ocupacion": lambda r: (r["ocupacion_B_pct"], -r["viviendas"]),
     "beneficio": lambda r: (-(r["economia"].get("beneficio_eur") or -1e18), -r["viviendas"]),
+    "orientacion": lambda r: (-r["jardines_a_sur_pct"], -r["viviendas"]),
+    "viario": lambda r: (r["viario_m2_por_vivienda"] if r["viviendas"] else 1e9, -r["viviendas"]),
 }
 
 
@@ -1123,7 +1165,8 @@ def escribir_csv(rs, ruta: Path):
     cols = ["id", "cumple", "pct_zona_unifamiliar", "unifamiliar_en", "remate", "acera", "casas", "pisos", "viviendas",
             "portales", "pisos_por_planta", "mix_pisos", "techo_casas_m2", "techo_pisos_m2", "techo_m2",
             "aprovechamiento_pct", "plazas", "plazas_necesarias", "plazas_casas", "plazas_bolsa", "plazas_accesibles",
-            "huella_m2", "ocupacion_B_pct", "fondo_saco_m", "beneficio_eur", "margen_sobre_ventas_pct"]
+            "huella_m2", "ocupacion_B_pct", "fondo_saco_m", "jardines_a_sur_pct", "viario_m2_por_vivienda",
+            "zona_comun_m2", "zona_comun_programa_m2", "beneficio_eur", "margen_sobre_ventas_pct"]
     with open(ruta, "w", newline="", encoding="utf-8-sig") as f:
         w = csv.writer(f, delimiter=";")
         w.writerow(cols)

@@ -20,11 +20,14 @@ Así, cada foto nueva amplía lo que el motor sabe hacer y queda como prueba par
 |---|---|---|---|
 | P01 | Calles paralelas (peine): hileras en una dirección, calles desde la fachada de acceso, bloques en otra zona | Motor inicial | Programado (`calles_paralelas`) |
 | P02 | Hileras perimetrales + calle interior en anillo + zona común central | Caso 01 (foto de la UA-03-01) | Programado (`perimetral`) |
-| P03 | Lazo con hileras a ambos lados y zona común en el centro del lazo | Patrón habitual (Radburn) | Pendiente |
+| P03 | Lazo con hileras a ambos lados y zona común en el centro del lazo | Metrovacesa, Villas del Tíber (4 hileras alrededor de una zona central) | Pendiente |
 | P04 | Peine con fondos de saco cortos desde un vial colector | Patrón habitual | Pendiente |
-| P05 | Manzana con bloque perimetral y patio común | Patrón habitual en ensanches | Pendiente |
-| P06 | Bloques lineales con zona común central y aparcamiento perimetral | Patrón habitual | Pendiente |
-| P07 | Mixto: casas perimetrales y bloque en la fachada principal | Patrón habitual | Pendiente |
+| P05 | Manzana con bloque perimetral y zonas comunes en el interior de la manzana | Neinor (promociones en interior de manzana) | Pendiente |
+| P06 | Bloques escalonados con zona común alejada de los bloques | Morph, Prado Pozuelo (3 bloques, 43 viviendas) | Pendiente |
+| P07 | Mixto: unifamiliares y plurifamiliares en un mismo conjunto | Kronos, Mirage (Los Pocillos); Cano y Escario, Montegancedo | Pendiente (P01 ya mezcla por zonas) |
+| P08 | Adosados con garaje en sótano privado e interior sin tráfico rodado | Hombre de Piedra, Villas del Támesis; Neinor, Torrejón Park Homes III | Pendiente |
+
+Los criterios de diseño sacados de estas referencias están en `CRITERIOS_DE_PROYECTO.md`.
 
 Los patrones «habituales» proceden de tipologías generales de ordenación residencial (hileras, manzana perimetral, bloque lineal, lazo y fondo de saco). Se concretarán cuando haya un ejemplo real del estudio que sirva de caso.
 
