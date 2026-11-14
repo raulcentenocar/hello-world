@@ -14,7 +14,7 @@ node visor/prueba_paridad.js <ruta a jsts.min.js> planos/variantes/entrada_UA-03
 ```
 
 Para obtener `jsts.min.js`: `npm install jsts@2.11.3` (está en `node_modules/jsts/dist/`).
-Último resultado: **134/134 variantes iguales y el mismo ranking**.
+Último resultado: **140/140 variantes iguales (patrones P01 y P02) y el mismo ranking**.
 
 ## Del visor al DXF
 

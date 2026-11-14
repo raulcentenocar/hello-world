@@ -12,6 +12,7 @@
   --plaza: #dfe4e5; --plaza-b: #a3abad; --acera: #ead3a6; --zona-u: #f3eddd; --zona-m: #e3ebf3;
   --parcela: #1c2427; --ret-u: #8a6d3b; --ret-m: #3b5f8a; --corte: #0d6b58;
   --p2: #c9d8ea; --p3: #a9bfd9; --p4: #8aa6c8; --nucleo: #55708f; --acc: #cfe3f7; --acc-b: #2c5d9a;
+  --comun: #bcd9ad; --comun-b: #5f8f4e; --jardin: #dfecd5;
   --f-ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --f-head: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
   --f-num: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -22,14 +23,16 @@
   --casa: #b8975c; --casa-b: #e6cf9f; --bloque: #5c789c; --bloque-b: #b9cbe2; --calzada: #4b5457;
   --plaza: #2f383b; --plaza-b: #5b6669; --acera: #6c5a3a; --zona-u: #23221c; --zona-m: #1b2430;
   --parcela: #e2e8e9; --ret-u: #c9a865; --ret-m: #7fa2cf; --corte: #3cb398;
-  --p2: #4f6886; --p3: #5d789c; --p4: #6d8ab0; --nucleo: #b9cbe2; --acc: #27425f; --acc-b: #9cc3ef; color-scheme: dark; } }
+  --p2: #4f6886; --p3: #5d789c; --p4: #6d8ab0; --nucleo: #b9cbe2; --acc: #27425f; --acc-b: #9cc3ef;
+  --comun: #2f4a2a; --comun-b: #8fbf7c; --jardin: #243421; color-scheme: dark; } }
 :root[data-theme="dark"] {
   --bg: #111618; --panel: #192023; --ink: #e2e8e9; --muted: #98a6aa; --line: #2b3538; --soft: #1f272a;
   --accent: #3cb398; --accent-ink: #0b1513; --ok: #5cc184; --bad: #ef7d68; --warn: #e0a640;
   --casa: #b8975c; --casa-b: #e6cf9f; --bloque: #5c789c; --bloque-b: #b9cbe2; --calzada: #4b5457;
   --plaza: #2f383b; --plaza-b: #5b6669; --acera: #6c5a3a; --zona-u: #23221c; --zona-m: #1b2430;
   --parcela: #e2e8e9; --ret-u: #c9a865; --ret-m: #7fa2cf; --corte: #3cb398;
-  --p2: #4f6886; --p3: #5d789c; --p4: #6d8ab0; --nucleo: #b9cbe2; --acc: #27425f; --acc-b: #9cc3ef; color-scheme: dark; }
+  --p2: #4f6886; --p3: #5d789c; --p4: #6d8ab0; --nucleo: #b9cbe2; --acc: #27425f; --acc-b: #9cc3ef;
+  --comun: #2f4a2a; --comun-b: #8fbf7c; --jardin: #243421; color-scheme: dark; }
 
 * { box-sizing: border-box; }
 body { background: var(--bg); color: var(--ink); font: 14px/1.45 var(--f-ui);
@@ -96,6 +99,7 @@ details[open] summary { margin-bottom: 8px; }
 .veredicto.no { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, transparent); }
 .notas { margin: 0; padding-left: 18px; font-size: 12.5px; color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
 .notas li.aviso { color: var(--warn); }
+.pista { font-size: 12.5px; color: var(--muted); margin: 0; }
 .prog { display: grid; grid-template-columns: 1fr auto auto; gap: 4px 10px; align-items: center; font-size: 13px; }
 .prog input { width: 64px; background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 3px 5px; font-family: var(--f-num); text-align: right; }
 .prog .cab { color: var(--muted); font-size: 12px; }
@@ -154,22 +158,40 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
     <h2 id="h-param">Ordenación</h2>
     <div class="grupo">
       <div class="campo">
+        <label>Patrón de implantación</label><span></span>
+        <div class="seg" id="estrategia" role="group" aria-label="Patrón de implantación">
+          <button type="button" data-v="calles_paralelas" aria-pressed="true">Calles paralelas</button>
+          <button type="button" data-v="perimetral" aria-pressed="false">Perimetral + anillo</button>
+        </div>
+      </div>
+      <div class="campo solo-per">
+        <label for="acc">Posición del acceso</label><output id="acc-o" class="num">50 %</output>
+        <input id="acc" type="range" min="0.1" max="0.9" step="0.05" value="0.5">
+      </div>
+      <div class="campo solo-per">
+        <label>Interior del anillo</label><span></span>
+        <div class="seg" id="interior" role="group" aria-label="Interior del anillo">
+          <button type="button" data-v="zona_comun" aria-pressed="true">Zona común</button>
+          <button type="button" data-v="casas" aria-pressed="false">Casas + zona común</button>
+        </div>
+      </div>
+      <div class="campo solo-par">
         <label for="pct">Suelo para casas</label><output id="pct-o" class="num">60 %</output>
         <input id="pct" type="range" min="0" max="100" step="5" value="60">
       </div>
-      <div class="campo">
+      <div class="campo solo-par">
         <label>Casas al</label><span></span>
         <div class="seg" id="lado" role="group" aria-label="Lado de las casas">
           <button type="button" data-v="abajo" aria-pressed="true">S</button>
           <button type="button" data-v="arriba" aria-pressed="false">N</button>
         </div>
       </div>
-      <div class="campo">
+      <div class="campo solo-par">
         <label for="ang">Orientación de hileras</label><output id="ang-o" class="num">0,5°</output>
         <input id="ang" type="range" min="0" max="179.5" step="0.5" value="0.5">
         <select id="ang-sel" aria-label="Orientaciones de las fachadas" style="grid-column: 1 / -1"></select>
       </div>
-      <div class="campo">
+      <div class="campo solo-par">
         <label>Final de la calle</label><span></span>
         <div class="seg" id="remate" role="group" aria-label="Final de la calle de casas">
           <button type="button" data-v="fondo_saco" aria-pressed="false">Fondo de saco</button>
@@ -244,6 +266,8 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
       <span><i style="background:var(--p3)"></i>Pisos 2D·3D·4D</span>
       <span><i style="background:var(--nucleo)"></i>Núcleo</span>
       <span><i style="background:var(--acc);border-color:var(--acc-b)"></i>Plaza accesible</span>
+      <span><i style="background:var(--comun)"></i>Zona común</span>
+      <span><i style="background:var(--jardin)"></i>Jardín privado</span>
       <span><i style="border:1px dashed var(--ret-u);background:none"></i>Retranqueos</span>
       <span>Arrastra la línea verde para cambiar el reparto</span>
     </div>
@@ -259,6 +283,7 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
       <div class="cifra"><span>Plazas</span><b id="c-plazas">—</b><small id="c-plazas2"></small></div>
       <div class="cifra"><span>Ocupación</span><b id="c-ocup">—</b><small id="c-ocup2"></small></div>
     </div>
+    <p class="pista" id="pista-casa"></p>
     <ul class="chk" id="checks"></ul>
     <div id="programa-res"></div>
     <div id="pro-forma"></div>
@@ -318,7 +343,8 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
     ["casas_max_hilera", "Máx. casas por hilera", 1, ""], ["casas_min_hilera", "Mín. casas por hilera", 1, ""],
     ["jardin_trasero_m", "Jardín trasero", 0.5, "m"], ["fondo_bloque_m", "Fondo de bloque", 0.5, "m"],
     ["longitud_max_bloque_m", "Longitud máx. bloque", 1, "m"], ["calzada_m", "Calzada", 0.5, "m"],
-    ["acera_m", "Acera", 0.1, "m"], ["martillo_largo_m", "Brazo del martillo", 0.5, "m"]
+    ["acera_m", "Acera", 0.1, "m"], ["martillo_largo_m", "Brazo del martillo", 0.5, "m"],
+    ["zona_comun_min_m2", "Zona común mínima", 10, "m²"]
   ];
   var URB_TXT = {
     edificabilidad_m2m2: "Edificabilidad (m²/m²)", viviendas_max: "Viviendas máximas", plazas_por_vivienda: "Plazas por vivienda",
@@ -333,7 +359,7 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
   ];
   var CHK_TXT = {
     hay_viviendas: "Hay viviendas", viviendas: "Viviendas dentro del máximo", techo: "Techo dentro de la edificabilidad",
-    plazas: "Plazas suficientes", ocupacion_A: "Ocupación de cada zona", fondo_saco_SI5: "Calle sin salida ≤ 20 m o con maniobra (DB-SI SI 5)",
+    plazas: "Plazas suficientes", zona_comun: "Zona común ≥ mínimo", ocupacion_A: "Ocupación de cada zona", fondo_saco_SI5: "Calle sin salida ≤ 20 m o con maniobra (DB-SI SI 5)",
     itinerario_peatonal: "Acera en la calle de casas (DB-SUA 9)"
   };
 
@@ -359,7 +385,8 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
       sel.appendChild(o);
     });
     var libre = document.createElement("option"); libre.value = "libre"; libre.textContent = "Ángulo libre"; sel.appendChild(libre);
-    params = { ang: Math.round(angs[0] * 2) / 2, pct: 60, uni_en: "abajo", remate: "martillo", acera: true };
+    params = { estrategia: "perimetral", ang: Math.round(angs[0] * 2) / 2, pct: 60, uni_en: "abajo", remate: "martillo", acera: true,
+      acceso_pos: 0.3, interior: "zona_comun" };
     pintarHipotesis(); pintarPrograma(); pintarEconomia(); pintarUrbanismo(); sincronizarControles();
     variantes = []; fijadas = []; idActiva = null; pintarGaleria(); pintarComparacion();
     recalcular();
@@ -423,6 +450,12 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
   // ---------------------------------------------------------------- controles
   function setSeg(id, v) { Array.prototype.forEach.call($(id).querySelectorAll("button"), function (b) { b.setAttribute("aria-pressed", String(b.dataset.v === String(v))); }); }
   function sincronizarControles() {
+    var per = params.estrategia === "perimetral";
+    setSeg("estrategia", params.estrategia);
+    Array.prototype.forEach.call(document.querySelectorAll(".solo-per"), function (e) { e.hidden = !per; });
+    Array.prototype.forEach.call(document.querySelectorAll(".solo-par"), function (e) { e.hidden = per; });
+    $("acc").value = params.acceso_pos; $("acc-o").textContent = fmt(100 * params.acceso_pos) + " %";
+    setSeg("interior", params.interior);
     $("pct").value = params.pct; $("pct-o").textContent = fmt(params.pct) + " %";
     $("ang").value = params.ang; $("ang-o").textContent = fmt(params.ang, 1) + "°";
     var sel = $("ang-sel"), hay = false;
@@ -443,13 +476,16 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
   segClick("lado", function (v) { params.uni_en = v; sincronizarControles(); recalcular(); });
   segClick("remate", function (v) { params.remate = v; sincronizarControles(); recalcular(); });
   segClick("acera", function (v) { params.acera = v === "1"; sincronizarControles(); recalcular(); });
+  segClick("estrategia", function (v) { params.estrategia = v; sincronizarControles(); recalcular(); });
+  segClick("interior", function (v) { params.interior = v; sincronizarControles(); recalcular(); });
+  $("acc").addEventListener("input", function (e) { params.acceso_pos = +e.target.value; $("acc-o").textContent = fmt(100 * params.acceso_pos) + " %"; programar(); });
   segClick("vista", function (v) { vista = v; setSeg("vista", v); pintarPlano(); });
 
   function programar() { clearTimeout(cola); cola = setTimeout(recalcular, 120); }
   function recalcular() {
     if (!ctx) return;
     var t0 = performance.now();
-    try { actual = Motor.variante(ctx, params); }
+    try { actual = Motor.calcular(ctx, params); }
     catch (err) { $("estado").textContent = "Error: " + err.message; return; }
     actual.params = Object.assign({}, params);
     $("estado").textContent = "Calculado en " + fmt(performance.now() - t0) + " ms";
@@ -475,6 +511,7 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
   }
   var CAPAS = [
     ["zona_uni", "var(--zona-u)", "none", 0], ["zona_multi", "var(--zona-m)", "none", 0],
+    ["zona_comun", "var(--comun)", "var(--comun-b)", 0.15], ["jardines", "var(--jardin)", "var(--comun-b)", 0.05],
     ["calzadas", "var(--calzada)", "none", 0], ["bolsas", "var(--plaza)", "var(--plaza-b)", 0.08],
     ["plazas_casas", "var(--plaza)", "var(--plaza-b)", 0.08], ["aceras", "var(--acera)", "none", 0],
     ["accesibles", "var(--acc)", "var(--acc-b)", 0.1],
@@ -485,7 +522,7 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
   function svgVariante(r, v, detalle) {
     var s = "";
     CAPAS.forEach(function (c) {
-      var gs = r.geo[c[0]]; gs = Array.isArray(gs) ? gs : [gs];
+      var gs = r.geo[c[0]] || []; gs = Array.isArray(gs) ? gs : [gs];
       var dash = c[0].indexOf("edif") === 0 ? ' stroke-dasharray="1.2 0.9"' : "";
       gs.forEach(function (g, i) {
         if (!g || g.isEmpty()) return;
@@ -553,9 +590,16 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
     function poli(cs, z) { return cs.map(function (c) { return anota(P(c.x, c.y, z)); }); }
     function d(ps) { return "M" + ps.map(function (p) { return p[0].toFixed(2) + "," + p[1].toFixed(2); }).join("L") + "Z"; }
     var suelo = "";
-    [["zona_uni", "var(--zona-u)"], ["zona_multi", "var(--zona-m)"], ["calzadas", "var(--calzada)"], ["bolsas", "var(--plaza)"], ["plazas_casas", "var(--plaza)"], ["aceras", "var(--acera)"]].forEach(function (cp) {
-      var gs = r.geo[cp[0]]; gs = Array.isArray(gs) ? gs : [gs];
-      gs.forEach(function (g) { Motor.polys(g).forEach(function (p) { suelo += '<path d="' + d(poli(p.getExteriorRing().getCoordinates(), 0)) + '" fill="' + cp[1] + '"/>'; }); });
+    [["zona_uni", "var(--zona-u)"], ["zona_multi", "var(--zona-m)"], ["zona_comun", "var(--comun)"], ["jardines", "var(--jardin)"],
+     ["calzadas", "var(--calzada)"], ["bolsas", "var(--plaza)"], ["plazas_casas", "var(--plaza)"], ["aceras", "var(--acera)"]].forEach(function (cp) {
+      var gs = r.geo[cp[0]] || []; gs = Array.isArray(gs) ? gs : [gs];
+      gs.forEach(function (g) {
+        Motor.polys(g).forEach(function (p) {
+          var dd = d(poli(p.getExteriorRing().getCoordinates(), 0));
+          for (var h = 0; h < p.getNumInteriorRing(); h++) dd += d(poli(p.getInteriorRingN(h).getCoordinates(), 0));
+          suelo += '<path d="' + dd + '" fill="' + cp[1] + '" fill-rule="evenodd"/>';
+        });
+      });
     });
     suelo += '<path d="' + d(poli(ctx.poly.getExteriorRing().getCoordinates(), 0)) + '" fill="none" stroke="var(--parcela)" stroke-width="0.4"/>';
     var cuerpos = [];
@@ -652,6 +696,9 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
     } else {
       $("pro-forma").innerHTML = '<p class="fuente">Cuenta de resultados: FALTA DATO (' + e.faltan.length + " valores). Rellénalos en «Cuenta de resultados».</p>";
     }
+    var vmaxP = Math.floor(ctx.comun.viviendas_max), supMax = Emax / vmaxP;
+    $("pista-casa").textContent = "Para llegar a " + vmaxP + " viviendas solo con casas, cada una debe tener como máximo " + fmt(Math.floor(supMax)) +
+      " m²c (ahora " + fmt(ctx.hip.sup_casa_m2) + " m²c" + (ctx.hip.sup_casa_m2 > supMax ? ": la edificabilidad no llega" : "") + ").";
     $("checks").innerHTML = Object.keys(r.comprobaciones).map(function (k) { return '<li class="' + (r.comprobaciones[k] ? "si" : "no") + '">' + CHK_TXT[k] + "</li>"; }).join("");
     $("notas").innerHTML = r.avisos.map(function (t) { return '<li class="aviso">' + t + "</li>"; }).join("") + r.notas.map(function (t) { return "<li>" + t + "</li>"; }).join("") +
       (r.fondo_saco_m ? "<li>Calle sin salida: " + fmt(r.fondo_saco_m) + " m.</li>" : "");
@@ -664,8 +711,8 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
     function paso() {
       var t0 = performance.now();
       while (i < comb.length && performance.now() - t0 < 60) {
-        var p = comb[i++], r = Motor.variante(ctx, p);
-        var k = [r.angulo_hileras, p.pct, r.unifamiliar_en, r.remate, p.acera, r.casas, r.pisos, r.plazas].join("|");
+        var p = comb[i++], r = Motor.calcular(ctx, p);
+        var k = Motor.claveDup(r, p);
         if (!vistos[k]) { vistos[k] = 1; r.params = p; res.push(r); }
       }
       $("barra-prog").style.width = (100 * i / comb.length) + "%";
@@ -695,7 +742,8 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
         '<svg viewBox="0 0 ' + v.w.toFixed(1) + " " + v.h.toFixed(1) + '" aria-hidden="true">' + svgVariante(r, v, false) + "</svg>" +
         '<span class="t1"><b>' + r.id + '</b><span class="tag ' + (r.cumple ? "si" : "no") + '">' + (r.cumple ? "cumple" : "no cumple") + "</span></span>" +
         '<span class="t1"><span>' + r.casas + "+" + r.pisos + " = " + r.viviendas + " viv</span><span>" + fmt(r.techo_m2) + " m²c</span></span>" +
-        '<span class="t2">' + fmt(r.pct_zona_unifamiliar) + " % casas " + r.unifamiliar_en + " · " + r.remate.replace("_", " ") + " · acera " + (r.acera ? "sí" : "no") + " · plazas " + r.plazas + "/" + r.plazas_necesarias + (r.economia.estado === "OK" ? " · " + fmt(r.economia.beneficio_eur / 1000) + " k€" : "") + "</span></button>";
+        (r.estrategia === "perimetral" ? '<span class="t2">Perimetral + anillo · acceso ' + fmt(100 * r.acceso_pos) + " % · interior " + r.interior.replace("_", " ") + " · acera "
+          : '<span class="t2">' + fmt(r.pct_zona_unifamiliar) + " % casas " + r.unifamiliar_en + " · " + r.remate.replace("_", " ") + " · acera ") + (r.acera ? "sí" : "no") + " · plazas " + r.plazas + "/" + r.plazas_necesarias + (r.economia.estado === "OK" ? " · " + fmt(r.economia.beneficio_eur / 1000) + " k€" : "") + "</span></button>";
     }).join("") + (lista.length > 48 ? '<p class="vacio">Se muestran 48 de ' + lista.length + '.</p>' : "") + (!lista.length ? '<p class="vacio">Ninguna variante cumple todas las comprobaciones.</p>' : "");
   }
   $("galeria").addEventListener("click", function (e) {
@@ -711,12 +759,12 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
     var r = actual; r.etiqueta = idActiva && variantes.some(function (x) { return x.id === idActiva && sameParams(x.params, r.params); }) ? idActiva : "Ajuste " + (fijadas.length + 1);
     fijadas.push(r); if (fijadas.length > 6) fijadas.shift(); pintarComparacion();
   });
-  function sameParams(a, b) { return a && b && a.ang === b.ang && a.pct === b.pct && a.uni_en === b.uni_en && a.remate === b.remate && a.acera === b.acera; }
+  function sameParams(a, b) { return !!a && !!b && JSON.stringify(a) === JSON.stringify(b); }
   function pintarComparacion() {
     var tb = $("comparar").querySelector("tbody");
     if (!fijadas.length) { tb.innerHTML = '<tr><td colspan="11" class="vacio" style="font-family:var(--f-ui)">Fija variantes con «Fijar para comparar».</td></tr>'; return; }
     tb.innerHTML = fijadas.map(function (r, i) {
-      return "<tr><td style=\"font-family:var(--f-ui)\">" + r.etiqueta + " · " + fmt(r.pct_zona_unifamiliar) + " % " + r.unifamiliar_en + ", " + r.remate.replace("_", " ") + "</td><td>" + r.casas + "</td><td>" + r.pisos + "</td><td>" + r.viviendas +
+      return "<tr><td style=\"font-family:var(--f-ui)\">" + r.etiqueta + " · " + (r.estrategia === "perimetral" ? "perimetral" : fmt(r.pct_zona_unifamiliar) + " % " + r.unifamiliar_en + ", " + r.remate.replace("_", " ")) + "</td><td>" + r.casas + "</td><td>" + r.pisos + "</td><td>" + r.viviendas +
         "</td><td>" + fmt(r.techo_m2) + "</td><td>" + r.plazas + "/" + r.plazas_necesarias + "</td><td>" + fmt(r.ocupacion_B_pct, 1) + "</td><td>" + fmt(r.fondo_saco_m) +
         "</td><td>" + (r.economia.estado === "OK" ? fmt(r.economia.beneficio_eur) : "—") + "</td><td>" + (r.cumple ? "sí" : "no") + '</td><td><button type="button" data-i="' + i + '" data-a="ver">Ver</button> · <button type="button" data-i="' + i + '" data-a="quitar">Quitar</button></td></tr>';
     }).join("");

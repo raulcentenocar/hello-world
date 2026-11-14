@@ -1,0 +1,19 @@
+{
+  "caso": "01",
+  "descripcion": "Foto aérea de una implantación de casas adosadas sobre la parcela UA-03-01 (aportada por el arquitecto).",
+  "imagen": "caso_01_UA-03-01_foto.png",
+  "patron": "P02",
+  "entrada": "../../planos/variantes/entrada_UA-03-01.json",
+  "estrategia": "perimetral",
+  "hipotesis": { "sup_casa_m2": 150.0 },
+  "cifras_leidas_estimadas": {
+    "casas": 34,
+    "pisos": 0,
+    "plazas_en_parcela_privada": 68,
+    "accesos_rodados": 1,
+    "zona_comun": true,
+    "orientaciones_de_hileras": 3
+  },
+  "tolerancia": { "viviendas_min": 33, "plazas_deben_cumplir": true },
+  "nota": "Las cifras se leen sobre la imagen y son estimadas. La foto no da medidas; el motor usa las hipótesis del JSON de entrada."
+}

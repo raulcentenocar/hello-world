@@ -107,6 +107,9 @@ HIPOTESIS_DEFECTO = {
     # Búsqueda
     "paso_rejilla_m": 0.5,
     "paso_fase_m": 2.0,
+    # P02 perimetral
+    "zona_comun_min_m2": 400.0,        # hipótesis de producto (piscina, juegos, estancia)
+    "tolerancia_frente_grados": 15.0,  # linderos casi alineados se tratan como un solo frente
 }
 
 BARRIDO_DEFECTO = {
@@ -115,6 +118,10 @@ BARRIDO_DEFECTO = {
     "unifamiliar_en": ["abajo", "arriba"],
     "remate": ["fondo_saco", "martillo", "lazo"],
     "acera": [False, True],
+    # Estrategias (patrones del catálogo `patrones/`) y parámetros propios de P02
+    "estrategias": ["calles_paralelas", "perimetral"],
+    "acceso_pos": [0.3, 0.5, 0.7],          # posición del acceso a lo largo del lindero de acceso (0-1)
+    "interior": ["zona_comun", "casas"],     # uso del interior del anillo
 }
 
 
@@ -606,14 +613,21 @@ def variante(ctx, ang, pct, uni_en, remate, acera):
                 respaldo = sol
             if not sol["completo"] or pl_m * sol["lay"][4] > lim_techo + 1e-6:
                 continue
+            # Viviendas efectivas: las que tienen sus plazas (cada vivienda sin plazas resta una).
+            plazas_sol = sol["n_plazas_u"] + sol["ap"]["n_bolsa"]
+            deficit = max(0, sol["necesarias"] - plazas_sol)
+            if sol["n_acc"] and not sol["ap"]["accesibles"]:
+                deficit = max(deficit, sol["n_acc"])
+            ppv = max(1, int(com["plazas_por_vivienda"]))
+            viv_ef = n + u * pl_m - math.ceil(deficit / ppv)
+            clave = (viv_ef, n + u * pl_m, n * hip["sup_casa_m2"] + pl_m * sol["lay"][4])
+            if mejor_clave is None or clave > mejor_clave:
+                elegido, mejor_clave = sol, clave
             if sol["ok_pl"]:
-                clave = (n + u * pl_m, n * hip["sup_casa_m2"] + pl_m * sol["lay"][4])
-                if mejor_clave is None or clave > mejor_clave:
-                    elegido, mejor_clave = sol, clave
                 break
     if elegido is None:
         elegido = respaldo if respaldo is not None else solucion(min(tope, len(lista)), 0)
-        notas.append("Ningún reparto cabe con todas sus plazas: se muestra el de más viviendas.")
+        notas.append("Ningún reparto encaja completo: se muestra el primero probado.")
     sol = elegido
     n_casas, n_pisos = sol["n"], sol["n_pisos"]
     bloques, pisos_geo, nucleos, u_planta, techo_planta = sol["lay"]
@@ -705,6 +719,237 @@ def _lado_txt(ang, uni_en):
 
 
 # --------------------------------------------------------------------------- #
+# Estrategia P02: hileras perimetrales + calle interior en anillo + zona común
+# --------------------------------------------------------------------------- #
+def _dif_ang(a, b):
+    return abs((a - b + 180) % 360 - 180)
+
+
+def frentes(pts, ccw, tol):
+    """Agrupa linderos consecutivos casi alineados en 'frentes' (lista de listas de lados)."""
+    ls = lados(pts, ccw)
+    n = len(ls)
+    ini = next((i for i in range(n) if _dif_ang(ls[i]["_angulo"], ls[i - 1]["_angulo"]) > tol), 0)
+    grupos, act = [], [ls[ini]]
+    for k in range(1, n):
+        l = ls[(ini + k) % n]
+        if _dif_ang(l["_angulo"], act[-1]["_angulo"]) <= tol:
+            act.append(l)
+        else:
+            grupos.append(act)
+            act = [l]
+    grupos.append(act)
+    out = []
+    for g in grupos:
+        a = g[0]["_seg"].coords[0]
+        b = g[-1]["_seg"].coords[-1]
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        L = math.hypot(dx, dy)
+        nx, ny = (-dy / L, dx / L) if ccw else (dy / L, -dx / L)   # normal hacia el interior
+        out.append({"lados": g, "indices": {l["indice"] for l in g}, "a": a, "b": b, "largo": L,
+                    "normal": (nx, ny), "segs": unary_union([l["_seg"] for l in g])})
+    return out
+
+
+def _filas_en_frente(zona, f, y0, h, hip, sep, c):
+    """Hileras de casas paralelas al frente f, en la franja [y0, y0+h] medida desde su línea."""
+    giro = 90.0 - math.degrees(math.atan2(f["normal"][1], f["normal"][0]))
+    zr = _limpia(affinity.rotate(zona, giro, origin=c))
+    if zr.is_empty:
+        return [], giro, None
+    (ax, ay), = _rot_pts([f["a"]], giro, c)
+    (bx, by), = _rot_pts([f["b"]], giro, c)
+    ye = (ay + by) / 2
+    a_ = hip["ancho_casa_m"]
+    minx, _, maxx, _ = zr.bounds
+    tr = _tramos_en_franja(prep(zr), minx, maxx, ye + y0, h, sep,
+                           hip["casas_min_hilera"] * a_, hip["casas_max_hilera"] * a_, hip["paso_rejilla_m"])
+    hileras = []
+    for x1, y1, x2, y2 in (r.bounds for r in tr):
+        n = min(int((x2 - x1 + 1e-6) // a_), hip["casas_max_hilera"])
+        if n >= hip["casas_min_hilera"]:
+            hileras.append([(x1 + i * a_, x1 + (i + 1) * a_) for i in range(n)])
+    return hileras, giro, ye
+
+
+def variante_perimetral(ctx, acceso_pos, interior, acera):
+    hip, com = ctx["hip"], ctx["comun"]
+    sep = float(com["separacion_edificios_m"])
+    poly, pts, c = ctx["poly"], ctx["pts"], ctx["poly"].centroid
+    ls = lados(pts, ctx["ccw"])
+    F, P, C, J = hip["fondo_casa_m"], hip["plaza_fondo_m"], hip["calzada_m"], hip["jardin_trasero_m"]
+    a_ = hip["acera_m"] if acera else 0.0
+    u = ctx["uni"]
+    U = zona_retranqueos(poly, ls, ctx["fachadas"], u["retranqueo_fachada_m"], u["retranqueo_linderos_m"])
+    fs = frentes(pts, ctx["ccw"], hip["tolerancia_frente_grados"])
+    for f in fs:
+        r = max(u["retranqueo_fachada_m"] if i in ctx["fachadas"] else u["retranqueo_linderos_m"] for i in f["indices"])
+        f["d"] = max(r, J)
+        f["D"] = f["d"] + F + P + a_
+    notas, avisos = [], []
+
+    # Anillo de calle: entre las distancias D y D + C a los linderos
+    def interior_a(dist):
+        return _limpia(poly.difference(unary_union([f["segs"].buffer(dist(f)) for f in fs])))
+    I1 = interior_a(lambda f: f["D"])
+    I2 = interior_a(lambda f: f["D"] + C)
+    anillo = _limpia(I1.difference(I2))
+    aceras = [_limpia(interior_a(lambda f: f["D"] - a_).difference(I1))] if acera else []
+    # Vial de acceso perpendicular al lindero de acceso
+    fa = next((f for f in fs if f["indices"] & ctx["accesos"]), None)
+    conector = Polygon()
+    if fa is not None:
+        giro = 90.0 - math.degrees(math.atan2(fa["normal"][1], fa["normal"][0]))
+        (ax, ay), (bx, by) = _rot_pts([fa["a"], fa["b"]], giro, c)
+        xc = ax + acceso_pos * (bx - ax)
+        ye = (ay + by) / 2
+        caja = box(xc - C / 2, ye - 2.0, xc + C / 2, ye + fa["D"] + C / 2)
+        conector = _limpia(affinity.rotate(caja, -giro, origin=c).intersection(poly))
+    # Hileras perimetrales: primero los frentes más largos. Cada casa evita la calle real,
+    # el vial de acceso, las casas ya colocadas (con su separación) y sus plazas; su propia
+    # entrada (plazas) debe quedar libre hasta la calle.
+    casas = []
+    colocadas, plazas_col = Polygon(), Polygon()
+    for f in sorted(fs, key=lambda f: -f["largo"]):
+        prohib = unary_union([anillo, conector.buffer(1.0),
+                              colocadas.buffer(sep) if not colocadas.is_empty else Polygon(), plazas_col])
+        zona = _limpia(U.difference(prohib))
+        hileras, giro, ye = _filas_en_frente(zona, f, f["d"], F, hip, sep, c)
+        for k, h in enumerate(hileras):
+            grupo, grupos = [], []
+            for x1, x2 in h:
+                casa = affinity.rotate(box(x1, ye + f["d"], x2, ye + f["d"] + F), -giro, origin=c)
+                plaza = affinity.rotate(box(x1, ye + f["d"] + F, x2, ye + f["d"] + F + P), -giro, origin=c)
+                libre = (plaza.intersection(poly).area >= plaza.area - 0.5
+                         and plaza.intersection(anillo).area < 0.5 and not plaza.buffer(-0.01).intersects(conector)
+                         and not plaza.buffer(-0.01).intersects(colocadas))
+                if libre:
+                    jardin = _limpia(affinity.rotate(box(x1, ye, x2, ye + f["d"]), -giro, origin=c).intersection(poly))
+                    grupo.append({"casa": casa, "plaza": plaza, "jardin": jardin})
+                else:
+                    grupos.append(grupo)
+                    grupo = []
+            grupos.append(grupo)
+            for g in grupos:
+                if len(g) >= hip["casas_min_hilera"]:
+                    hid = f"P{len(casas)}-{k}"
+                    for x in g:
+                        x["hilera"] = hid
+                    casas += g
+                    colocadas = unary_union([colocadas] + [x["casa"] for x in g])
+                    plazas_col = unary_union([plazas_col] + [x["plaza"] for x in g])
+
+    # Interior del anillo
+    if interior == "casas" and not I2.is_empty:
+        isla_pts = []
+        for pi in _polys(I2):
+            cs = list(pi.exterior.coords)[:-1]
+            if len(cs) >= 3:
+                isla_pts.append(cs)
+        for ip in isla_pts:
+            ipoly = Polygon(ip)
+            fi = frentes(ip, ipoly.exterior.is_ccw, hip["tolerancia_frente_grados"])
+            colocadas_i = unary_union([])
+            for f in sorted(fi, key=lambda f: -f["largo"]):
+                prohib = unary_union([g["segs"].buffer(P) for g in fi if g is not f] +
+                                     ([colocadas_i.buffer(max(sep, 2 * J))] if not colocadas_i.is_empty else []))
+                zona = _limpia(ipoly.difference(prohib))
+                hileras, giro, ye = _filas_en_frente(zona, f, P, F, hip, sep, c)
+                for k, h in enumerate(hileras):
+                    hid = f"I{len(casas)}-{k}"
+                    for x1, x2 in h:
+                        casa = affinity.rotate(box(x1, ye + P, x2, ye + P + F), -giro, origin=c)
+                        plaza = affinity.rotate(box(x1, ye, x2, ye + P), -giro, origin=c)
+                        jardin = _limpia(affinity.rotate(box(x1, ye + P + F, x2, ye + P + F + J), -giro, origin=c)
+                                         .intersection(ipoly))
+                        casas.append({"casa": casa, "plaza": plaza, "jardin": jardin, "hilera": hid})
+                    colocadas_i = unary_union([colocadas_i] + [x["casa"] for x in casas if x["hilera"] == hid])
+
+    # Plazas dentro de la parcela privada (delante de cada casa)
+    por_casa = int((hip["ancho_casa_m"] - hip["paso_peatonal_casa_m"]) // hip["plaza_ancho_m"])
+    todas = unary_union([x["casa"] for x in casas]) if casas else Polygon()
+    for x in casas:
+        x["plazas_ok"] = (x["plaza"].intersection(poly).area >= x["plaza"].area - 0.5
+                          and not x["plaza"].buffer(-0.01).intersects(todas)
+                          and not x["plaza"].buffer(-0.01).intersects(conector))
+        x["d"] = x["casa"].distance(conector) if not conector.is_empty else 0.0
+
+    # Reparto: tope por edificabilidad y nº de viviendas; se quitan las más lejanas al acceso
+    Emax = ctx["sup"] * com["edificabilidad_m2m2"]
+    vmax = int(com["viviendas_max"])
+    casas.sort(key=lambda x: x["d"])
+    tope = min(len(casas), vmax, int(Emax // hip["sup_casa_m2"]))
+    n = tope
+    while n > 0:
+        cuenta = {}
+        for x in casas[:n]:
+            cuenta[x["hilera"]] = cuenta.get(x["hilera"], 0) + 1
+        if min(cuenta.values()) >= hip["casas_min_hilera"]:
+            break
+        n -= 1
+    if n < len(casas):
+        notas.append(f"Se colocan {n} de {len(casas)} casas posibles (edificabilidad / nº máximo de viviendas).")
+    elegidas = casas[:n]
+    ids = {}
+    for x in elegidas:
+        ids[x["hilera"]] = ids.get(x["hilera"], 0) + 1
+    hileras_n = [v for _, v in sorted(ids.items())]
+    plazas = sum(por_casa for x in elegidas if x["plazas_ok"])
+    interiores = [g for x in elegidas if x["hilera"].startswith("I") for g in (x["casa"], x["plaza"], x["jardin"])]
+    zona_comun = _limpia(I2.difference(unary_union(interiores))) if interiores else I2
+
+    # Comprobaciones (mismas claves que P01 + zona común)
+    huella = sum(x["casa"].area for x in elegidas)
+    techo = n * hip["sup_casa_m2"]
+    necesarias = int(com["plazas_por_vivienda"]) * n
+    zc = zona_comun.area if not zona_comun.is_empty else 0.0
+    chk = {
+        "hay_viviendas": n > 0,
+        "viviendas": n <= vmax,
+        "techo": techo <= Emax + 0.5,
+        "plazas": plazas >= necesarias,
+        "ocupacion_A": 100 * huella / ctx["sup"] <= u["ocupacion_pct"] + 1e-6,
+        "fondo_saco_SI5": not anillo.is_empty,
+        "itinerario_peatonal": acera,
+        "zona_comun": zc >= hip["zona_comun_min_m2"],
+    }
+    if not chk["plazas"]:
+        avisos.append(f"Faltan {necesarias - plazas} plazas.")
+    if not chk["fondo_saco_SI5"]:
+        avisos.append("No se forma el anillo de calle: revisar el fondo de saco (DB-SI SI 5).")
+    if not chk["itinerario_peatonal"]:
+        avisos.append("Calle interior sin acera: itinerario peatonal por la calzada (DB-SUA 9, revisar).")
+    if not chk["zona_comun"]:
+        avisos.append(f"Zona común de {zc:.0f} m², menor que el mínimo de {hip['zona_comun_min_m2']:.0f} m².")
+    notas.append(f"Zona común: {zc:.0f} m². Calle interior en anillo con un acceso.")
+    if hileras_n:
+        notas.append("Hileras: " + " + ".join(str(v) for v in hileras_n) + " casas.")
+    geo = {
+        "parcela": poly, "zona_uni": poly, "zona_multi": Polygon(), "edif_uni": U, "edif_multi": Polygon(),
+        "casas": [x["casa"] for x in elegidas], "plazas_casas": [x["plaza"] for x in elegidas if x["plazas_ok"]],
+        "calzadas": [g for g in (anillo, conector) if not g.is_empty], "bolsas": [], "bloques": [],
+        "aceras": [g for g in aceras if not g.is_empty], "pisos": [], "nucleos": [], "accesibles": [],
+        "jardines": [x["jardin"] for x in elegidas if not x["jardin"].is_empty], "zona_comun": zona_comun,
+    }
+    return {
+        "estrategia": "perimetral", "angulo_hileras": -1.0, "pct_zona_unifamiliar": 100,
+        "unifamiliar_en": "perímetro", "remate": "anillo", "acera": acera,
+        "acceso_pos": acceso_pos, "interior": interior,
+        "casas": n, "pisos": 0, "viviendas": n, "bloques": 0, "plantas_bloque": 0, "portales": 0,
+        "pisos_por_planta": 0, "mix_pisos": {}, "tipos_pisos_planta": [], "plazas_accesibles": 0,
+        "techo_m2": round(techo, 1), "aprovechamiento_pct": round(100 * techo / Emax, 1),
+        "plazas": plazas, "plazas_necesarias": necesarias, "plazas_casas": plazas, "plazas_bolsa": 0,
+        "huella_m2": round(huella, 1), "ocupacion_A_uni_pct": round(100 * huella / ctx["sup"], 1),
+        "ocupacion_A_multi_pct": 0.0, "ocupacion_B_pct": round(100 * huella / ctx["sup"], 1),
+        "fondo_saco_m": 0.0, "zona_comun_m2": round(zc, 1),
+        "comprobaciones": chk, "cumple": all(chk.values()),
+        "techo_casas_m2": round(techo, 1), "techo_pisos_m2": 0.0,
+        "economia": cuenta_resultados(ctx["economia"], techo, 0.0, plazas, ctx["sup"], huella),
+        "avisos": avisos, "notas": notas, "_geo": geo,
+    }
+
+
+# --------------------------------------------------------------------------- #
 # Barrido y ranking
 # --------------------------------------------------------------------------- #
 def angulos(ctx):
@@ -730,19 +975,32 @@ OBJETIVOS = {
 def barrer(ctx, objetivo="ranking"):
     b = ctx["barrido"]
     res, vistos = [], set()
-    for ang, pct, ue, rem, ac in itertools.product(angulos(ctx), b["pct_zona_unifamiliar"], b["unifamiliar_en"],
-                                                    b["remate"], b["acera"]):
+    combos = []
+    if "calles_paralelas" in b["estrategias"]:
+        combos += [("calles_paralelas",) + t for t in itertools.product(
+            angulos(ctx), b["pct_zona_unifamiliar"], b["unifamiliar_en"], b["remate"], b["acera"])]
+    for est, *resto in combos:
+        ang, pct, ue, rem, ac = resto
         if pct in (0, 100) and ue != b["unifamiliar_en"][0]:
             continue   # sin corte, el lado da igual
         if pct <= 0 and (rem != b["remate"][0] or ac != b["acera"][0]):
             continue   # sin calle de casas
         r = variante(ctx, ang, pct, ue, rem, ac)
+        r["estrategia"] = "calles_paralelas"
         clave = (r["angulo_hileras"], pct, r["unifamiliar_en"], r["remate"], ac, r["casas"], r["pisos"], r["plazas"])
         if clave not in vistos:
             vistos.add(clave)
             res.append(r)
+    if "perimetral" in b["estrategias"]:
+        for pos, inter, ac in itertools.product(b["acceso_pos"], b["interior"], b["acera"]):
+            r = variante_perimetral(ctx, pos, inter, ac)
+            clave = ("perimetral", ac, r["casas"], r["plazas"], math.floor(r["zona_comun_m2"] + 0.5),
+                     math.floor(r["huella_m2"] + 0.5))
+            if clave not in vistos:
+                vistos.add(clave)
+                res.append(r)
     if objetivo == "ranking":
-        res.sort(key=lambda r: (not r["cumple"], -sum(r["comprobaciones"].values()), -r["viviendas"],
+        res.sort(key=lambda r: (not r["cumple"], sum(not v for v in r["comprobaciones"].values()), -r["viviendas"],
                                 -r["techo_m2"], -(r["plazas"] - r["plazas_necesarias"] >= 0), r["ocupacion_B_pct"]))
     else:
         res.sort(key=lambda r: (not r["cumple"],) + OBJETIVOS[objetivo](r))
@@ -761,6 +1019,7 @@ ESTILO = {
     "bolsas": ("#e2e2e2", "#999", 0.06), "aceras": ("#f0e0c0", "#b99", 0.05),
     "casas": ("#e6cfa6", "#5a4630", 0.12), "bloques": ("#9fb4cc", "#2c3e55", 0.15),
     "pisos": ("#b8c9de", "#2c3e55", 0.08), "nucleos": ("#6f86a3", "#2c3e55", 0.08),
+    "jardines": ("#dcebd2", "#9bb88a", 0.05), "zona_comun": ("#c9e2bf", "#6d9a5c", 0.1),
     "accesibles": ("#cfe0f5", "#2c5d9a", 0.1),
 }
 
@@ -776,10 +1035,10 @@ def _path(g, ox, oy):
 
 def svg_grupo(r, ctx, ox, oy):
     out = []
-    for capa in ["zona_uni", "zona_multi", "calzadas", "bolsas", "accesibles", "plazas_casas", "aceras", "casas",
+    for capa in ["zona_uni", "zona_multi", "zona_comun", "jardines", "calzadas", "bolsas", "accesibles", "plazas_casas", "aceras", "casas",
                  "bloques", "pisos", "nucleos", "edif_uni", "edif_multi", "parcela"]:
         fill, stroke, sw = ESTILO[capa]
-        gs = r["_geo"][capa]
+        gs = r["_geo"].get(capa, [])
         gs = gs if isinstance(gs, list) else [gs]
         dash = ' stroke-dasharray="1,0.8"' if capa.startswith("edif") else ""
         for g in gs:
@@ -839,7 +1098,8 @@ def exportar_dxf(r, ctx, ruta: Path):
     capas = {"parcela": ("PARCELA", 7), "edif_uni": ("RETRANQUEO_UNI", 3), "edif_multi": ("RETRANQUEO_MULTI", 4),
              "calzadas": ("VIARIO", 8), "plazas_casas": ("PLAZAS", 9), "bolsas": ("PLAZAS", 9),
              "aceras": ("ACERAS", 30), "casas": ("CASAS", 1), "bloques": ("BLOQUES", 5),
-             "pisos": ("PISOS", 150), "nucleos": ("NUCLEOS", 250), "accesibles": ("PLAZAS_ACCESIBLES", 140)}
+             "pisos": ("PISOS", 150), "nucleos": ("NUCLEOS", 250), "accesibles": ("PLAZAS_ACCESIBLES", 140),
+             "jardines": ("JARDINES_PRIVADOS", 82), "zona_comun": ("ZONA_COMUN", 94)}
     for nombre, color in set(capas.values()):
         doc.layers.add(nombre, color=color)
     doc.layers.add("VOLUMEN_3D", color=6)
@@ -847,7 +1107,7 @@ def exportar_dxf(r, ctx, ruta: Path):
     hp = ctx["hip"]["altura_planta_m"]
     alturas = {"casas": int(ctx["uni"]["plantas_max"]) * hp, "bloques": r["plantas_bloque"] * hp}
     for clave, (capa, _) in capas.items():
-        gs = r["_geo"][clave]
+        gs = r["_geo"].get(clave, [])
         for g in (gs if isinstance(gs, list) else [gs]):
             for p in _polys(g):
                 msp.add_lwpolyline(list(p.exterior.coords), close=True, dxfattribs={"layer": capa})
@@ -907,8 +1167,12 @@ def main(argv=None) -> int:
         ctx["economia"].update({k: v for k, v in (q.get("economia") or {}).items() if v is not None})
         if "separacion_edificios_m" in q:
             ctx["comun"]["separacion_edificios_m"] = q["separacion_edificios_m"]
-        r = variante(ctx, float(q["ang"]), float(q["pct"]), q.get("uni_en", "abajo"), q.get("remate", "fondo_saco"),
-                     bool(q.get("acera", False)))
+        if q.get("estrategia") == "perimetral":
+            r = variante_perimetral(ctx, float(q.get("acceso_pos", 0.5)), q.get("interior", "zona_comun"),
+                                    bool(q.get("acera", False)))
+        else:
+            r = variante(ctx, float(q["ang"]), float(q["pct"]), q.get("uni_en", "abajo"), q.get("remate", "fondo_saco"),
+                         bool(q.get("acera", False)))
         r["id"] = "VISOR"
         exportar_dxf(r, ctx, carpeta / "visor.dxf")
         (carpeta / "visor.svg").write_text(svg_variante(r, ctx), encoding="utf-8")
@@ -939,11 +1203,11 @@ def main(argv=None) -> int:
     lineas = [f"VARIANTES DE ORDENACIÓN (reglas fijas, sin IA) — {ctx['nombre']}",
               f"Superficie {ctx['sup']:.0f} m² · edificabilidad {ctx['sup'] * ctx['comun']['edificabilidad_m2m2']:.0f} m²c"
               f" · máx. {ctx['comun']['viviendas_max']} viv · {len(rs)} variantes generadas", "",
-              f"{'Id':<6}{'OK':<4}{'Uni%':>5} {'Uni en':<7}{'Remate':<11}{'Acera':<6}{'Casas':>6}{'Pisos':>6}"
+              f"{'Id':<6}{'OK':<4}{'Uni%':>5} {'Uni en':<10}{'Remate':<11}{'Acera':<6}{'Casas':>6}{'Pisos':>6}"
               f"{'Viv':>5}{'m²c':>7}{'Plazas':>9}{'Ocup.B%':>8}{'F.saco':>7}"]
     for r in rs:
         lineas.append(f"{r['id']:<6}{'✔' if r['cumple'] else '✘':<4}{r['pct_zona_unifamiliar']:>5} "
-                      f"{r['unifamiliar_en']:<7}{r['remate']:<11}{'sí' if r['acera'] else 'no':<6}{r['casas']:>6}"
+                      f"{r['unifamiliar_en']:<10}{r['remate']:<11}{'sí' if r['acera'] else 'no':<6}{r['casas']:>6}"
                       f"{r['pisos']:>6}{r['viviendas']:>5}{r['techo_m2']:>7.0f}"
                       f"{str(r['plazas']) + '/' + str(r['plazas_necesarias']):>9}{r['ocupacion_B_pct']:>8.1f}"
                       f"{r['fondo_saco_m']:>7.0f}")
