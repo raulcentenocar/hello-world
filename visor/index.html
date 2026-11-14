@@ -100,6 +100,7 @@ details[open] summary { margin-bottom: 8px; }
 .notas { margin: 0; padding-left: 18px; font-size: 12.5px; color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
 .notas li.aviso { color: var(--warn); }
 .pista { font-size: 12.5px; color: var(--muted); margin: 0; }
+.seg.producto button { padding: 9px 4px; font-weight: 500; }
 .prog { display: grid; grid-template-columns: 1fr auto auto; gap: 4px 10px; align-items: center; font-size: 13px; }
 .prog input { width: 64px; background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 3px 5px; font-family: var(--f-num); text-align: right; }
 .prog .cab { color: var(--muted); font-size: 12px; }
@@ -155,43 +156,50 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
 <main class="mesa">
   <!-- Parámetros -->
   <section class="panel" aria-labelledby="h-param">
-    <h2 id="h-param">Ordenación</h2>
+    <h2 id="h-param">¿Qué quieres construir?</h2>
+    <div class="seg producto" id="producto" role="group" aria-label="Producto">
+      <button type="button" data-v="adosadas" aria-pressed="true">Solo adosadas</button>
+      <button type="button" data-v="bloques" aria-pressed="false">Solo bloques</button>
+      <button type="button" data-v="mezcla" aria-pressed="false">Mezcla</button>
+    </div>
+    <p class="pista" id="producto-txt"></p>
+    <h2>Ordenación</h2>
     <div class="grupo">
-      <div class="campo">
+      <div class="campo" data-en="ad-per ad-par">
         <label>Patrón de implantación</label><span></span>
         <div class="seg" id="estrategia" role="group" aria-label="Patrón de implantación">
           <button type="button" data-v="calles_paralelas" aria-pressed="true">Calles paralelas</button>
           <button type="button" data-v="perimetral" aria-pressed="false">Perimetral + anillo</button>
         </div>
       </div>
-      <div class="campo solo-per">
+      <div class="campo" data-en="ad-per">
         <label for="acc">Posición del acceso</label><output id="acc-o" class="num">50 %</output>
         <input id="acc" type="range" min="0.1" max="0.9" step="0.05" value="0.5">
       </div>
-      <div class="campo solo-per">
+      <div class="campo" data-en="ad-per">
         <label>Interior del anillo</label><span></span>
         <div class="seg" id="interior" role="group" aria-label="Interior del anillo">
           <button type="button" data-v="zona_comun" aria-pressed="true">Zona común</button>
           <button type="button" data-v="casas" aria-pressed="false">Casas + zona común</button>
         </div>
       </div>
-      <div class="campo solo-par">
+      <div class="campo" data-en="mezcla">
         <label for="pct">Suelo para casas</label><output id="pct-o" class="num">60 %</output>
-        <input id="pct" type="range" min="0" max="100" step="5" value="60">
+        <input id="pct" type="range" min="10" max="90" step="5" value="60">
       </div>
-      <div class="campo solo-par">
+      <div class="campo" data-en="mezcla">
         <label>Casas al</label><span></span>
         <div class="seg" id="lado" role="group" aria-label="Lado de las casas">
           <button type="button" data-v="abajo" aria-pressed="true">S</button>
           <button type="button" data-v="arriba" aria-pressed="false">N</button>
         </div>
       </div>
-      <div class="campo solo-par">
-        <label for="ang">Orientación de hileras</label><output id="ang-o" class="num">0,5°</output>
+      <div class="campo" data-en="ad-par bloq mezcla">
+        <label for="ang" id="ang-lbl">Orientación de hileras</label><output id="ang-o" class="num">0,5°</output>
         <input id="ang" type="range" min="0" max="179.5" step="0.5" value="0.5">
         <select id="ang-sel" aria-label="Orientaciones de las fachadas" style="grid-column: 1 / -1"></select>
       </div>
-      <div class="campo solo-par">
+      <div class="campo" data-en="ad-par mezcla">
         <label>Final de la calle</label><span></span>
         <div class="seg" id="remate" role="group" aria-label="Final de la calle de casas">
           <button type="button" data-v="fondo_saco" aria-pressed="false">Fondo de saco</button>
@@ -199,7 +207,7 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
           <button type="button" data-v="lazo" aria-pressed="false">Lazo</button>
         </div>
       </div>
-      <div class="campo">
+      <div class="campo" data-en="ad-per ad-par mezcla">
         <label>Acera en la calle</label><span></span>
         <div class="seg" id="acera" role="group" aria-label="Acera">
           <button type="button" data-v="0" aria-pressed="false">No</button>
@@ -208,7 +216,7 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
       </div>
     </div>
 
-    <details open>
+    <details open data-en="bloq mezcla">
       <summary>Programa de pisos</summary>
       <div class="prog" id="programa"></div>
       <p class="fuente">Construido por vivienda (sin núcleo) y reparto objetivo. Cada portal da a una vivienda pasante a cada lado.</p>
@@ -388,7 +396,7 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
       sel.appendChild(o);
     });
     var libre = document.createElement("option"); libre.value = "libre"; libre.textContent = "Ángulo libre"; sel.appendChild(libre);
-    params = { estrategia: "perimetral", ang: Math.round(angs[0] * 2) / 2, pct: 60, uni_en: "abajo", remate: "martillo", acera: true,
+    params = { producto: "adosadas", estrategia: "perimetral", ang: Math.round(angs[0] * 2) / 2, pct: 60, uni_en: "abajo", remate: "martillo", acera: true,
       acceso_pos: 0.3, interior: "zona_comun" };
     pintarHipotesis(); pintarPrograma(); pintarEconomia(); pintarUrbanismo(); sincronizarControles();
     variantes = []; fijadas = []; idActiva = null; pintarGaleria(); pintarComparacion();
@@ -453,10 +461,16 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
   // ---------------------------------------------------------------- controles
   function setSeg(id, v) { Array.prototype.forEach.call($(id).querySelectorAll("button"), function (b) { b.setAttribute("aria-pressed", String(b.dataset.v === String(v))); }); }
   function sincronizarControles() {
-    var per = params.estrategia === "perimetral";
-    setSeg("estrategia", params.estrategia);
-    Array.prototype.forEach.call(document.querySelectorAll(".solo-per"), function (e) { e.hidden = !per; });
-    Array.prototype.forEach.call(document.querySelectorAll(".solo-par"), function (e) { e.hidden = per; });
+    var modo = params.producto === "bloques" ? "bloq" : params.producto === "mezcla" ? "mezcla"
+      : (params.estrategia === "perimetral" ? "ad-per" : "ad-par");
+    setSeg("producto", params.producto); setSeg("estrategia", params.estrategia);
+    Array.prototype.forEach.call(document.querySelectorAll("[data-en]"), function (e) { e.hidden = e.dataset.en.split(" ").indexOf(modo) < 0; });
+    $("ang-lbl").textContent = params.producto === "bloques" ? "Orientación de los bloques" : "Orientación de hileras";
+    $("producto-txt").textContent = {
+      adosadas: "Solo viviendas unifamiliares adosadas, con jardín y plazas en su parcela.",
+      bloques: "Solo viviendas en bloque, por portales, con aparcamiento en superficie.",
+      mezcla: "Casas y bloques: la línea verde reparte el suelo entre las dos zonas."
+    }[params.producto];
     $("acc").value = params.acceso_pos; $("acc-o").textContent = fmt(100 * params.acceso_pos) + " %";
     setSeg("interior", params.interior);
     $("pct").value = params.pct; $("pct-o").textContent = fmt(params.pct) + " %";
@@ -479,7 +493,15 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
   segClick("lado", function (v) { params.uni_en = v; sincronizarControles(); recalcular(); });
   segClick("remate", function (v) { params.remate = v; sincronizarControles(); recalcular(); });
   segClick("acera", function (v) { params.acera = v === "1"; sincronizarControles(); recalcular(); });
-  segClick("estrategia", function (v) { params.estrategia = v; sincronizarControles(); recalcular(); });
+  segClick("estrategia", function (v) { params.estrategia = v; if (v === "calles_paralelas") params.pct = 100; sincronizarControles(); recalcular(); });
+  segClick("producto", function (v) {
+    params.producto = v;
+    if (v === "adosadas") { params.estrategia = params.estrategia === "calles_paralelas" && params.pct === 100 ? "calles_paralelas" : "perimetral"; if (params.estrategia === "calles_paralelas") params.pct = 100; }
+    else if (v === "bloques") { params.estrategia = "calles_paralelas"; params.pct = 0; }
+    else { params.estrategia = "calles_paralelas"; if (params.pct <= 0 || params.pct >= 100) params.pct = 60; }
+    variantes = []; idActiva = null; pintarGaleria();
+    sincronizarControles(); recalcular();
+  });
   segClick("interior", function (v) { params.interior = v; sincronizarControles(); recalcular(); });
   $("acc").addEventListener("input", function (e) { params.acceso_pos = +e.target.value; $("acc-o").textContent = fmt(100 * params.acceso_pos) + " %"; programar(); });
   segClick("vista", function (v) { vista = v; setSeg("vista", v); pintarPlano(); });
@@ -717,6 +739,7 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
 
   // ---------------------------------------------------------------- banco de variantes
   $("generar").addEventListener("click", function () {
+    ctx.barrido.producto = params.producto;
     var btn = $("generar"), comb = Motor.combinaciones(ctx), res = [], vistos = {}, i = 0;
     btn.disabled = true; btn.textContent = "Generando…";
     function paso() {
@@ -756,13 +779,18 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
         '<span class="t1"><b>' + r.id + '</b><span class="tag ' + (r.cumple ? "si" : "no") + '">' + (r.cumple ? "cumple" : "no cumple") + "</span></span>" +
         '<span class="t1"><span>' + r.casas + "+" + r.pisos + " = " + r.viviendas + " viv</span><span>" + fmt(r.techo_m2) + " m²c</span></span>" +
         (r.estrategia === "perimetral" ? '<span class="t2">Perimetral + anillo · acceso ' + fmt(100 * r.acceso_pos) + " % · interior " + r.interior.replace("_", " ") + " · acera "
-          : '<span class="t2">' + fmt(r.pct_zona_unifamiliar) + " % casas " + r.unifamiliar_en + " · " + r.remate.replace("_", " ") + " · acera ") + (r.acera ? "sí" : "no") + " · plazas " + r.plazas + "/" + r.plazas_necesarias + " · jardín S " + fmt(r.jardines_a_sur_pct) + " % · viario " + fmt(r.viario_m2_por_vivienda) + " m²/viv" + (r.economia.estado === "OK" ? " · " + fmt(r.economia.beneficio_eur / 1000) + " k€" : "") + "</span></button>";
+          : r.pct_zona_unifamiliar <= 0 ? '<span class="t2">Solo bloques · orientación ' + fmt(r.angulo_hileras, 1) + "° · aparcamiento en superficie"
+          : r.pct_zona_unifamiliar >= 100 ? '<span class="t2">Adosadas en calles paralelas · ' + r.remate.replace("_", " ") + " · acera "
+          : '<span class="t2">' + fmt(r.pct_zona_unifamiliar) + " % casas " + r.unifamiliar_en + " · " + r.remate.replace("_", " ") + " · acera ") + (r.acera ? "sí" : "no") + " · plazas " + r.plazas + "/" + r.plazas_necesarias + (r.casas ? " · jardín S " + fmt(r.jardines_a_sur_pct) + " %" : " · " + r.portales + " portales") + " · viario " + fmt(r.viario_m2_por_vivienda) + " m²/viv" + (r.economia.estado === "OK" ? " · " + fmt(r.economia.beneficio_eur / 1000) + " k€" : "") + "</span></button>";
     }).join("") + (lista.length > 48 ? '<p class="vacio">Se muestran 48 de ' + lista.length + '.</p>' : "") + (!lista.length ? '<p class="vacio">Ninguna variante cumple todas las comprobaciones.</p>' : "");
   }
   $("galeria").addEventListener("click", function (e) {
     var t = e.target.closest(".tarjeta"); if (!t) return;
     var r = variantes.filter(function (x) { return x.id === t.dataset.id; })[0]; if (!r) return;
-    idActiva = r.id; params = Object.assign({}, r.params); sincronizarControles(); recalcular(); pintarGaleria();
+    idActiva = r.id; params = Object.assign({}, r.params);
+    params.producto = r.estrategia === "perimetral" || r.pct_zona_unifamiliar >= 100 ? "adosadas" : r.pct_zona_unifamiliar <= 0 ? "bloques" : "mezcla";
+    params.estrategia = r.estrategia;
+    sincronizarControles(); recalcular(); pintarGaleria();
     $("plano").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
   });
 

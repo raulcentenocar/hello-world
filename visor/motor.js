@@ -66,7 +66,7 @@
     unifamiliar_en: ["abajo", "arriba"],
     remate: ["fondo_saco", "martillo", "lazo"],
     acera: [false, true],
-    estrategias: ["calles_paralelas", "perimetral"], acceso_pos: [0.3, 0.5, 0.7], interior: ["zona_comun", "casas"]
+    producto: "todo", estrategias: ["calles_paralelas", "perimetral"], acceso_pos: [0.3, 0.5, 0.7], interior: ["zona_comun", "casas"]
   };
 
   // ------------------------------------------------------------------ geometría
@@ -876,9 +876,16 @@
     return a.map(Number);
   }
   function combinaciones(ctx) {
-    var b = ctx.barrido, out = [];
-    if (b.estrategias.indexOf("calles_paralelas") >= 0) angulos(ctx).forEach(function (ang) {
-      b.pct_zona_unifamiliar.forEach(function (pct) {
+    var b = ctx.barrido, out = [], prod = b.producto || "todo";
+    var pcts = prod === "adosadas" ? [100] : prod === "bloques" ? [0]
+      : prod === "mezcla" ? b.pct_zona_unifamiliar.filter(function (x) { return x > 0 && x < 100; }) : b.pct_zona_unifamiliar;
+    var angs = angulos(ctx);
+    if (prod === "bloques") {
+      var st = {}; angs.forEach(function (a) { st[a] = 1; st[Math.round(((a + 90) % 180) * 100) / 100] = 1; });
+      angs = Object.keys(st).map(Number).sort(function (x, y) { return x - y; });
+    }
+    if (b.estrategias.indexOf("calles_paralelas") >= 0) angs.forEach(function (ang) {
+      pcts.forEach(function (pct) {
         b.unifamiliar_en.forEach(function (ue) {
           b.remate.forEach(function (rem) {
             b.acera.forEach(function (ac) {
@@ -890,7 +897,7 @@
         });
       });
     });
-    if (b.estrategias.indexOf("perimetral") >= 0) b.acceso_pos.forEach(function (pos) {
+    if (b.estrategias.indexOf("perimetral") >= 0 && (prod === "todo" || prod === "adosadas")) b.acceso_pos.forEach(function (pos) {
       b.interior.forEach(function (inter) {
         b.acera.forEach(function (ac) { out.push({ estrategia: "perimetral", acceso_pos: pos, interior: inter, acera: ac }); });
       });

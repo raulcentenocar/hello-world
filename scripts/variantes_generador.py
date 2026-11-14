@@ -142,6 +142,8 @@ BARRIDO_DEFECTO = {
     "unifamiliar_en": ["abajo", "arriba"],
     "remate": ["fondo_saco", "martillo", "lazo"],
     "acera": [False, True],
+    # Producto: "adosadas" (solo casas), "bloques" (solo pisos), "mezcla" (casas + pisos) o "todo"
+    "producto": "todo",
     # Estrategias (patrones del catálogo `patrones/`) y parámetros propios de P02
     "estrategias": ["calles_paralelas", "perimetral"],
     "acceso_pos": [0.3, 0.5, 0.7],          # posición del acceso a lo largo del lindero de acceso (0-1)
@@ -1018,9 +1020,15 @@ def barrer(ctx, objetivo="ranking"):
     b = ctx["barrido"]
     res, vistos = [], set()
     combos = []
+    prod = b.get("producto", "todo")
+    pcts = {"adosadas": [100], "bloques": [0],
+            "mezcla": [x for x in b["pct_zona_unifamiliar"] if 0 < x < 100]}.get(prod, b["pct_zona_unifamiliar"])
+    angs = angulos(ctx)
+    if prod == "bloques":   # sin casas: se prueban también los bloques perpendiculares a cada fachada
+        angs = sorted(set(angs) | {round((a + 90) % 180, 2) for a in angs})
     if "calles_paralelas" in b["estrategias"]:
         combos += [("calles_paralelas",) + t for t in itertools.product(
-            angulos(ctx), b["pct_zona_unifamiliar"], b["unifamiliar_en"], b["remate"], b["acera"])]
+            angs, pcts, b["unifamiliar_en"], b["remate"], b["acera"])]
     for est, *resto in combos:
         ang, pct, ue, rem, ac = resto
         if pct in (0, 100) and ue != b["unifamiliar_en"][0]:
@@ -1033,7 +1041,7 @@ def barrer(ctx, objetivo="ranking"):
         if clave not in vistos:
             vistos.add(clave)
             res.append(r)
-    if "perimetral" in b["estrategias"]:
+    if "perimetral" in b["estrategias"] and prod in ("todo", "adosadas"):
         for pos, inter, ac in itertools.product(b["acceso_pos"], b["interior"], b["acera"]):
             r = variante_perimetral(ctx, pos, inter, ac)
             clave = ("perimetral", ac, r["casas"], r["plazas"], math.floor(r["zona_comun_m2"] + 0.5),
@@ -1189,6 +1197,8 @@ def main(argv=None) -> int:
     p.add_argument("--top", type=int, default=9, help="Variantes en la lámina (por defecto 9)")
     p.add_argument("--salida", type=Path, default=None, help="Carpeta (por defecto planos/variantes/<nombre>)")
     p.add_argument("--dxf", default=None, help="Exportar a DXF la variante indicada (p. ej. V001)")
+    p.add_argument("--producto", default=None, choices=["adosadas", "bloques", "mezcla", "todo"],
+                   help="Qué se quiere construir: solo adosadas, solo bloques, mezcla o todo")
     p.add_argument("--objetivo", default="ranking", choices=sorted(OBJETIVOS),
                    help="Criterio de orden tras el cumplimiento (por defecto: ranking)")
     p.add_argument("--parametros", default=None,
@@ -1224,6 +1234,8 @@ def main(argv=None) -> int:
         print("PENDIENTE DE VALIDAR POR EL ARQUITECTO")
         return 0
 
+    if args.producto:
+        ctx["barrido"]["producto"] = args.producto
     rs = barrer(ctx, args.objetivo)
     top = rs[: args.top]
     (carpeta / "lamina.svg").write_text(svg_lamina(top, ctx), encoding="utf-8")
