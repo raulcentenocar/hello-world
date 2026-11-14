@@ -380,11 +380,13 @@ Se usan las claves de `scripts/ejemplos/ejemplo_ficticio.json` y de `scripts/LEE
   - **Unifamiliar: 3 m.** El generador usa un único valor como distancia mínima de cualquier punto del edificio al lindero de la parcela. A UA-03-02 y ZV-02 llegan los extremos de hilera (3 m) o los testeros (3 m). El 0 m de la cédula solo se aplica a la medianera entre viviendas de la misma hilera, que el generador ya resuelve al adosar.
   - **Multifamiliar: 5 m** (linderos = testeros = 5 m).
 - `viviendas_max` = **34** (cédula y decisión del arquitecto (PAUSA F1)).
-- `fondo_edificable_m`, `separacion_edificios_m`, `longitud_max_bloque_m` = **null → FALTA DATO** (no figuran en la cédula). Las tipologías `unifamiliar_adosada`, `bloque_abierto` y `torre` necesitan la separación entre edificios, así que no se pueden generar completas hasta tener ese dato.
+- `separacion_edificios_m` = **6**. Es un **dato PROVISIONAL del arquitecto (PAUSA F1, rev. 2)**, **no procede de la cédula** y está pendiente de confirmar con la normativa del Plan Parcial. `scripts/LEEME_volumetria.md` reserva el bloque `urbanismo` para valores de la ficha o la norma. Este valor se incluye ahí por indicación expresa del arquitecto y se identifica como provisional en este texto y en la tabla final. Con él ya se pueden generar `unifamiliar_adosada`, `bloque_abierto` y `torre`. El generador aplica un único valor a todas las separaciones, aunque su alcance no está confirmado (riesgo 4.16).
+- `fondo_edificable_m`, `longitud_max_bloque_m` = **null → FALTA DATO** (no figuran en la cédula). Con `longitud_max_bloque_m: null`, el generador no limita la longitud de hilera ni de bloque. **Tampoco modela la agrupación de 8 en 8** de la decisión del arquitecto (PAUSA F1, rev. 2), así que F2 tendrá que comprobarla a mano (riesgo 4.15).
+- El generador **no modela el aparcamiento en superficie** (68 plazas). F2 tendrá que comprobar que cabe en el suelo libre (riesgo 4.5).
 - `atico` y `computo` = **null**: no figuran en la cédula. El generador no genera ático y computa al 100 % cualquier concepto no computable que F2 declare como hipótesis, que es lo conservador.
 - No se incluye bloque `hipotesis`, porque son parámetros de diseño de F2.
 
-**Mezcla (decisión del arquitecto (PAUSA F1)).** Se mantienen **dos bloques**, uno por uso, cada uno sobre **la parcela completa**. Son las envolventes de cada tipo y **no representan la mezcla**. Al ser una mezcla, **F2 tendrá que repartir la parcela, la edificabilidad (5.100 m²c en total) y las viviendas (34 en total) entre los dos tipos**. Eso es una decisión de diseño, no de urbanismo. Si F2 ejecuta cada bloque sobre una subparcela, tendrá que ajustar `coordenadas`, `superficie_oficial_m2`, `edificabilidad_m2m2` y `viviendas_max` de cada bloque para que **la suma no supere 5.100 m²c ni 34 viviendas**. También tendrá que declarar como hipótesis la regla de ocupación y la separación entre las dos partes, que son FALTA DATO (sección 2.3). Si cada bloque se ejecuta tal cual, el generador limitará a 34 viviendas **cada uno**, no la suma.
+**Mezcla (decisión del arquitecto (PAUSA F1)).** Se mantienen **dos bloques**, uno por uso, cada uno sobre **la parcela completa**. Son las envolventes de cada tipo y **no representan la mezcla**. Al ser una mezcla dentro de **una sola promoción** (decisión del arquitecto (PAUSA F1, rev. 2)), **F2 tendrá que repartir la parcela, la edificabilidad (5.100 m²c en total) y las viviendas (34 en total) entre los dos tipos, en varias variantes** (decisión del arquitecto (PAUSA F1, rev. 2)). Eso es una decisión de diseño, no de urbanismo. Si F2 ejecuta cada bloque sobre una subparcela, tendrá que ajustar `coordenadas`, `superficie_oficial_m2`, `edificabilidad_m2m2` y `viviendas_max` de cada bloque para que **la suma no supere 5.100 m²c ni 34 viviendas**. También tendrá que declarar como hipótesis la regla de ocupación (FALTA DATO) y si aplica los 6 m provisionales entre las dos partes, que está pendiente de confirmar (sección 2.3). Si cada bloque se ejecuta tal cual, el generador limitará a 34 viviendas **cada uno**, no la suma.
 
 ### 6.1 UNIFAMILIAR (envolvente sobre la parcela completa)
 
@@ -411,7 +413,7 @@ Se usan las claves de `scripts/ejemplos/ejemplo_ficticio.json` y de `scripts/LEE
     "retranqueo_fachada_m": 3,
     "retranqueo_linderos_m": 3,
     "fondo_edificable_m": null,
-    "separacion_edificios_m": null,
+    "separacion_edificios_m": 6,
     "longitud_max_bloque_m": null,
     "viviendas_max": 34,
     "atico": null,
@@ -446,7 +448,7 @@ Se usan las claves de `scripts/ejemplos/ejemplo_ficticio.json` y de `scripts/LEE
     "retranqueo_fachada_m": 5,
     "retranqueo_linderos_m": 5,
     "fondo_edificable_m": null,
-    "separacion_edificios_m": null,
+    "separacion_edificios_m": 6,
     "longitud_max_bloque_m": null,
     "viviendas_max": 34,
     "atico": null,
@@ -467,7 +469,7 @@ Se usan las claves de `scripts/ejemplos/ejemplo_ficticio.json` y de `scripts/LEE
 | retranqueo_fachada_m | 3 | 5 | Cédula (alineación exterior; lados 1 y 2) |
 | retranqueo_linderos_m | 3 (UA-03-02 y ZV-02; extremo de hilera = testero = 3; 0 solo entre viviendas) | 5 (UA-03-02 y ZV-02; linderos = testeros = 5) | Cédula + decisión del arquitecto (PAUSA F1) para la ZV-02 |
 | viviendas_max | 34 | 34 | Cédula; decisión del arquitecto (PAUSA F1). **Total compartido** en la mezcla |
-| separacion_edificios_m | null, **FALTA DATO** | null, **FALTA DATO** | No figura en la cédula |
+| separacion_edificios_m | 6, **PROVISIONAL** | 6, **PROVISIONAL** | **Dato provisional del arquitecto (PAUSA F1, rev. 2).** No figura en la cédula. Pendiente de confirmar con la normativa del Plan Parcial (riesgo 4.16) |
 | fondo_edificable_m | null, **FALTA DATO** | null, **FALTA DATO** | No figura en la cédula |
 | longitud_max_bloque_m | null, **FALTA DATO** | null, **FALTA DATO** | No figura en la cédula |
 | atico | null, **FALTA DATO** | null, **FALTA DATO** | No figura en la cédula |
