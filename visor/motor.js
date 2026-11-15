@@ -54,7 +54,7 @@
     tipos_piso: { "2D": { construida_m2: 85.0 }, "3D": { construida_m2: 105.0 }, "4D": { construida_m2: 125.0 } },
     mix_pisos_pct: { "2D": 30, "3D": 50, "4D": 20 }, nucleo_ancho_m: 5.0,
     plazas_accesibles: 2, transferencia_accesible_m: 1.2, altura_planta_m: 3.0, calzada_m: 6.0, plaza_ancho_m: 2.5, plaza_fondo_m: 5.0,
-    paso_peatonal_casa_m: 1.5, acera_m: 1.5, martillo_largo_m: 12.0, fondo_saco_max_m: 20.0,
+    paso_peatonal_casa_m: 1.5, acera_m: 1.5, plataforma_unica_m: 7.0, martillo_largo_m: 12.0, fondo_saco_max_m: 20.0,
     distancia_aparcamiento_edificio_m: 2.0, aparcamiento_fuera_retranqueo: true,
     paso_rejilla_m: 0.5, paso_fase_m: 2.0, zona_comun_min_m2: 400.0, tolerancia_frente_grados: 15.0,
     programa_zona_comun: [["piscina adultos + playa", 150, 1], ["piscina infantil", 30, 1], ["juegos infantiles", 80, 1],
@@ -65,7 +65,7 @@
     pct_zona_unifamiliar: [0, 30, 40, 50, 60, 70, 80, 100],
     unifamiliar_en: ["abajo", "arriba"],
     remate: ["fondo_saco", "martillo", "lazo"],
-    acera: [false, true],
+    acera: [false, true, "plataforma"],
     producto: "todo", estrategias: ["calles_paralelas", "perimetral"], acceso_pos: [0.3, 0.5, 0.7], interior: ["zona_comun", "casas"]
   };
 
@@ -241,7 +241,7 @@
         y += modulo;
       }
       var a = rects.reduce(function (s, r) { return s + areaR(r); }, 0);
-      if (a > mejorA) { mejor = rects; mejorA = a; }
+      if (a > mejorA + 1e-6) { mejor = rects; mejorA = a; }
     }
     return mejor;
   }
@@ -421,9 +421,15 @@
   }
 
   // ------------------------------------------------------------------ una variante
+  function tipoCalle(hip, acera) {
+    if (acera === "plataforma") return { hip: Object.assign({}, hip, { calzada_m: hip.plataforma_unica_m }), banda: false, itinerario: true };
+    var banda = acera === true || acera === "acera";
+    return { hip: hip, banda: banda, itinerario: banda };
+  }
   function variante(ctx, p) {
-    var ang = p.ang, pct = p.pct, uniEn = p.uni_en, remate = p.remate, acera = !!p.acera;
-    var hip = ctx.hip, com = ctx.comun, sep = +com.separacion_edificios_m, c = ctx.centro;
+    var ang = p.ang, pct = p.pct, uniEn = p.uni_en, remate = p.remate, aceraIn = p.acera;
+    var tc = tipoCalle(ctx.hip, aceraIn), acera = tc.banda, itinerario = tc.itinerario;
+    var hip = tc.hip, com = ctx.comun, sep = +com.separacion_edificios_m, c = ctx.centro;
     var pts = rotPts(ctx.pts, -ang, c), poly = poligono(pts), ls = lados(pts, ctx.ccw);
     var acc = union(ls.filter(function (l) { return ctx.accesos.has(l.indice); }).map(function (l) { return l.seg; })).buffer(0.5, QS);
     var notas = [], avisos = [], Cz = hip.calzada_m;
@@ -642,6 +648,15 @@
     var bolsas = elegido.ap.bolsas, vialesBolsa = elegido.ap.viales_bolsa, nBolsa = elegido.ap.n_bolsa;
     var largoBolsa = elegido.ap.largo_bolsa, accesibles = elegido.ap.accesibles;
 
+    // Espacio libre comunitario de la zona de bloques
+    var zonaComunM = vacio();
+    if (nPisos && !Zm.isEmpty()) {
+      var ocM = union(bloques.map(R).concat(bolsas.map(R), vialesBolsa, accesibles.map(R), mods.map(function (m) { return m.calzada; }), remates));
+      zonaComunM = ocM.isEmpty() ? Zm : limpia(Zm.difference(ocM.buffer(hip.distancia_aparcamiento_edificio_m, QS)));
+      if (corteG) zonaComunM = limpia(zonaComunM.difference(corteG));
+    }
+    if (mods.length && aceraIn === "plataforma") notas.push("Calle de plataforma única de " + hip.calzada_m.toFixed(1) + " m (coexistencia, sin acera separada).");
+
     // 4. Comprobaciones
     var huellaU = casas.reduce(function (s, r) { return s + areaR(r); }, 0);
     var huellaM = bloques.reduce(function (s, r) { return s + areaR(r); }, 0);
@@ -653,7 +668,7 @@
     var chk = {
       hay_viviendas: viv > 0, viviendas: viv <= vmax, techo: techo <= Emax + 0.5, plazas: plazas >= necesarias && !(nAccR && !accesibles.length),
       ocupacion_A: ocAu <= ctx.uni.ocupacion_pct + 1e-6 && ocAm <= ctx.multi.ocupacion_pct + 1e-6,
-      fondo_saco_SI5: fondoSaco <= hip.fondo_saco_max_m + 1e-6, itinerario_peatonal: acera || !mods.length
+      fondo_saco_SI5: fondoSaco <= hip.fondo_saco_max_m + 1e-6, itinerario_peatonal: itinerario || !mods.length
     };
     if (!chk.plazas) avisos.push(plazas < necesarias ? "Faltan " + (necesarias - plazas) + " plazas." : "Faltan las plazas accesibles.");
     if (!chk.fondo_saco_SI5) avisos.push("Calle sin salida de " + Math.round(fondoSaco) + " m sin espacio de maniobra (DB-SI SI 5, revisar).");
@@ -673,7 +688,7 @@
       bolsas: bolsas.map(function (r) { return back(R(r)); }), bloques: bloques.map(function (r) { return back(R(r)); }),
       aceras: aceras.map(function (r) { return back(R(r)); }),
       pisos: pisosGeo.map(function (p) { return back(R(p[0])); }), nucleos: nucleos.map(function (r) { return back(R(r)); }),
-      accesibles: accesibles.map(function (r) { return back(R(r)); }),
+      accesibles: accesibles.map(function (r) { return back(R(r)); }), zona_comun: back(zonaComunM),
       corte: corteG ? back(linea([bp[0] - 1, yc], [bp[2] + 1, yc]).intersection(poly)) : null
     };
     var r1 = function (x) { return Math.round(x * 10) / 10; };
@@ -681,11 +696,12 @@
     return {
       angulo_hileras: r1(((ang % 180) + 180) % 180), pct_zona_unifamiliar: pct,
       unifamiliar_en: (pct > 0 && pct < 100) ? ladoTxt(ang, uniEn) : (pct >= 100 ? "todo" : "—"),
-      estrategia: "calles_paralelas", uni_en_marco: uniEn, remate: remate, acera: acera,
+      estrategia: "calles_paralelas", uni_en_marco: uniEn, remate: remate, acera: aceraIn,
       casas: nCasas, pisos: nPisos, viviendas: viv, bloques: bloques.length, plantas_bloque: plM, portales: nucleos.length,
       pisos_por_planta: uPlanta, mix_pisos: mixReal, tipos_pisos_planta: pisosGeo.map(function (p) { return p[1]; }),
       plazas_accesibles: accesibles.length ? nAccR : 0, techo_casas_m2: r1(techoU), techo_pisos_m2: r1(techoM),
       economia: cuentaResultados(ctx.economia, techoU, techoM, plazas, ctx.sup, huellaU + huellaM),
+      zona_comun_m2: zonaComunM.isEmpty() ? 0 : r1(zonaComunM.getArea()),
       jardines_a_sur_pct: ind.jardines_a_sur_pct, orientacion_jardines: ind.orientacion_jardines, viario_m2: ind.viario_m2,
       viario_m2_por_vivienda: ind.viario_m2_por_vivienda, zona_comun_programa_m2: ind.zona_comun_programa_m2, zona_comun_programa: ind.zona_comun_programa,
       plantas_casa: Math.floor(ctx.uni.plantas_max),
@@ -712,7 +728,7 @@
       var a = g[0].a, b = g[g.length - 1].b, dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy);
       var nrm = ccw ? [-dy / L, dx / L] : [dy / L, -dx / L];
       return { lados: g, indices: new Set(g.map(function (l) { return l.indice; })), a: a, b: b, largo: L, normal: nrm,
-        segs: union(g.map(function (l) { return l.seg; })) };
+        segs: union(g.map(function (l) { return l.seg; })), linea: linea(a, b) };
     });
   }
   function filasEnFrente(zona, f, y0, h, hip, sep, c) {
@@ -728,8 +744,9 @@
     });
     return { hileras: hileras, giro: giro, ye: ye };
   }
-  function variantePerimetral(ctx, accesoPos, interior, acera) {
-    var hip = ctx.hip, com = ctx.comun, sep = +com.separacion_edificios_m, poly = ctx.poly, c = ctx.centro;
+  function variantePerimetral(ctx, accesoPos, interior, aceraIn) {
+    var tc = tipoCalle(ctx.hip, aceraIn), acera = tc.banda, itinerario = tc.itinerario;
+    var hip = tc.hip, com = ctx.comun, sep = +com.separacion_edificios_m, poly = ctx.poly, c = ctx.centro;
     var ls = lados(ctx.pts, ctx.ccw);
     var F = hip.fondo_casa_m, P = hip.plaza_fondo_m, Cz = hip.calzada_m, Jd = hip.jardin_trasero_m, a_ = acera ? hip.acera_m : 0;
     var u = ctx.uni, U = zonaRetranqueos(poly, ls, ctx.fachadas, u.retranqueo_fachada_m, u.retranqueo_linderos_m);
@@ -739,7 +756,7 @@
       f.d = Math.max(r, Jd); f.D = f.d + F + P + a_;
     });
     var notas = [], avisos = [];
-    function interiorA(dist) { return limpia(poly.difference(union(fs.map(function (f) { return f.segs.buffer(dist(f), QS); })))); }
+    function interiorA(dist) { return limpia(poly.difference(union(fs.map(function (f) { return f.linea.buffer(dist(f), QS); })))); }
     var I1 = interiorA(function (f) { return f.D; }), I2 = interiorA(function (f) { return f.D + Cz; });
     var anillo = limpia(I1.difference(I2));
     var aceras = acera ? [limpia(interiorA(function (f) { return f.D - a_; }).difference(I1))] : [];
@@ -832,7 +849,7 @@
     var huella = eleg.reduce(function (s, x) { return s + x.casa.getArea(); }, 0), techo = n * hip.sup_casa_m2;
     var necesarias = Math.floor(com.plazas_por_vivienda) * n, zc = zonaComun.isEmpty() ? 0 : zonaComun.getArea();
     var chk = { hay_viviendas: n > 0, viviendas: n <= vmax, techo: techo <= Emax + 0.5, plazas: plazas >= necesarias,
-      ocupacion_A: 100 * huella / ctx.sup <= u.ocupacion_pct + 1e-6, fondo_saco_SI5: !anillo.isEmpty(), itinerario_peatonal: acera,
+      ocupacion_A: 100 * huella / ctx.sup <= u.ocupacion_pct + 1e-6, fondo_saco_SI5: !anillo.isEmpty(), itinerario_peatonal: itinerario,
       zona_comun: zc >= hip.zona_comun_min_m2 };
     if (!chk.plazas) avisos.push("Faltan " + (necesarias - plazas) + " plazas.");
     if (!chk.fondo_saco_SI5) avisos.push("No se forma el anillo de calle: revisar el fondo de saco (DB-SI SI 5).");
@@ -846,7 +863,7 @@
     var indP = indicadores(n, eleg.map(function (x) { return x.rumbo; }), viarioP.length ? union(viarioP).getArea() : 0, hip);
     return {
       estrategia: "perimetral", angulo_hileras: -1.0, pct_zona_unifamiliar: 100, unifamiliar_en: "perímetro", uni_en_marco: "abajo",
-      remate: "anillo", acera: acera, acceso_pos: accesoPos, interior: interior,
+      remate: "anillo", acera: aceraIn, acceso_pos: accesoPos, interior: interior,
       casas: n, pisos: 0, viviendas: n, bloques: 0, plantas_bloque: 0, plantas_casa: Math.floor(u.plantas_max), portales: 0,
       pisos_por_planta: 0, mix_pisos: {}, tipos_pisos_planta: [], plazas_accesibles: 0,
       techo_m2: r1(techo), aprovechamiento_pct: r1(100 * techo / Emax), plazas: plazas, plazas_necesarias: necesarias,
@@ -905,7 +922,7 @@
     return out;
   }
   function calcular(ctx, p) {
-    return p.estrategia === "perimetral" ? variantePerimetral(ctx, p.acceso_pos, p.interior, !!p.acera) : variante(ctx, p);
+    return p.estrategia === "perimetral" ? variantePerimetral(ctx, p.acceso_pos, p.interior, p.acera) : variante(ctx, p);
   }
   function claveDup(r, p) {
     return p.estrategia === "perimetral"

@@ -208,10 +208,11 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
         </div>
       </div>
       <div class="campo" data-en="ad-per ad-par mezcla">
-        <label>Acera en la calle</label><span></span>
-        <div class="seg" id="acera" role="group" aria-label="Acera">
-          <button type="button" data-v="0" aria-pressed="false">No</button>
-          <button type="button" data-v="1" aria-pressed="true">Sí</button>
+        <label>Tipo de calle</label><span></span>
+        <div class="seg" id="acera" role="group" aria-label="Tipo de calle">
+          <button type="button" data-v="0" aria-pressed="false">Sin acera</button>
+          <button type="button" data-v="1" aria-pressed="true">Con acera</button>
+          <button type="button" data-v="plataforma" aria-pressed="false">Plataforma única</button>
         </div>
       </div>
     </div>
@@ -371,7 +372,7 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
   var CHK_TXT = {
     hay_viviendas: "Hay viviendas", viviendas: "Viviendas dentro del máximo", techo: "Techo dentro de la edificabilidad",
     plazas: "Plazas suficientes", zona_comun: "Zona común ≥ mínimo", ocupacion_A: "Ocupación de cada zona", fondo_saco_SI5: "Calle sin salida ≤ 20 m o con maniobra (DB-SI SI 5)",
-    itinerario_peatonal: "Acera en la calle de casas (DB-SUA 9)"
+    itinerario_peatonal: "Itinerario peatonal: acera o plataforma única (DB-SUA 9)"
   };
 
   var ctx = null, entradaActual = null, actual = null, params = null, vista = "planta";
@@ -478,7 +479,7 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
     var sel = $("ang-sel"), hay = false;
     Array.prototype.forEach.call(sel.options, function (o) { if (o.value !== "libre" && Math.abs(+o.value - params.ang) < 0.3) { sel.value = o.value; hay = true; } });
     if (!hay) sel.value = "libre";
-    setSeg("lado", params.uni_en); setSeg("remate", params.remate); setSeg("acera", params.acera ? 1 : 0);
+    setSeg("lado", params.uni_en); setSeg("remate", params.remate); setSeg("acera", params.acera === "plataforma" ? "plataforma" : params.acera ? 1 : 0);
     // Rótulo del lado según la orientación
     var a = params.ang * Math.PI / 180;
     function rumbo(dy0) { var dx = -Math.sin(a) * dy0, dy = Math.cos(a) * dy0; var r = (Math.atan2(dx, dy) * 180 / Math.PI + 360) % 360; return ["N", "NE", "E", "SE", "S", "SO", "O", "NO"][Math.floor(((r + 22.5) % 360) / 45)]; }
@@ -492,7 +493,7 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
   $("ang-sel").addEventListener("change", function (e) { if (e.target.value !== "libre") { params.ang = +e.target.value; sincronizarControles(); recalcular(); } });
   segClick("lado", function (v) { params.uni_en = v; sincronizarControles(); recalcular(); });
   segClick("remate", function (v) { params.remate = v; sincronizarControles(); recalcular(); });
-  segClick("acera", function (v) { params.acera = v === "1"; sincronizarControles(); recalcular(); });
+  segClick("acera", function (v) { params.acera = v === "plataforma" ? "plataforma" : v === "1"; sincronizarControles(); recalcular(); });
   segClick("estrategia", function (v) { params.estrategia = v; if (v === "calles_paralelas") params.pct = 100; sincronizarControles(); recalcular(); });
   segClick("producto", function (v) {
     params.producto = v;
@@ -703,8 +704,8 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
     $("c-techo").textContent = fmt(r.techo_m2); $("c-techo2").textContent = fmt(r.aprovechamiento_pct, 1) + " % de " + fmt(Emax);
     $("c-plazas").textContent = r.plazas + "/" + r.plazas_necesarias; $("c-plazas2").textContent = r.plazas_casas + " en calle + " + r.plazas_bolsa + " en bolsa";
     $("c-ocup").textContent = fmt(r.ocupacion_B_pct, 1) + " %"; $("c-ocup2").textContent = "casas " + fmt(r.ocupacion_A_uni_pct, 1) + " % · bloques " + fmt(r.ocupacion_A_multi_pct, 1) + " %";
-    var zcTxt = r.estrategia === "perimetral"
-      ? fmt(r.zona_comun_m2) + " / " + fmt(r.zona_comun_programa_m2) + " m²"
+    var zcTxt = (r.estrategia === "perimetral" || r.pisos)
+      ? fmt(r.zona_comun_m2 || 0) + " / " + fmt(r.zona_comun_programa_m2) + " m²"
       : "no se reserva · programa " + fmt(r.zona_comun_programa_m2) + " m²";
     var orient = Object.keys(r.orientacion_jardines || {}).map(function (k) { return k + " " + r.orientacion_jardines[k]; }).join(" · ");
     $("criterios").innerHTML = '<div class="tabla-min">' +
@@ -780,8 +781,8 @@ textarea { width: 100%; min-height: 140px; background: var(--soft); border: 1px 
         '<span class="t1"><span>' + r.casas + "+" + r.pisos + " = " + r.viviendas + " viv</span><span>" + fmt(r.techo_m2) + " m²c</span></span>" +
         (r.estrategia === "perimetral" ? '<span class="t2">Perimetral + anillo · acceso ' + fmt(100 * r.acceso_pos) + " % · interior " + r.interior.replace("_", " ") + " · acera "
           : r.pct_zona_unifamiliar <= 0 ? '<span class="t2">Solo bloques · orientación ' + fmt(r.angulo_hileras, 1) + "° · aparcamiento en superficie"
-          : r.pct_zona_unifamiliar >= 100 ? '<span class="t2">Adosadas en calles paralelas · ' + r.remate.replace("_", " ") + " · acera "
-          : '<span class="t2">' + fmt(r.pct_zona_unifamiliar) + " % casas " + r.unifamiliar_en + " · " + r.remate.replace("_", " ") + " · acera ") + (r.casas ? (r.acera ? "sí" : "no") : "") + " · plazas " + r.plazas + "/" + r.plazas_necesarias + (r.casas ? " · jardín S " + fmt(r.jardines_a_sur_pct) + " %" : " · " + r.portales + " portales") + " · viario " + fmt(r.viario_m2_por_vivienda) + " m²/viv" + (r.economia.estado === "OK" ? " · " + fmt(r.economia.beneficio_eur / 1000) + " k€" : "") + "</span></button>";
+          : r.pct_zona_unifamiliar >= 100 ? '<span class="t2">Adosadas en calles paralelas · ' + r.remate.replace("_", " ") + " · "
+          : '<span class="t2">' + fmt(r.pct_zona_unifamiliar) + " % casas " + r.unifamiliar_en + " · " + r.remate.replace("_", " ") + " · ") + (r.casas ? (r.acera === "plataforma" ? "plataforma única" : r.acera ? "con acera" : "sin acera") : "") + " · plazas " + r.plazas + "/" + r.plazas_necesarias + (r.casas ? " · jardín S " + fmt(r.jardines_a_sur_pct) + " %" : " · " + r.portales + " portales") + " · viario " + fmt(r.viario_m2_por_vivienda) + " m²/viv" + (r.economia.estado === "OK" ? " · " + fmt(r.economia.beneficio_eur / 1000) + " k€" : "") + "</span></button>";
     }).join("") + (lista.length > 48 ? '<p class="vacio">Se muestran 48 de ' + lista.length + '.</p>' : "") + (!lista.length ? '<p class="vacio">Ninguna variante cumple todas las comprobaciones.</p>' : "");
   }
   $("galeria").addEventListener("click", function (e) {

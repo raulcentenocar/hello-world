@@ -37,7 +37,7 @@ import sys
 from pathlib import Path
 
 from shapely import affinity
-from shapely.geometry import Polygon, box
+from shapely.geometry import LineString, Polygon, box
 from shapely.ops import unary_union
 from shapely.prepared import prep
 
@@ -117,6 +117,7 @@ HIPOTESIS_DEFECTO = {
     "plaza_fondo_m": 5.0,
     "paso_peatonal_casa_m": 1.5,       # paso entre plazas hasta la puerta de cada casa
     "acera_m": 1.5,
+    "plataforma_unica_m": 7.0,         # calle de coexistencia tipo «mews» (Accordia, Cambridge: 7 m)
     "martillo_largo_m": 12.0,          # brazo total del martillo de giro (hipótesis)
     "fondo_saco_max_m": 20.0,          # DB-SI SI 5 1.2: vía sin salida > 20 m → espacio de maniobra
     "distancia_aparcamiento_edificio_m": 2.0,
@@ -141,7 +142,7 @@ BARRIDO_DEFECTO = {
     "pct_zona_unifamiliar": [0, 30, 40, 50, 60, 70, 80, 100],
     "unifamiliar_en": ["abajo", "arriba"],
     "remate": ["fondo_saco", "martillo", "lazo"],
-    "acera": [False, True],
+    "acera": [False, True, "plataforma"],   # sin acera, acera separada o plataforma única (coexistencia)
     # Producto: "adosadas" (solo casas), "bloques" (solo pisos), "mezcla" (casas + pisos) o "todo"
     "producto": "todo",
     # Estrategias (patrones del catálogo `patrones/`) y parámetros propios de P02
@@ -405,8 +406,18 @@ def _aceras(mod, hip):
 # --------------------------------------------------------------------------- #
 # Una variante
 # --------------------------------------------------------------------------- #
+def _tipo_calle(hip, acera):
+    """acera: False, True ('acera') o 'plataforma'. Devuelve (hip, banda de acera, itinerario peatonal)."""
+    if acera == "plataforma":
+        return dict(hip, calzada_m=hip["plataforma_unica_m"]), False, True
+    banda = acera is True or acera == "acera"
+    return hip, banda, banda
+
+
 def variante(ctx, ang, pct, uni_en, remate, acera):
     hip, com = ctx["hip"], ctx["comun"]
+    acera_in = acera
+    hip, acera, itinerario = _tipo_calle(hip, acera)
     sep = float(com["separacion_edificios_m"])
     c = ctx["poly"].centroid
     pts = _rot_pts(ctx["pts"], -ang, c)
@@ -613,7 +624,7 @@ def variante(ctx, ang, pct, uni_en, remate, acera):
             Mlib = _limpia(M.difference(ocupa_ap.buffer(da))) if not ocupa_ap.is_empty else M
             cand = bloques_lineales(Mlib, 0.0, hip["fondo_bloque_m"], sep, hip["longitud_min_bloque_m"],
                                     hip["longitud_max_bloque_m"], hip["paso_rejilla_m"]) if not Mlib.is_empty else []
-            cand.sort(key=lambda b: (b.centroid.y, b.centroid.x))
+            cand.sort(key=lambda b: ((b.bounds[1] + b.bounds[3]) / 2, (b.bounds[0] + b.bounds[2]) / 2))
             lay = colocar_portales(cand, secuencia_mix(u, mix), tipos, hip, huella_max_m)
         ok_pl = n_plazas_u + ap["n_bolsa"] >= necesarias and not (n_acc and not ap["accesibles"])
         return {"n": n_casas, "u": u, "lay": lay, "casas": casas, "plazas_u": plazas_u, "n_plazas_u": n_plazas_u,
@@ -679,6 +690,17 @@ def variante(ctx, ang, pct, uni_en, remate, acera):
     bolsas, viales_bolsa, n_bolsa = ap["bolsas"], ap["viales_bolsa"], ap["n_bolsa"]
     largo_bolsa, accesibles = ap["largo_bolsa"], ap["accesibles"]
 
+    # Espacio libre comunitario de la zona de bloques (jardín común entre bloques)
+    zona_comun_m = Polygon()
+    if n_pisos and not Zm.is_empty:
+        ocupado_m = unary_union(bloques + bolsas + viales_bolsa + accesibles + [m["calzada"] for m in mods] + remates)
+        zona_comun_m = _limpia(Zm.difference(ocupado_m.buffer(hip["distancia_aparcamiento_edificio_m"]))
+                               if not ocupado_m.is_empty else Zm)
+        if corte is not None:
+            zona_comun_m = _limpia(zona_comun_m.difference(corte))
+    if mods and acera_in == "plataforma":
+        notas.append(f"Calle de plataforma única de {hip['calzada_m']:.1f} m (coexistencia, sin acera separada).")
+
     # 4. Comprobaciones
     huella_u = sum(c.area for c in casas)
     huella_m = sum(b.area for b in bloques)
@@ -695,7 +717,7 @@ def variante(ctx, ang, pct, uni_en, remate, acera):
         "plazas": plazas >= necesarias and not (n_acc and not accesibles),
         "ocupacion_A": ocA_u <= ctx["uni"]["ocupacion_pct"] + 1e-6 and ocA_m <= ctx["multi"]["ocupacion_pct"] + 1e-6,
         "fondo_saco_SI5": fondo_saco <= hip["fondo_saco_max_m"] + 1e-6,
-        "itinerario_peatonal": acera or not mods,
+        "itinerario_peatonal": itinerario or not mods,
     }
     if not chk["plazas"]:
         avisos.append(f"Faltan {necesarias - plazas} plazas." if plazas < necesarias else "Faltan las plazas accesibles.")
@@ -713,6 +735,7 @@ def variante(ctx, ang, pct, uni_en, remate, acera):
         "casas": casas, "plazas_casas": plazas_u, "calzadas": [m["calzada"] for m in mods] + remates + viales_bolsa,
         "bolsas": bolsas, "bloques": bloques, "aceras": aceras,
         "pisos": [g for g, _ in pisos_geo], "nucleos": nucleos, "accesibles": accesibles,
+        "zona_comun": zona_comun_m,
     }
     # Indicadores: el jardín de las casas 'abajo' mira a -y del marco girado y el de las 'arriba' a +y
     a_r = math.radians(ang)
@@ -728,7 +751,7 @@ def variante(ctx, ang, pct, uni_en, remate, acera):
         "angulo_hileras": round(ang % 180, 1),
         "pct_zona_unifamiliar": pct,
         "unifamiliar_en": _lado_txt(ang, uni_en) if 0 < pct < 100 else ("todo" if pct >= 100 else "—"),
-        "remate": remate, "acera": acera,
+        "remate": remate, "acera": acera_in,
         "casas": n_casas, "pisos": n_pisos, "viviendas": viv,
         "bloques": len(bloques), "plantas_bloque": pl_m, "portales": len(nucleos),
         "pisos_por_planta": u_planta, "mix_pisos": mix_real, "tipos_pisos_planta": [t for _, t in pisos_geo],
@@ -742,6 +765,7 @@ def variante(ctx, ang, pct, uni_en, remate, acera):
         "comprobaciones": chk, "cumple": all(chk.values()),
         "techo_casas_m2": round(techo_u, 1), "techo_pisos_m2": round(techo_m, 1),
         "economia": cuenta_resultados(ctx["economia"], techo_u, techo_m, plazas, ctx["sup"], huella_u + huella_m),
+        "zona_comun_m2": round(zona_comun_m.area, 1) if not zona_comun_m.is_empty else 0.0,
         **ind,
         "avisos": avisos, "notas": notas, "_geo": geo,
     }
@@ -784,7 +808,8 @@ def frentes(pts, ccw, tol):
         L = math.hypot(dx, dy)
         nx, ny = (-dy / L, dx / L) if ccw else (dy / L, -dx / L)   # normal hacia el interior
         out.append({"lados": g, "indices": {l["indice"] for l in g}, "a": a, "b": b, "largo": L,
-                    "normal": (nx, ny), "segs": unary_union([l["_seg"] for l in g])})
+                    "normal": (nx, ny), "segs": unary_union([l["_seg"] for l in g]),
+                    "linea": LineString([a, b])})
     return out
 
 
@@ -811,6 +836,8 @@ def _filas_en_frente(zona, f, y0, h, hip, sep, c):
 
 def variante_perimetral(ctx, acceso_pos, interior, acera):
     hip, com = ctx["hip"], ctx["comun"]
+    acera_in = acera
+    hip, acera, itinerario = _tipo_calle(hip, acera)
     sep = float(com["separacion_edificios_m"])
     poly, pts, c = ctx["poly"], ctx["pts"], ctx["poly"].centroid
     ls = lados(pts, ctx["ccw"])
@@ -827,7 +854,8 @@ def variante_perimetral(ctx, acceso_pos, interior, acera):
 
     # Anillo de calle: entre las distancias D y D + C a los linderos
     def interior_a(dist):
-        return _limpia(poly.difference(unary_union([f["segs"].buffer(dist(f)) for f in fs])))
+        # La calle se mide desde la misma cuerda que las hileras (frentes curvos o quebrados)
+        return _limpia(poly.difference(unary_union([f["linea"].buffer(dist(f)) for f in fs])))
     I1 = interior_a(lambda f: f["D"])
     I2 = interior_a(lambda f: f["D"] + C)
     anillo = _limpia(I1.difference(I2))
@@ -949,7 +977,7 @@ def variante_perimetral(ctx, acceso_pos, interior, acera):
         "plazas": plazas >= necesarias,
         "ocupacion_A": 100 * huella / ctx["sup"] <= u["ocupacion_pct"] + 1e-6,
         "fondo_saco_SI5": not anillo.is_empty,
-        "itinerario_peatonal": acera,
+        "itinerario_peatonal": itinerario,
         "zona_comun": zc >= hip["zona_comun_min_m2"],
     }
     if not chk["plazas"]:
@@ -972,7 +1000,7 @@ def variante_perimetral(ctx, acceso_pos, interior, acera):
     }
     return {
         "estrategia": "perimetral", "angulo_hileras": -1.0, "pct_zona_unifamiliar": 100,
-        "unifamiliar_en": "perímetro", "remate": "anillo", "acera": acera,
+        "unifamiliar_en": "perímetro", "remate": "anillo", "acera": acera_in,
         "acceso_pos": acceso_pos, "interior": interior,
         "casas": n, "pisos": 0, "viviendas": n, "bloques": 0, "plantas_bloque": 0, "portales": 0,
         "pisos_por_planta": 0, "mix_pisos": {}, "tipos_pisos_planta": [], "plazas_accesibles": 0,

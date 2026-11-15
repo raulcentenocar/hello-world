@@ -56,4 +56,20 @@ Las superficies son orientativas, para dimensionar en fase de implantación. Las
 
 **Límite de este análisis:** desde la sesión no se pueden abrir los planos ni las imágenes de estas promociones; las reglas salen de las descripciones publicadas. Los planos o fotos de implantación que me pases (como el caso 01) son lo que permite fijar dimensiones reales.
 
+## 4. Lo aprendido de proyectos publicados en revistas
+
+| Proyecto | Lección para el método | Estado en el motor |
+|---|---|---|
+| Las Cabañas, 14 adosados (Architizer) | Calle peatonal entre dos hileras de parcelas; coches por calles exteriores y garajes en sótano | Patrón P09 (pendiente) |
+| 22 viviendas en hilera, Madrid (Carlos Rubio Carvajal) | Garajes en un sótano común bajo los jardines traseros, sin rampas individuales; acceso peatonal por puente sobre patio inglés | P08/P09 (pendiente) |
+| Accordia Mews, Cambridge (citada en las guías de Ebbsfleet) | Calle de coexistencia de 7 m de plataforma única en lugar de calzada + acera | **Programado: tipo de calle «plataforma única»** |
+| Guías de vivienda adosada (Brampton, Wakefield, Ipswich) | Clasificación: casas con acceso frontal, con calle trasera (lane), con patio de aparcamiento trasero (parking court); aparcamiento en la parcela frente a patios traseros | Frontal: programado (P01, P02). Trasero: P09 (pendiente) |
+| Cantalares, 39 viviendas (Sancho-Madridejos, Metalocus) | Dos barras longitudinales adaptadas al solar, alternando espacios exteriores privados y comunitarios | **Indicador: espacio libre comunitario en bloques y mezcla** |
+| 194 viviendas en Carabanchel (Burgos & Garrido) y 101 viviendas de realojo (Paredes Pedrosa) | Bloque en U abierto alrededor de un patio común: fresco en verano y soleado en invierno | Patrón P05 (pendiente) |
+| 32 viviendas VPPL en Valdebebas (Burgos & Garrido) | Dos sótanos de garaje liberan el resto de la parcela como jardín común de manzana | P05 + sótano (pendiente) |
+| Casas patio en Villaviciosa de Odón (Junquera) y en Vallecas (Garciagerman) | Alternativa a la adosada: casas patio, intimidad con muros ciegos, espacio común libre de coches | Patrón P10 (pendiente) |
+| Hilera de viviendas en Aravaca (Amann-Cánovas-Maruri) | Bandas entre dos calles paralelas y pares de viviendas escalonados según la pendiente | Pendiente: necesita topografía |
+
+Referencias: [Las Cabañas](https://architizer.com/projects/las-cabanas), [22 viviendas en hilera (COAM)](https://www.coam.org/media/Default%20Files/fundacion/biblioteca/revista-arquitectura-100/2000-2008/docs/revista-articulos/revista-arquitectura-2003-n332-pag90-91.pdf), [Ebbsfleet, laneways](https://www.designforebbsfleet.org/level-4-laneways), [Brampton, townhouse guidelines](https://www.brampton.ca/EN/Business/planning-development/guidelines-manuals/Documents/Transit-SupportiveTownhouseDesignGuidelines.pdf), [Wakefield, design code](https://districtdesigncode.wakefield.gov.uk/part-b-codes-and-guidance/b3-welcoming-places/b32-blocks-and-typologies/b321-form-and-typologies), [Ipswich, aparcamiento](https://www.ipswich.gov.uk/sites/default/files/ncd42_-_car_parking_what_works_where.pdf), [Cantalares (Metalocus)](https://www.metalocus.es/es/noticias/tipologia-hibrida-y-luz-39-viviendas-y-zonas-comunes-en-cantalares-por-sancho-madridejos), [101 viviendas de realojo (Arquitectura Viva)](https://arquitecturaviva.com/obras/101-viviendas-de-realojo-madrid), [Valdebebas (madrid.org)](https://www.madrid.org/bdccm/premios/PDF/LIBRO2005-2004/T35-05-04.pdf), [Casas patio Villaviciosa (Metalocus)](https://www.metalocus.es/es/noticias/un-espacio-para-vivir-lleno-de-matices-conjunto-de-casas-patio-en-villaviciosa-de-odon-por-junquera-arquitectos), [Casas patio Vallecas (Metalocus)](https://www.metalocus.es/es/noticias/reinterpretando-la-vivienda-en-hilera-casas-patio-en-vallecas-por-garciagerman-arquitectos), [Hilera en Aravaca (Arquitectura Viva)](https://arquitecturaviva.com/obras/hilera-de-viviendas-en-aravaca), [12 viviendas en Huércal-Overa (ARQA)](https://arqa.com/arquitectura/12-viviendas-en-huercal-overa.html).
+
 PENDIENTE DE VALIDAR POR EL ARQUITECTO

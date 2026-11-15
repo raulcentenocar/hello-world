@@ -247,7 +247,7 @@ def bloques_lineales(zona, angulo, fondo, separacion, l_min, l_max, paso, fases=
             rects += _tramos_en_franja(pz, minx, maxx, y, fondo, separacion, l_min, l_max, paso)
             y += modulo
         area = sum(r.area for r in rects)
-        if area > mejor_area:
+        if area > mejor_area + 1e-6:   # empate: se queda el primer desfase (igual en Python y JS)
             mejor, mejor_area = rects, area
     return [affinity.rotate(r, angulo, origin=c) for r in mejor]
 

@@ -26,6 +26,11 @@ Así, cada foto nueva amplía lo que el motor sabe hacer y queda como prueba par
 | P06 | Bloques escalonados con zona común alejada de los bloques | Morph, Prado Pozuelo (3 bloques, 43 viviendas) | Pendiente |
 | P07 | Mixto: unifamiliares y plurifamiliares en un mismo conjunto | Kronos, Mirage (Los Pocillos); Cano y Escario, Montegancedo | Pendiente (P01 ya mezcla por zonas) |
 | P08 | Adosados con garaje en sótano privado e interior sin tráfico rodado | Hombre de Piedra, Villas del Támesis; Neinor, Torrejón Park Homes III | Pendiente |
+| P09 | Dos hileras con calle peatonal central y acceso rodado por calles traseras o por sótano común | Las Cabañas; 22 viviendas en hilera (Rubio Carvajal); guías de «lane-based townhouses» | Pendiente |
+| P10 | Casas patio agrupadas, con el espacio común libre de coches | Junquera (Villaviciosa de Odón); Garciagerman (Vallecas) | Pendiente |
+| P11 | Bloque en U abierto alrededor de un patio común | Burgos & Garrido (Carabanchel); Paredes Pedrosa (realojo, Madrid) | Pendiente |
+
+Tipos de calle disponibles en P01 y P02: sin acera, con acera separada o **plataforma única de 7 m** (coexistencia tipo «mews», como Accordia en Cambridge).
 
 Los criterios de diseño sacados de estas referencias están en `CRITERIOS_DE_PROYECTO.md`.
 
