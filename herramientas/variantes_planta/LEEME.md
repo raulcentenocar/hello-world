@@ -1,6 +1,6 @@
 # Generador de variantes de planta
 
-Herramienta de presentación: a partir de una envolvente fija (mismos muros, misma estructura) genera N distribuciones distintas, cada una con su lámina numerada (`07 / 24`), su cuadro de superficies útiles y un mosaico final de todas las variantes.
+Herramienta de presentación para **pisos de una planta** y **adosados de planta baja + primera** (por defecto, el piloto UA-03-01). A partir de una envolvente fija (mismos muros, misma estructura) genera N distribuciones distintas, cada una con su lámina numerada (`07 / 24`), su cuadro de superficies útiles y un mosaico final de todas las variantes.
 
 Es **determinista, sin IA**: misma semilla + mismos parámetros = mismas plantas.
 
@@ -10,6 +10,8 @@ Cada variante **cumple las reglas de [`REGLAS.md`](REGLAS.md)**: superficies y p
 
 Abre `index.html` en el navegador (doble clic). No necesita servidor ni instalación.
 
+- **Tipología**: adosado (2 plantas, escalera común a ambas, medianeras ciegas) o piso.
+- **Adosado**: tipo y lado de la escalera, ancho de tramo, altura entre plantas, contrahuella, huella, aseo y dormitorio en planta baja, plazas de garaje, edificabilidad por vivienda.
 - **Envolvente**: ancho y fondo exteriores, muro, tabique, fachadas con huecos y fachada de acceso.
 - **Programa**: rango de dormitorios y baños, cocina abierta/cerrada, con/sin pasillo, vivienda accesible.
 - **Luz, ventilación y normativa**: % de hueco, % de ventilación, altura de hueco, profundidad máxima, puertas, pasillo.

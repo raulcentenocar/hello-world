@@ -105,6 +105,7 @@ td.wrap{white-space:normal;text-align:left;min-width:220px}
   <form id="form" autocomplete="off">
   <details open><summary>Envolvente</summary>
     <div class="grid2">
+      <label class="full">Tipología<select id="tipologia"><option value="adosado">Adosado (planta baja + primera)</option><option value="piso">Piso (una planta)</option></select></label>
       <label>Ancho exterior E-O (m)<input type="number" id="ancho" step="0.05" min="4"></label>
       <label>Fondo exterior N-S (m)<input type="number" id="fondo" step="0.05" min="4"></label>
       <label>Muro exterior (m)<input type="number" id="muro" step="0.01" min="0.1"></label>
@@ -127,10 +128,27 @@ td.wrap{white-space:normal;text-align:left;min-width:220px}
       <label>Baños mín.<input type="number" id="banoMin" min="1" max="4" step="1"></label>
       <label>Baños máx.<input type="number" id="banoMax" min="1" max="4" step="1"></label>
       <label>Cocina<select id="cocina"><option value="ambas">Abierta y cerrada</option><option value="abierta">Abierta al salón</option><option value="cerrada">Cerrada</option></select></label>
-      <label>Pasillo<select id="pasillo"><option value="ambos">Con y sin pasillo</option><option value="si">Con pasillo</option><option value="no">Sin pasillo</option></select></label>
+      <label id="lblPasillo">Pasillo<select id="pasillo"><option value="ambos">Con y sin pasillo</option><option value="si">Con pasillo</option><option value="no">Sin pasillo</option></select></label>
       <label>Ancho libre pasillo (m)<input type="number" id="anchoPas" step="0.05" min="0.85"></label>
       <label style="flex-direction:row;align-items:center;gap:6px;color:var(--ink);align-self:end"><input type="checkbox" id="accesible">Vivienda accesible</label>
     </div>
+    <p class="note" id="notaAdosado">En adosado, dormitorios y baños son los de planta primera.</p>
+  </details>
+  <details open id="grpAdosado"><summary>Adosado: escalera y planta baja</summary>
+    <div class="grid2">
+      <label>Escalera<select id="escTipo"><option value="auto">Recta o ida y vuelta</option><option value="recta">Recta</option><option value="U">Ida y vuelta</option></select></label>
+      <label>Junto a medianera<select id="escLado"><option value="auto">Cualquiera</option><option value="O">Oeste</option><option value="E">Este</option></select></label>
+      <label>Ancho de tramo (m)<input type="number" id="anchoEsc" step="0.05" min="0.8"></label>
+      <label>Altura entre plantas (m)<input type="number" id="alturaPlanta" step="0.05"></label>
+      <label>Contrahuella máx. (m)<input type="number" id="contrahuella" step="0.005"></label>
+      <label>Huella (m)<input type="number" id="huella" step="0.01"></label>
+      <label>Aseo en planta baja<select id="aseoPB"><option value="si">Sí</option><option value="no">No</option><option value="ambos">Con y sin aseo</option></select></label>
+      <label>Dormitorio en planta baja<select id="dormPB"><option value="0">No</option><option value="1">Sí</option></select></label>
+      <label>Plazas de garaje dentro<select id="plazas"><option value="0">Ninguna</option><option value="1">1 plaza</option><option value="2">2 plazas</option></select></label>
+      <label>Plaza · ancho × largo (m)<span style="display:flex;gap:4px"><input type="number" id="plazaA" step="0.05"><input type="number" id="plazaL" step="0.05"></span></label>
+      <label class="full">Edificabilidad máx. por vivienda (m²c)<input type="number" id="edifViv" step="0.5"></label>
+    </div>
+    <p class="note">La escalera ocupa la misma posición en las dos plantas. Valores de escalera de partida para uso restringido (CTE DB-SUA 1). Edificabilidad por defecto: cédula UA-03-01, 5.100 m²c / 34 viviendas.</p>
   </details>
   <details><summary>Luz, ventilación y normativa</summary>
     <div class="grid2">
@@ -259,20 +277,28 @@ const CAT = {
   salon:{name:"SALÓN",color:"#E8866B"},
   dorm:{name:"HABITACIONES",color:"#94B5D9"},
   bano:{name:"BAÑO",color:"#9EC6A3"},
-  circ:{name:"PASILLO",color:"#DDD7CB"}
+  circ:{name:"CIRCULACIÓN",color:"#DDD7CB"},
+  esc:{name:"ESCALERA",color:"#CBC3B3"},
+  garaje:{name:"GARAJE",color:"#B5B0A6"},
+  aux:{name:"AUXILIAR",color:"#C6D3CC"}
 };
 const WALL="#262626";
-const DEF = {ancho:9.6,fondo:10.4,muro:0.25,tabique:0.10,luzN:true,luzS:true,luzE:false,luzO:false,acceso:"O",
-  dormMin:1,dormMax:3,banoMin:1,banoMax:2,cocina:"ambas",pasillo:"ambos",anchoPas:1.0,accesible:false,
+const PRESETS={
+  adosado:{ancho:6.0,fondo:12.5,luzN:true,luzS:true,luzE:false,luzO:false,acceso:"S",dormMin:2,dormMax:4,banoMin:1,banoMax:2,pilares:false},
+  piso:{ancho:9.6,fondo:10.4,luzN:true,luzS:true,luzE:false,luzO:false,acceso:"O",dormMin:1,dormMax:3,banoMin:1,banoMax:2,pilares:true}
+};
+const DEF = {tipologia:"adosado",ancho:6.0,fondo:12.5,muro:0.25,tabique:0.10,luzN:true,luzS:true,luzE:false,luzO:false,acceso:"S",
+  dormMin:2,dormMax:4,banoMin:1,banoMax:2,cocina:"ambas",pasillo:"ambos",anchoPas:1.0,accesible:false,
+  escTipo:"auto",escLado:"auto",anchoEsc:0.9,alturaPlanta:3.0,contrahuella:0.185,huella:0.27,aseoPB:"si",dormPB:"0",plazas:"0",plazaA:2.5,plazaL:5.0,edifViv:150,
   ilumPct:12.5,ventPct:8.3,altoHueco:1.5,profMax:7.0,puerta:0.8,pasilloMin:0.9,giroAcc:1.5,cocinaLuz:true,
   minSalon:16,minCocina:6,minDormP:10,minDorm:8,minBano:3.5,
   camaDobleA:1.5,camaDobleL:2.0,camaIndA:0.9,camaIndL:1.9,pasoCama:0.7,pieCama:0.6,mesilla:0.45,armarioF:0.6,armarioDoble:1.5,armarioInd:1.0,frenteArmario:0.7,
   sofaL:2.1,sofaF:0.9,distTV:1.8,tvL:1.6,mesa4L:1.2,mesa4A:0.8,mesa6L:1.6,mesa6A:0.9,zonaSilla:0.7,
   encimeraF:0.6,frenteCocina:1.1,encimeraBase:2.4,encimeraDorm:0.4,
   duchaA:0.8,duchaL:1.2,inodoroA:0.4,inodoroF:0.65,inodoroLat:0.2,inodoroFrente:0.6,lavaboA:0.6,lavaboF:0.5,frenteLavabo:0.7,
-  pilares:true,luzX:4.55,luzY:4.95,
+  pilares:false,luzX:4.55,luzY:4.95,
   nVar:24,semilla:1955,formato:"169",papel:"#F5F2EA",eyebrow:"MISMOS MUROS · MISMA ESTRUCTURA",
-  proyecto:"VIVIENDA TIPO · EJEMPLO",tituloMosaico:"UNA PLANTA, {n} CASAS.",firma:"",mueble:true,zonas:false,rotulos:true,cotas:true};
+  proyecto:"ADOSADO · UA-03-01",tituloMosaico:"UN ADOSADO, {n} CASAS.",firma:"",mueble:true,zonas:false,rotulos:true,cotas:true};
 const KEYS = Object.keys(DEF);
 const EPS=0.011, TOL=0.002;
 const fmt=(n,d=2)=>n.toFixed(d).replace(".",",");
@@ -280,6 +306,7 @@ const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"
 const snap=v=>Math.round(v*20)/20;
 const SIDES=["N","S","E","O"];
 const OPP={N:"S",S:"N",E:"O",O:"E"};
+const FLOORNAME={PB:"PLANTA BAJA",P1:"PLANTA PRIMERA","":""};
 
 /* ================== Parámetros ================== */
 function readForm(){
@@ -291,21 +318,28 @@ function readForm(){
   P.dormMin=Math.max(0,Math.round(P.dormMin));P.dormMax=Math.max(P.dormMin,Math.round(P.dormMax));
   P.banoMin=Math.max(1,Math.round(P.banoMin));P.banoMax=Math.max(P.banoMin,Math.round(P.banoMax));
   P.nVar=Math.min(64,Math.max(1,Math.round(P.nVar)));P.semilla=Math.round(P.semilla);
+  P.dormPB=+P.dormPB;P.plazas=+P.plazas;
   return P;
 }
 function writeForm(P){
   for(const k of KEYS){const el=document.getElementById(k);if(!el||P[k]===undefined)continue;
     if(el.type==="checkbox")el.checked=!!P[k];else el.value=P[k];}
+  syncTipologia();
 }
-function saveLocal(P){try{localStorage.setItem("variantes_planta_params_v2",JSON.stringify(P));}catch(e){}}
-function loadLocal(){try{const s=localStorage.getItem("variantes_planta_params_v2");return s?JSON.parse(s):null;}catch(e){return null;}}
+function syncTipologia(){const ad=document.getElementById("tipologia").value==="adosado";
+  document.getElementById("grpAdosado").hidden=!ad;document.getElementById("lblPasillo").hidden=ad;document.getElementById("notaAdosado").hidden=!ad;}
+const LSKEY="variantes_planta_params_v3";
+function saveLocal(P){try{localStorage.setItem(LSKEY,JSON.stringify(P));}catch(e){}}
+function loadLocal(){try{const s=localStorage.getItem(LSKEY);return s?JSON.parse(s):null;}catch(e){return null;}}
 const corrW=P=>Math.max(P.anchoPas,P.accesible?1.1:P.pasilloMin);
+const frontSide=P=>P.acceso==="N"?"N":"S";
 
 /* ================== Azar reproducible ================== */
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 function shuffle(arr,rng){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const pick=(arr,rng)=>arr[Math.floor(rng()*arr.length)];
 
-/* ================== Programa ================== */
+/* ================== Programa (piso) ================== */
 function makeRooms(prog,P,rng,A){
   const R=[{id:"salon",cat:"salon",label:"SALÓN"},{id:"cocina",cat:"cocina",label:"COCINA",open:prog.open}];
   for(let i=1;i<=prog.nd;i++)R.push({id:"d"+i,cat:"dorm",label:prog.nd===1?"DORMITORIO":"DORM. "+i,principal:i===1});
@@ -340,7 +374,7 @@ function affinity(g){
   let s=0;
   for(let i=0;i<g.length;i++)for(let j=i+1;j<g.length;j++){
     const k=[g[i].cat,g[j].cat].sort().join("-");
-    s+={"cocina-salon":2,"bano-dorm":0.8,"dorm-dorm":0.6,"bano-bano":0.6,"bano-cocina":0.5}[k]||0;}
+    s+={"cocina-salon":2,"bano-dorm":0.8,"dorm-dorm":0.6,"bano-bano":0.6,"bano-cocina":0.5,"circ-dorm":0.3,"cocina-garaje":0.4}[k]||0;}
   return s;
 }
 function randPartition(items,rng){
@@ -377,9 +411,18 @@ function strips(items,R,s,u0,u1,v0,v1,out){
   items.forEach((r,i)=>{const du=i===items.length-1?u1-u:(u1-u0)*r.t/tot;
     out.push({...r,...toGlobal(R,s,u,v0,du,v1-v0)});u+=du;});
 }
+function snapRooms(out){
+  const ds=out.filter(r=>r.cat==="dorm"&&r.id!=="dpb").sort((a,b)=>b.w*b.h-a.w*a.h);
+  const ids=ds.map(r=>r.id).sort();
+  const remap={};ds.forEach((r,i)=>{remap[r.id]=ids[i];r.principal=i===0;r.label=ds.length===1?"DORMITORIO":"DORM. "+(i+1);});
+  ds.forEach(r=>r.id=remap[r.id]);
+  for(const r of out){const x2=snap(r.x+r.w),y2=snap(r.y+r.h);r.x=snap(r.x);r.y=snap(r.y);r.w=+(x2-r.x).toFixed(2);r.h=+(y2-r.y).toFixed(2);
+    if(r.w<0.3||r.h<0.3)return null;}
+  return out;
+}
 
-/* ================== Generar una distribución ================== */
-function generateOne(prog,P,rng,Wi,Di){
+/* ================== Generar un piso ================== */
+function generatePiso(prog,P,rng,Wi,Di){
   const A=Wi*Di;
   const rooms=makeRooms(prog,P,rng,A);if(!rooms)return null;
   const out=[];const R0={x:0,y:0,w:Wi,h:Di};
@@ -434,9 +477,84 @@ function generateOne(prog,P,rng,Wi,Di){
       if(endRoom)out.push({...endRoom,...toGlobal(Rn,s,0,vEnd,Lu,dEnd)});
     }
   }
-  for(const r of out){const x2=snap(r.x+r.w),y2=snap(r.y+r.h);r.x=snap(r.x);r.y=snap(r.y);r.w=+(x2-r.x).toFixed(2);r.h=+(y2-r.y).toFixed(2);
-    if(r.w<0.3||r.h<0.3)return null;}
+  return snapRooms(out);
+}
+
+/* ================== Adosado: escalera y plantas ================== */
+function stairGeom(P,type){
+  const n=Math.ceil(P.alturaPlanta/P.contrahuella-1e-9);const treads=n-1;
+  if(type==="recta")return{type,n,treads,sw:P.anchoEsc,ls:treads*P.huella};
+  const perFlight=Math.ceil(treads/2);
+  return{type,n,treads,perFlight,sw:2*P.anchoEsc+0.1,ls:perFlight*P.huella+P.anchoEsc};
+}
+function stairConfigs(P,Wi,Di){
+  const types=P.escTipo==="auto"?["recta","U"]:[P.escTipo];
+  const sides=P.escLado==="auto"?["O","E"]:[P.escLado];
+  const out=[];
+  for(const type of types){const g=stairGeom(P,type);
+    if(Wi-g.sw<corrW(P)+0.3)continue;
+    for(let y0=2.4;y0<=Di-g.ls-2.4+TOL;y0+=0.4)for(const side of sides)
+      out.push({...g,y0:snap(y0),side,key:`${type}|${side}|${snap(y0)}`});}
   return out;
+}
+function floorRooms(ft,prog,P,rng){
+  const jit=()=>0.85+0.35*rng();const acc=P.accesible?1:0;const R=[];
+  if(ft==="PB"){
+    R.push({id:"salon",cat:"salon",label:"SALÓN",t:24*jit()});
+    R.push({id:"cocina",cat:"cocina",label:"COCINA",open:prog.open,t:(prog.open?9:10)*jit()+acc*2});
+    if(prog.aseo)R.push({id:"aseo",cat:"bano",label:"ASEO",aseo:true,t:2.6*jit()});
+    if(prog.dormPB)R.push({id:"dpb",cat:"dorm",label:"DORM. PB",t:10*jit()+acc*2.5});
+    if(prog.garaje)R.push({id:"garaje",cat:"garaje",label:"GARAJE",plazas:prog.garaje,t:15*prog.garaje*jit()});
+    if(rng()<0.5)R.push({id:"ves",cat:"circ",label:"VESTÍBULO",t:3.5*jit()});
+  }else{
+    for(let i=1;i<=prog.nd;i++)R.push({id:"d"+i,cat:"dorm",label:prog.nd===1?"DORMITORIO":"DORM. "+i,principal:i===1,t:(i===1?13:9.5)*jit()+acc*2.5});
+    for(let i=1;i<=prog.nb;i++)R.push({id:"b"+i,cat:"bano",label:prog.nb===1?"BAÑO":"BAÑO "+i,t:4.8*jit()+acc*1.6});
+  }
+  return R;
+}
+/* Genera una planta en posición canónica (frente arriba, escalera a la izquierda) y luego la refleja */
+function generateAdosadoFloor(ft,cfg,prog,P,rng,Wi,Di){
+  const rooms=floorRooms(ft,prog,P,rng);
+  const y0=cfg.y0,y1=cfg.y0+cfg.ls,sw=cfg.sw,t=P.tabique,cw=corrW(P)+t;
+  const F=[],B=[],M=[];
+  const mEligible=r=>(r.cat==="bano")||(r.cat==="cocina"&&(r.open||!P.cocinaLuz));
+  const gar=!!prog.garaje;
+  const midW=Wi-sw-cw;
+  for(const r of rooms){
+    if(r.id==="garaje"||r.id==="ves"){F.push(r);continue;}
+    if(midW>=1.5&&mEligible(r)&&rng()<(gar&&r.cat==="cocina"?0.7:r.cat==="cocina"?0.25:0.45)&&M.length<2){M.push(r);continue;}
+    if(r.cat==="salon"){(gar||rng()<0.65?B:F).push(r);continue;}
+    if(r.cat==="cocina"){const sIn=B.find(x=>x.cat==="salon")?"B":F.find(x=>x.cat==="salon")?"F":null;
+      const opp=rng()<0.6;(sIn==="B"?(opp?F:B):sIn==="F"?(opp?B:F):(rng()<0.5?F:B)).push(r);continue;}
+    if(r.cat==="circ"){(rng()<0.5?F:B).push(r);continue;}
+    (rng()<0.5?F:B).push(r);
+  }
+  if(!F.length||!B.length)return null;
+  const mArea=midW*cfg.ls,mT=M.reduce((a,r)=>a+r.t,0);
+  if(midW>=1.5&&(!M.length||mT<mArea*0.6))M.push({id:"aux",cat:"aux",label:ft==="PB"?"LAVADERO":"VESTIDOR",t:Math.max(2.5,mArea-mT)});
+  const out=[];
+  const needDoor=r=>r.cat==="dorm"||r.cat==="bano"||r.cat==="aux"||r.cat==="garaje"||(r.cat==="cocina"&&!r.open);
+  const layZone=(items,R,bandAtBottom,id)=>{
+    const nd=items.filter(needDoor).length;
+    if(nd>=2&&R.h>cw+2.4&&rng()<0.75){
+      const cR=bandAtBottom?{x:0,y:R.y+R.h-cw,w:Wi,h:cw}:{x:0,y:R.y,w:Wi,h:cw};
+      out.push({id,cat:"circ",label:"PASILLO",x:cR.x,y:cR.y,w:cR.w,h:cR.h,t:0});
+      const rR=bandAtBottom?{x:0,y:R.y,w:Wi,h:R.h-cw}:{x:0,y:R.y+cw,w:Wi,h:R.h-cw};
+      strips(shuffle(items,rng),rR,"N",0,Wi,0,rR.h,out);
+    }else layTree(tree(items,rng),R,out);};
+  layZone(F,{x:0,y:0,w:Wi,h:y0},true,"pasF");
+  layZone(B,{x:0,y:y1,w:Wi,h:Di-y1},false,"pasB");
+  out.push({id:"esc",cat:"esc",label:"ESCALERA",x:0,y:y0,w:sw,h:cfg.ls,t:0});
+  const hallLabel="DISTRIBUIDOR";
+  if(M.length){
+    out.push({id:"hall",cat:"circ",label:hallLabel,hall:true,x:sw,y:y0,w:cw,h:cfg.ls,t:0});
+    layTree(tree(M,rng),{x:sw+cw,y:y0,w:Wi-sw-cw,h:cfg.ls},out);
+  }else out.push({id:"hall",cat:"circ",label:hallLabel,hall:true,x:sw,y:y0,w:Wi-sw,h:cfg.ls,t:0});
+  for(const r of out){
+    if(cfg.side==="E")r.x=Wi-r.x-r.w;
+    if(frontSide(P)==="S")r.y=Di-r.y-r.h;
+  }
+  return snapRooms(out);
 }
 
 /* ================== Geometría ================== */
@@ -465,7 +583,6 @@ const hit=(a,b)=>a.x<b.x+b.w-TOL&&b.x<a.x+a.w-TOL&&a.y<b.y+b.h-TOL&&b.y<a.y+a.h-
 const inside=(a,n)=>a.x>=n.x-TOL&&a.y>=n.y-TOL&&a.x+a.w<=n.x+n.w+TOL&&a.y+a.h<=n.y+n.h+TOL;
 const ivHit=(a0,a1,list)=>list.some(([b0,b1])=>a0<b1-TOL&&b0<a1-TOL);
 function sideOfSeg(r,seg){if(seg.vert)return Math.abs(seg.c-r.x)<EPS?"O":"E";return Math.abs(seg.c-r.y)<EPS?"N":"S";}
-/* Marco local de una pared: a = a lo largo de la pared, b = hacia el interior del local */
 function F(n,side){
   const hz=side==="N"||side==="S";const L=hz?n.w:n.h,D=hz?n.h:n.w;
   const pt={N:(a,b)=>[n.x+a,n.y+b],S:(a,b)=>[n.x+a,n.y+n.h-b],O:(a,b)=>[n.x+b,n.y+a],E:(a,b)=>[n.x+n.w-b,n.y+a]}[side];
@@ -475,10 +592,6 @@ function F(n,side){
 }
 const along=(n,side,g0,g1)=>(side==="N"||side==="S")?[g0-n.x,g1-n.x]:[g0-n.y,g1-n.y];
 function subIv(segs,ivs){let out=segs;for(const[g0,g1]of ivs){const np=[];for(const[a,b]of out){if(g1<=a||g0>=b){np.push([a,b]);continue;}if(g0>a)np.push([a,g0]);if(g1<b)np.push([g1,b]);}out=np;}return out;}
-function facadePillars(P,side,Wi,Di){
-  return pillarRects(P).filter(p=>side==="N"?p.y<0.3:side==="S"?p.y+p.h>Di-0.3:side==="O"?p.x<0.3:p.x+p.w>Wi-0.3)
-    .map(p=>(side==="N"||side==="S")?[p.x-0.1,p.x+p.w+0.1]:[p.y-0.1,p.y+p.h+0.1]);
-}
 function pillarRects(P){
   if(!P.pilares)return[];
   const e=P.muro,W=P.ancho,D=P.fondo;const out=[];
@@ -486,14 +599,19 @@ function pillarRects(P){
   for(let i=0;i<=nx;i++)for(let j=0;j<=ny;j++){const x=e/2+i*(W-e)/nx,y=e/2+j*(D-e)/ny;out.push({x:x-e-0.15,y:y-e-0.15,w:0.3,h:0.3,px:x,py:y});}
   return out;
 }
+function facadePillars(P,side,Wi,Di){
+  return pillarRects(P).filter(p=>side==="N"?p.y<0.3:side==="S"?p.y+p.h>Di-0.3:side==="O"?p.x<0.3:p.x+p.w>Wi-0.3)
+    .map(p=>(side==="N"||side==="S")?[p.x-0.1,p.x+p.w+0.1]:[p.y-0.1,p.y+p.h+0.1]);
+}
 
 /* ================== Validación: dimensiones y accesos ================== */
-function evaluate(rooms,prog,P,Wi,Di){
-  const t=P.tabique, A=Wi*Di;
+function evaluate(fl,P,Wi,Di){
+  const rooms=fl.rooms,t=P.tabique,A=Wi*Di;
   const lit=new Set(SIDES.filter(s=>P["luz"+s]));
   const by={};rooms.forEach(r=>{by[r.id]=r;r.nr=netRect(r,Wi,Di,t);r.net=r.nr.w*r.nr.h;
     r.ext=contacts(r,Wi,Di);r.lit=r.ext.filter(c=>lit.has(c.side)).reduce((s,c)=>s+c.len,0);});
-  const salon=by.salon,coc=by.cocina,pas=by.pas;
+  const salon=by.salon,coc=by.cocina,escR=by.esc,gar=by.garaje;
+  const circs=rooms.filter(r=>r.cat==="circ");
   let score=0;
   for(const r of rooms){
     const dmin=Math.min(r.nr.w,r.nr.h),asp=Math.max(r.w,r.h)/Math.min(r.w,r.h);
@@ -501,65 +619,92 @@ function evaluate(rooms,prog,P,Wi,Di){
     if(r.cat==="cocina"){if(r.net<P.minCocina||dmin<(r.open?1.6:1.8)||asp>(r.open?4:3.2))return{fail:"dim"};}
     if(r.cat==="dorm"){if(r.net<(r.principal?P.minDormP:P.minDorm)||dmin<(r.principal?2.5:2.2)||asp>2.2||r.lit<0.9)return{fail:"dim"};
       score+=Math.max(0,asp-1.5)*0.4+(r.lit<2?0.2:0);}
-    if(r.cat==="bano"){if(r.net<P.minBano||dmin<1.4||asp>2.8||r.net>9)return{fail:"dim"};}
-    if(r.cat==="circ"&&Math.min(r.nr.w,r.nr.h)<corrW(P)-EPS)return{fail:"dim"};
-    if(r.cat!=="salon"&&r.cat!=="circ"&&r.t)score+=Math.abs(r.net-r.t)/r.t*0.6;
+    if(r.cat==="bano"){if(r.aseo){if(r.net<1.5||dmin<1.0||asp>3||r.net>6)return{fail:"dim"};}
+      else if(r.net<P.minBano||dmin<1.4||asp>2.8||r.net>9)return{fail:"dim"};}
+    if(r.cat==="circ"&&dmin<corrW(P)-EPS)return{fail:"dim"};
+    if(r.id==="ves"&&r.net>6)return{fail:"dim"};
+    if(r.cat==="aux"&&(r.net<1.5||dmin<1.0))return{fail:"dim"};
+    if(r.cat==="garaje"){const fr=r.ext.find(c=>c.side===frontSide(P));if(!fr||fr.len<P.plazaA+0.3)return{fail:"dim"};}
+    if(r.t&&r.cat!=="salon"&&r.cat!=="circ"&&r.cat!=="esc")score+=Math.abs(r.net-r.t)/r.t*0.3;
   }
   const doors=[];
-  const commons=[salon];if(pas)commons.unshift(pas);
-  if(coc.open){const s=shared(coc,salon);if(!s||s.len<1.5)return{fail:"acceso"};doors.push({kind:"open",a:coc,b:salon,seg:s});}
-  if(pas){const s=shared(pas,salon);if(!s||s.len<1.0)return{fail:"acceso"};doors.push({kind:"paso",a:pas,b:salon,seg:s});}
+  const commons=[...circs];if(salon)commons.push(salon);
+  const links=new Map(commons.map(c=>[c,[]]));
+  const link=(a,b)=>{links.get(a).push(b);links.get(b).push(a);};
+  for(let i=0;i<circs.length;i++)for(let j=i+1;j<circs.length;j++){const s=shared(circs[i],circs[j]);if(s&&s.len>=0.9){doors.push({kind:"open2",a:circs[i],b:circs[j],seg:s});link(circs[i],circs[j]);}}
+  if(escR){let ok=null;for(const c of commons){const s=shared(escR,c);if(s&&s.len>=P.anchoEsc-0.05){ok={c,s};break;}}
+    if(!ok)return{fail:"acceso"};doors.push({kind:"baranda",a:escR,b:ok.c,seg:ok.s});fl.escFrom=ok.c;}
+  if(coc&&coc.open){if(!salon)return{fail:"acceso"};const s=shared(coc,salon);if(!s||s.len<1.5)return{fail:"acceso"};doors.push({kind:"open",a:coc,b:salon,seg:s});}
+  if(salon)for(const c of circs){const s=shared(c,salon);if(s&&s.len>=1.0){doors.push({kind:"paso",a:c,b:salon,seg:s});link(c,salon);}}
   const minDoor=P.puerta+0.15;
   const doorTo=(r,cands)=>{for(const c of cands){const s=shared(r,c);if(s&&s.len>=minDoor)return{from:c,seg:s};}return null;};
-  if(!coc.open){const d=doorTo(coc,commons);if(!d)return{fail:"acceso"};doors.push({kind:"puerta",a:coc,b:d.from,seg:d.seg});}
+  if(coc&&!coc.open){const d=doorTo(coc,commons);if(!d)return{fail:"acceso"};doors.push({kind:"puerta",a:coc,b:d.from,seg:d.seg});}
   for(const r of rooms.filter(r=>r.cat==="dorm")){const d=doorTo(r,commons);if(!d)return{fail:"acceso"};doors.push({kind:"puerta",a:r,b:d.from,seg:d.seg});
-    if(d.from===salon&&pas)score+=0.15;}
-  let common=0,suite=false;const suited=new Set();
-  for(const b of rooms.filter(r=>r.cat==="bano")){
+    if(d.from===salon&&circs.length)score+=0.15;}
+  for(const r of rooms.filter(r=>r.cat==="aux")){const d=doorTo(r,commons.concat(rooms.filter(x=>x.cat==="dorm"||(x.cat==="cocina"&&!x.open))));if(!d)return{fail:"acceso"};doors.push({kind:"puerta",a:r,b:d.from,seg:d.seg});}
+  if(gar){const d=doorTo(gar,circs.concat(coc&&!coc.open?[coc]:[]));if(!d)return{fail:"acceso"};doors.push({kind:"puerta",a:gar,b:d.from,seg:d.seg});}
+  let common=0,suite=false;const suited=new Set();const baths=rooms.filter(r=>r.cat==="bano");
+  for(const b of baths){
     let d=doorTo(b,commons);
     if(d){common++;if(d.from===salon)score+=0.25;b.suiteOf=null;}
-    else{const ds=rooms.filter(r=>r.cat==="dorm"&&!suited.has(r.id));d=doorTo(b,ds);if(!d)return{fail:"acceso"};suited.add(d.from.id);suite=true;b.suiteOf=d.from.id;}
+    else{if(b.aseo)return{fail:"acceso"};const ds=rooms.filter(r=>r.cat==="dorm"&&!suited.has(r.id));d=doorTo(b,ds);if(!d)return{fail:"acceso"};suited.add(d.from.id);suite=true;b.suiteOf=d.from.id;}
     doors.push({kind:"puerta",a:b,b:d.from,seg:d.seg});
   }
-  if(common<1)return{fail:"acceso"};
-  const sides=P.acceso==="any"?SIDES:[P.acceso];
-  let entry=null,eb=-1;
-  for(const r of commons)for(const c of r.ext){if(!sides.includes(c.side)||c.len<1.0)continue;
-    const val=c.len+(P.acceso==="any"&&!lit.has(c.side)?20:0)+(r===salon?0.5:0);
-    if(val>eb){eb=val;entry={room:r,...c};}}
-  if(!entry)return{fail:"acceso"};
-  if(pas)score+=pas.net/A*3;
-  // zonas húmedas agrupadas (bajantes y patinillos comunes)
+  if(fl.needCommonBath&&baths.length&&common<1)return{fail:"acceso"};
+  let entry=null;
+  if(fl.hasEntry){
+    const sides=fl.name?[frontSide(P)]:(P.acceso==="any"?SIDES:[P.acceso]);
+    let eb=-1;
+    for(const r of commons)for(const c of r.ext){if(!sides.includes(c.side)||c.len<1.0)continue;
+      const val=c.len+(P.acceso==="any"&&!lit.has(c.side)?20:0)+(r===salon?0.5:2);
+      if(val>eb){eb=val;entry={room:r,...c};}}
+    if(!entry)return{fail:"acceso"};
+  }
+  // todas las zonas comunes conectadas
+  const root=entry?entry.room:(fl.escFrom||commons[0]);
+  if(root&&links.has(root)){const seen=new Set([root]);const q=[root];while(q.length){const c=q.pop();for(const n of links.get(c))if(!seen.has(n)){seen.add(n);q.push(n);}}
+    if(commons.some(c=>!seen.has(c)))return{fail:"acceso"};}
+  score+=circs.reduce((s,c)=>s+c.net,0)/A*3;
   const wet=rooms.filter(r=>r.cat==="bano"||r.cat==="cocina");
-  const cx=wet.reduce((s,r)=>s+r.x+r.w/2,0)/wet.length,cy=wet.reduce((s,r)=>s+r.y+r.h/2,0)/wet.length;
-  score+=wet.reduce((s,r)=>s+Math.hypot(r.x+r.w/2-cx,r.y+r.h/2-cy),0)/wet.length*0.06;
+  if(wet.length>1){const cx=wet.reduce((s,r)=>s+r.x+r.w/2,0)/wet.length,cy=wet.reduce((s,r)=>s+r.y+r.h/2,0)/wet.length;
+    score+=wet.reduce((s,r)=>s+Math.hypot(r.x+r.w/2-cx,r.y+r.h/2-cy),0)/wet.length*0.06;}
   return{doors,entry,suite,score};
 }
 
 /* ================== Iluminación y ventilación ================== */
-function lighting(v,P,Wi,Di){
+function lighting(fl,P,Wi,Di){
   const lit=new Set(SIDES.filter(s=>P["luz"+s]));
-  const rooms=v.rooms, salon=rooms.find(r=>r.cat==="salon"), coc=rooms.find(r=>r.cat==="cocina");
-  const en=v.entry, ew=Math.min(Math.max(P.puerta+0.1,0.9),en.len-0.1);
-  const enOnLit=lit.has(en.side);
-  const ep=subIv([[en.a+0.1,en.b-0.1]],facadePillars(P,en.side,Wi,Di)).filter(([a,b])=>b-a>=ew-TOL).sort((x,y)=>(y[1]-y[0])-(x[1]-x[0]));
-  if(!ep.length)return"luz";
-  const [pa,pb]=ep[0];
-  const e0=enOnLit&&pb-pa>=ew+1.6?pa+0.15:pa+(pb-pa-ew)/2;
-  v.entryPos={side:en.side,a0:e0,a1:e0+ew,room:en.room};
-  v.windows=[];
-  const cocVia=coc.open&&coc.lit<0.9;
+  const rooms=fl.rooms, salon=rooms.find(r=>r.cat==="salon"), coc=rooms.find(r=>r.cat==="cocina"), gar=rooms.find(r=>r.cat==="garaje");
+  const blocked=[];
+  fl.entryPos=null;fl.garageDoor=null;
+  if(fl.entry){
+    const en=fl.entry, ew=Math.min(Math.max(P.puerta+0.1,0.9),en.len-0.1);
+    const ep=subIv([[en.a+0.1,en.b-0.1]],facadePillars(P,en.side,Wi,Di)).filter(([a,b])=>b-a>=ew-TOL).sort((x,y)=>(y[1]-y[0])-(x[1]-x[0]));
+    if(!ep.length)return"acceso";
+    const [pa,pb]=ep[0];
+    const e0=lit.has(en.side)&&pb-pa>=ew+1.6?pa+0.15:pa+(pb-pa-ew)/2;
+    fl.entryPos={side:en.side,a0:e0,a1:e0+ew,room:en.room};blocked.push({room:en.room,side:en.side,iv:[e0-0.2,e0+ew+0.2]});
+  }
+  if(gar){
+    const c=gar.ext.find(c=>c.side===frontSide(P));
+    const pcs=subIv([[c.a+0.15,c.b-0.15]],facadePillars(P,c.side,Wi,Di)).sort((x,y)=>(y[1]-y[0])-(x[1]-x[0]));
+    if(!pcs.length)return"acceso";const [pa,pb]=pcs[0];const L=pb-pa;
+    const gw=gar.plazas===2&&L>=2*P.plazaA+0.2?2*P.plazaA:Math.min(3.0,L);
+    if(gw<P.plazaA-0.2)return"acceso";
+    const g0=pa+(L-gw)/2;fl.garageDoor={side:c.side,a0:g0,a1:g0+gw,room:gar};blocked.push({room:gar,side:c.side,iv:[g0-0.2,g0+gw+0.2]});
+  }
+  fl.windows=[];
+  const cocVia=!!(coc&&coc.open&&salon&&coc.lit<0.9);
   for(const r of rooms){
     r.hueco=0;r.ilum=null;r.vent="—";r.prof=null;r.lightVia=null;
-    if(r.cat==="circ")continue;
+    if(r.cat==="aux")r.vent="mecánica (DB-HS3)";
+    if(r.cat==="circ"||r.cat==="esc"||r.cat==="garaje"||r.cat==="aux")continue;
     const needs=r.cat==="salon"||r.cat==="dorm"||(r.cat==="cocina"&&(r.open?!cocVia:P.cocinaLuz));
     let pieces=[];
     for(const c of r.ext){if(!lit.has(c.side))continue;
-      let segs=[[c.a+0.2,c.b-0.2]];
       const blk=facadePillars(P,c.side,Wi,Di);
-      if(v.entryPos.room===r&&v.entryPos.side===c.side)blk.push([v.entryPos.a0-0.2,v.entryPos.a1+0.2]);
-      segs=subIv(segs,blk);
-      for(const[a,b]of segs){const u=b-a-0.2;if(u>=0.45)pieces.push({side:c.side,a:a+0.1,b:b-0.1,u});}}
+      for(const b of blocked)if(b.side===c.side)blk.push(b.iv);
+      for(const[a,b]of subIv([[c.a+0.2,c.b-0.2]],blk)){const u=b-a-0.2;if(u>=0.45)pieces.push({side:c.side,a:a+0.1,b:b-0.1,u});}}
     pieces.sort((p,q)=>q.u-p.u);
     let base=r.net;
     if(r===salon&&cocVia){base+=coc.net;coc.lightVia="salon";}
@@ -570,15 +715,15 @@ function lighting(v,P,Wi,Di){
       if(!first&&rem<=0.01)break;
       let wl=first?Math.min(p.u,Math.max(rem,needs?cap:Math.min(cap,p.u))):Math.min(p.u,rem);
       if(wl<0.45)continue;
-      const m=(p.a+p.b)/2;v.windows.push({room:r.id,side:p.side,a0:m-wl/2,a1:m+wl/2});
+      const m=(p.a+p.b)/2;fl.windows.push({room:r.id,side:p.side,a0:m-wl/2,a1:m+wl/2});
       r.hueco+=wl*P.altoHueco;rem-=wl;first=false;
     }
     if(needs&&rem>0.01)return"luz";
-    if(r.hueco>0){r.ilum=r.hueco/base*100;r.vent=r.hueco/base*100>=P.ventPct?"natural":"insuficiente";
+    if(r.hueco>0){r.ilum=r.hueco/base*100;r.vent=r.ilum>=P.ventPct?"natural":"insuficiente";
       if(needs&&r.vent!=="natural")return"luz";}
     else r.vent=(r.cat==="bano"||r.cat==="cocina")?"mecánica (DB-HS3)":"—";
     if(needs){
-      const ws=new Set(v.windows.filter(w=>w.room===r.id).map(w=>w.side));
+      const ws=new Set(fl.windows.filter(w=>w.room===r.id).map(w=>w.side));
       const grp=r===salon&&cocVia?[r,coc]:[r];
       let best=1e9;
       for(const s of ws){const d=Math.max(...grp.map(g=>s==="N"?g.y+g.h:s==="S"?Di-g.y:s==="O"?g.x+g.w:Wi-g.x));best=Math.min(best,d);}
@@ -586,6 +731,7 @@ function lighting(v,P,Wi,Di){
     }
   }
   if(cocVia){coc.ilum=null;coc.vent="a través del salón + extracción";}
+  if(gar)gar.vent="por puerta de garaje + rejilla";
   return null;
 }
 
@@ -595,21 +741,16 @@ function wallPos(L,wa){
   const out=[0,L-wa,(L-wa)/2];for(let a=0.1;a<L-wa;a+=0.1)out.push(a);
   return out.filter((a,i)=>out.findIndex(b=>Math.abs(b-a)<0.02)===i);
 }
-function* wallCands(nr,wa,make){
-  for(const s of SIDES){const f=F(nr,s);for(const a of wallPos(f.L,wa)){const c=make(f,a);if(c)yield c;}}
+function* wallCands(nr,wa,make,sides=SIDES){
+  for(const s of sides){const f=F(nr,s);for(const a of wallPos(f.L,wa)){const c=make(f,a);if(c)yield c;}}
 }
-const prim={
-  r:(q,k="f")=>({t:"r",q,k}),
-  l:(p,q)=>({t:"l",p,q}),
-  c:(p,r)=>({t:"c",p,r}),
-  e:(o)=>({t:"e",...o})
-};
-function piecesFor(r,v,P){
+const prim={r:(q,k="f")=>({t:"r",q,k}),l:(p,q)=>({t:"l",p,q}),c:(p,r)=>({t:"c",p,r}),e:(o)=>({t:"e",...o}),d:(q)=>({t:"d",q})};
+function giroPiece(nr,d){return{name:"giro Ø"+fmt(d),*cands(){for(let x=nr.x;x<=nr.x+nr.w-d+TOL;x+=0.15)for(let y=nr.y;y<=nr.y+nr.h-d+TOL;y+=0.15)
+  yield{bodies:[],clears:[{x,y,w:d,h:d,giro:true}],draw:[]};}};}
+function piecesFor(r,fl,P){
   const acc=P.accesible, nr=r.nr, out=[];
-  const giro=d=>({name:"giro Ø"+fmt(d),*cands(){for(let x=nr.x;x<=nr.x+nr.w-d+TOL;x+=0.15)for(let y=nr.y;y<=nr.y+nr.h-d+TOL;y+=0.15)
-    yield{bodies:[],clears:[{x,y,w:d,h:d,giro:true}],draw:[]};}});
   if(r.cat==="dorm"){
-    const dbl=r.principal;const bw=dbl?P.camaDobleA:P.camaIndA,bl=dbl?P.camaDobleL:P.camaIndL;const pl=acc?0.9:P.pasoCama;
+    const dbl=!!r.principal;const bw=dbl?P.camaDobleA:P.camaIndA,bl=dbl?P.camaDobleL:P.camaIndL;const pl=acc?0.9:P.pasoCama;
     if(dbl){
       out.push({name:`cama ${fmt(bw)}×${fmt(bl)} + paso ${fmt(pl)}`,*cands(){for(const withMes of[true,false]){const m=withMes?P.mesilla:0;
         yield* wallCands(nr,bw+2*m,(f,a)=>{const bed=f.rect(a+m,0,bw,bl);const b0=withMes?0.4:0;
@@ -630,24 +771,24 @@ function piecesFor(r,v,P){
     out.push({name:`armario ${fmt(al)}×${fmt(af)}`,*cands(){yield* wallCands(nr,al,(f,a)=>{const b=f.rect(a,0,al,af);const p1=f.pt(a,0),p2=f.pt(a+al,af);
       return{bodies:[b],clears:[f.rect(a,af,al,P.frenteArmario)],walls:[{side:f.side,a0:a,a1:a+al}],tall:[{side:f.side,a0:a,a1:a+al}],
         draw:[prim.r(b),prim.l(p1,p2)]};});}});
-    if(acc)out.push(giro(P.giroAcc));
+    if(acc)out.push(giroPiece(nr,P.giroAcc));
   }
   if(r.cat==="bano"){
-    out.push({name:`ducha ${fmt(P.duchaA)}×${fmt(P.duchaL)}`,*cands(){for(const[wa,wd]of[[P.duchaL,P.duchaA],[P.duchaA,P.duchaL]])
+    if(!r.aseo)out.push({name:`ducha ${fmt(P.duchaA)}×${fmt(P.duchaL)}`,*cands(){for(const[wa,wd]of[[P.duchaL,P.duchaA],[P.duchaA,P.duchaL]])
       yield* wallCands(nr,wa,(f,a)=>{const b=f.rect(a,0,wa,wd);
         return{bodies:[b],clears:[],walls:[{side:f.side,a0:a,a1:a+wa}],draw:[prim.r(b),prim.l([b.x,b.y],[b.x+b.w,b.y+b.h]),prim.l([b.x+b.w,b.y],[b.x,b.y+b.h])]};});}});
     out.push({name:"inodoro",*cands(){const wa=P.inodoroA,wd=P.inodoroF;
       for(const latL of acc?[0.8,P.inodoroLat]:[P.inodoroLat])for(const latR of acc?(latL===0.8?[P.inodoroLat]:[0.8]):[P.inodoroLat])
-      yield* wallCands(nr,wa,(f,a)=>{const b=f.rect(a,0,wa,wd);
-        return{bodies:[b],clears:[f.rect(a-latL,0,latL,wd),f.rect(a+wa,0,latR,wd),f.rect(a-latL,wd,wa+latL+latR,P.inodoroFrente)],walls:[{side:f.side,a0:a,a1:a+wa}],
+      yield* wallCands(nr,wa,(f,a)=>{
+        return{bodies:[f.rect(a,0,wa,wd)],clears:[f.rect(a-latL,0,latL,wd),f.rect(a+wa,0,latR,wd),f.rect(a-latL,wd,wa+latL+latR,P.inodoroFrente)],walls:[{side:f.side,a0:a,a1:a+wa}],
           draw:[prim.r(f.rect(a,0,wa,0.18)),prim.e(f.ell(a+wa/2,0.18+(wd-0.18)/2,wa*0.42,(wd-0.18)/2))]};});}});
-    out.push({name:"lavabo",*cands(){const wa=P.lavaboA,wd=P.lavaboF;
+    out.push({name:"lavabo",*cands(){const wa=r.aseo?Math.min(P.lavaboA,0.5):P.lavaboA,wd=r.aseo?Math.min(P.lavaboF,0.4):P.lavaboF;
       yield* wallCands(nr,wa,(f,a)=>{const b=f.rect(a,0,wa,wd);
         return{bodies:[b],clears:[f.rect(a,wd,wa,P.frenteLavabo)],walls:[{side:f.side,a0:a,a1:a+wa}],draw:[prim.r(b),prim.e(f.ell(a+wa/2,wd*0.45,wa*0.3,wd*0.28))]};});}});
-    if(acc)out.push(giro(P.giroAcc));
+    if(acc&&!r.aseo)out.push(giroPiece(nr,P.giroAcc));
   }
   if(r.cat==="cocina"){
-    const nd=v.prog.nd;const lk=P.encimeraBase+Math.max(0,nd-1)*P.encimeraDorm;const ef=P.encimeraF,fr=P.frenteCocina;
+    const nd=fl.prog.nd;const lk=P.encimeraBase+Math.max(0,nd-1)*P.encimeraDorm;const ef=P.encimeraF,fr=P.frenteCocina;
     const kdraw=(runs)=>{const d=[];runs.forEach(q=>d.push(prim.r(q)));const q=runs[0];const hz=q.w>=q.h;
       const L=hz?q.w:q.h;const at=(s,dd)=>hz?[q.x+s,q.y+q.h/2+dd]:[q.x+q.w/2+dd,q.y+s];
       if(L>=1.6){const sk=at(L*0.3,0);d.push(prim.r(hz?{x:sk[0]-0.3,y:q.y+0.08,w:0.6,h:q.h-0.16}:{x:q.x+0.08,y:sk[1]-0.3,w:q.w-0.16,h:0.6}));
@@ -663,7 +804,7 @@ function piecesFor(r,v,P){
           const c1=f1.rect(s2==="O"?a1+ef:a1,ef,l1-ef,fr),c2=f2.rect(s1==="N"?a2+ef:a2,ef,l2-ef,fr);
           yield{bodies:[b1,b2],clears:[c1,c2],walls:[{side:s1,a0:a1,a1:a1+l1},{side:s2,a0:a2,a1:a2+l2}],draw:kdraw(l1>=l2?[b1,b2]:[b2,b1])};}}
     }});
-    if(acc)out.push(giro(P.giroAcc));
+    if(acc)out.push(giroPiece(nr,P.giroAcc));
   }
   if(r.cat==="salon"){
     const sl=P.sofaL,sf=P.sofaF,dt=P.distTV,tl=P.tvL;
@@ -673,10 +814,31 @@ function piecesFor(r,v,P){
       if(dt>=1.3)draw.push(prim.r(f.rect(a+sl*0.25,sf+0.4,sl*0.5,0.55)));
       return{bodies:[sofa,tv],clears:[f.rect(a,sf,sl,dt)],walls:[{side:f.side,a0:a,a1:a+sl}],draw};});}});
   }
+  if(r.cat==="aux"){
+    const lav=r.label==="LAVADERO";const al=lav?1.2:Math.min(1.5,Math.max(nr.w,nr.h)-0.1),af=0.6;
+    out.push({name:lav?`lavadora y pila ${fmt(al)}×${fmt(af)}`:`armario ${fmt(al)}×${fmt(af)}`,*cands(){yield* wallCands(nr,al,(f,a)=>{const b=f.rect(a,0,al,af);const p1=f.pt(a,0),p2=f.pt(a+al,af);
+      const draw=lav?[prim.r(b),prim.c(f.pt(a+0.3,0.3),0.22),prim.r(f.rect(a+0.7,0.08,0.42,0.44))]:[prim.r(b),prim.l(p1,p2)];
+      return{bodies:[b],clears:[f.rect(a,af,al,P.frenteArmario)],walls:[{side:f.side,a0:a,a1:a+al}],draw};});}});
+  }
+  if(r.cat==="garaje"&&fl.garageDoor){
+    const gd=fl.garageDoor,side=gd.side,pa=P.plazaA,pl=P.plazaL,np=r.plazas;
+    const div=along(nr,side,gd.a0,gd.a1);
+    out.push({name:`${np} plaza${np>1?"s":""} ${fmt(pa)}×${fmt(pl)}`,*cands(){
+      const layouts=np===2?[["tandem",pa,2*pl],["lado",2*pa,pl]]:[["una",pa,pl]];
+      for(const[kind,wa,wd]of layouts)yield* wallCands(nr,wa,(f,a)=>{
+        const need=Math.min(div[1]-div[0],kind==="lado"?2*pa-0.3:pa-0.3);
+        if(Math.min(a+wa,div[1])-Math.max(a,div[0])<need-TOL)return null;
+        const pls=kind==="tandem"?[f.rect(a,0,pa,pl),f.rect(a,pl,pa,pl)]:kind==="lado"?[f.rect(a,0,pa,pl),f.rect(a+pa,0,pa,pl)]:[f.rect(a,0,pa,pl)];
+        const draw=[];
+        for(const q of pls){draw.push(prim.d(q));const hz=q.w<q.h;const cw=1.8,cl=4.3;
+          draw.push(prim.r(hz?{x:q.x+(q.w-cw)/2,y:q.y+(q.h-cl)/2,w:cw,h:cl}:{x:q.x+(q.w-cl)/2,y:q.y+(q.h-cw)/2,w:cl,h:cw}));}
+        return{bodies:pls,clears:[],draw};},[side]);
+    }});
+  }
   return out;
 }
-function diningPiece(r,v,P){
-  const pers=2+Math.max(0,v.prog.nd-1);
+function diningPiece(r,fl,P){
+  const pers=2+Math.max(0,fl.prog.nd-1);
   const [tl,ta]=pers<=2?[P.mesa4A,P.mesa4A]:pers<=4?[P.mesa4L,P.mesa4A]:[P.mesa6L,P.mesa6A];
   const z=P.zonaSilla,nr=r.nr,np=pers<=2?2:pers<=4?4:6;
   return{name:`mesa ${np} p. ${fmt(tl)}×${fmt(ta)} + sillas ${fmt(z)}`,*cands(){for(const[w,h]of[[tl,ta],[ta,tl]])
@@ -688,23 +850,25 @@ function diningPiece(r,v,P){
         else{draw.push(prim.r({x:x-cs-0.06,y:y+h*tt-cs/2,w:cs,h:cs}),prim.r({x:x+w+0.06,y:y+h*tt-cs/2,w:cs,h:cs}));}}
       yield{bodies:[b],clears:[{x:x-z,y:y-z,w:w+2*z,h:h+2*z}],draw};}}};
 }
-function roomCtx(r,v,P,pillars){
+function roomCtx(r,fl,P,pillars){
   const nr=r.nr;const ctx={nr,blocks:[],hard:[],nonwall:{N:[],S:[],E:[],O:[]},wins:{N:[],S:[],E:[],O:[]}};
   for(const p of pillars){if(!hit(p,nr))continue;const ix=Math.min(p.x+p.w,nr.x+nr.w)-Math.max(p.x,nr.x),iy=Math.min(p.y+p.h,nr.y+nr.h)-Math.max(p.y,nr.y);
     if(ix>0.06&&iy>0.06)ctx.hard.push(p);}
-  for(const d of v.doors){
+  for(const d of fl.doors){
     if(d.a!==r&&d.b!==r)continue;
     const s=sideOfSeg(r,d.seg);
-    if(d.kind==="open"){ctx.nonwall[s].push(along(nr,s,d.seg.a,d.seg.b));continue;}
+    if(d.kind==="open"||d.kind==="open2"||d.kind==="baranda"){ctx.nonwall[s].push(along(nr,s,d.seg.a,d.seg.b));
+      if(d.kind==="baranda"&&d.b===r)ctx.blocks.push(F(nr,s).rect(along(nr,s,d.seg.a,d.seg.b)[0],0,d.seg.len,0.9));
+      continue;}
     if(d.g0===undefined)continue;
     const iv=along(nr,s,d.g0,d.g0+d.dw);ctx.nonwall[s].push(iv);
     const f=F(nr,s);
     if(d.a===r&&d.kind==="puerta")ctx.blocks.push(f.rect(iv[0],0,d.dw,d.dw));
     else ctx.blocks.push(f.rect(iv[0],0,iv[1]-iv[0],d.kind==="paso"?1.0:0.8));
   }
-  if(v.entryPos.room===r){const s=v.entryPos.side;const iv=along(nr,s,v.entryPos.a0,v.entryPos.a1);ctx.nonwall[s].push(iv);
+  if(fl.entryPos&&fl.entryPos.room===r){const s=fl.entryPos.side;const iv=along(nr,s,fl.entryPos.a0,fl.entryPos.a1);ctx.nonwall[s].push(iv);
     ctx.blocks.push(F(nr,s).rect(iv[0]-0.15,0,iv[1]-iv[0]+0.3,1.2));}
-  for(const w of v.windows)if(w.room===r.id)ctx.wins[w.side].push(along(nr,w.side,w.a0,w.a1));
+  for(const w of fl.windows)if(w.room===r.id)ctx.wins[w.side].push(along(nr,w.side,w.a0,w.a1));
   return ctx;
 }
 function solve(ctx,pieces,cap=7000){
@@ -737,42 +901,44 @@ function doorOptions(d,P){
   if(s.len>=dw+0.35)return[[s.a+0.15,dw],[s.b-0.15-dw,dw]];
   return[[s.a+(s.len-dw)/2,dw]];
 }
-function furnish(v,P){
+function furnish(fl,P){
   const pillars=pillarRects(P);
-  const rooms=v.rooms;
-  v.doors.forEach(d=>{delete d.g0;});
-  const t=P.tabique;
+  const rooms=fl.rooms,t=P.tabique;
+  fl.doors.forEach(d=>{delete d.g0;});
   const gapHit=d=>{const s=d.seg;const q=s.vert?{x:s.c-t/2-0.02,y:d.g0,w:t+0.04,h:d.dw}:{x:d.g0,y:s.c-t/2-0.02,w:d.dw,h:t+0.04};return pillars.some(p=>hit(p,q));};
-  const pas=v.doors.find(d=>d.kind==="paso");if(pas){[pas.g0,pas.dw]=doorOptions(pas,P)[0];if(gapHit(pas))return"mueble";}
-  const corr=rooms.find(r=>r.cat==="circ");
-  if(corr){const nr=corr.nr;const thin=nr.w<nr.h?"x":"y";
+  for(const d of fl.doors.filter(d=>d.kind==="paso")){[d.g0,d.dw]=doorOptions(d,P)[0];if(gapHit(d))return"mueble";}
+  for(const r of rooms){
+    if(r.cat==="esc"&&pillars.some(p=>hit(p,r.nr)))return"mueble";
+    if(r.cat!=="circ")continue;const nr=r.nr;const thin=nr.w<nr.h?"x":"y";
     for(const p of pillars){if(!hit(p,nr))continue;
       const free=thin==="x"?Math.max(p.x-nr.x,nr.x+nr.w-(p.x+p.w)):Math.max(p.y-nr.y,nr.y+nr.h-(p.y+p.h));
       if(free<P.pasilloMin-TOL)return"mueble";}}
   const coc=rooms.find(r=>r.cat==="cocina"),salon=rooms.find(r=>r.cat==="salon");
-  const priv=[...rooms.filter(r=>r.cat==="bano"&&r.suiteOf),...rooms.filter(r=>r.cat==="dorm"),...rooms.filter(r=>r.cat==="bano"&&!r.suiteOf)];
-  if(!coc.open)priv.push(coc);
+  const priv=[...rooms.filter(r=>r.cat==="bano"&&r.suiteOf),...rooms.filter(r=>r.cat==="dorm"),...rooms.filter(r=>r.cat==="bano"&&!r.suiteOf),...rooms.filter(r=>r.cat==="garaje"),...rooms.filter(r=>r.cat==="aux")];
+  if(coc&&!coc.open)priv.push(coc);
   for(const r of priv){
-    const d=v.doors.find(d=>d.a===r);let done=null;
-    for(const[g0,dw]of doorOptions(d,P)){d.g0=g0;d.dw=dw;if(gapHit(d))continue;const res=solve(roomCtx(r,v,P,pillars),piecesFor(r,v,P));if(res){done=res;break;}}
+    const d=fl.doors.find(d=>d.a===r&&d.kind==="puerta");let done=null;
+    for(const[g0,dw]of doorOptions(d,P)){d.g0=g0;d.dw=dw;if(gapHit(d))continue;const res=solve(roomCtx(r,fl,P,pillars),piecesFor(r,fl,P));if(res){done=res;break;}}
     if(!done)return"mueble";r.furn=done;
   }
-  const din=[diningPiece(salon,v,P),diningPiece(coc,v,P)];
-  const tryCommon=(withDinIn)=>{
-    const out={};
-    if(coc.open){const pcs=piecesFor(coc,v,P);if(withDinIn==="cocina")pcs.splice(1,0,din[1]);const r=solve(roomCtx(coc,v,P,pillars),pcs);if(!r)return null;out.coc=r;}
-    else if(withDinIn==="cocina")return null;
-    const sp=piecesFor(salon,v,P);if(withDinIn==="salon")sp.push(din[0]);if(P.accesible)sp.push({name:"giro Ø"+fmt(P.giroAcc),*cands(){const nr=salon.nr,dd=P.giroAcc;
-      for(let x=nr.x;x<=nr.x+nr.w-dd+TOL;x+=0.15)for(let y=nr.y;y<=nr.y+nr.h-dd+TOL;y+=0.15)yield{bodies:[],clears:[{x,y,w:dd,h:dd,giro:true}],draw:[]};}});
-    const r=solve(roomCtx(salon,v,P,pillars),sp,9000);if(!r)return null;out.sal=r;return out;};
-  let res=tryCommon("salon"),dinIn="salón";
-  if(!res){res=tryCommon("cocina");dinIn="cocina";}
-  if(!res&&!coc.open){const pcs=piecesFor(coc,v,P);pcs.splice(1,0,din[1]);const rk=solve(roomCtx(coc,v,P,pillars),pcs);
-    if(rk){const rs=tryCommon(null);if(rs){coc.furn=rk;res=rs;dinIn="cocina";}}}
-  if(!res)return"mueble";
-  if(res.coc)coc.furn=res.coc;salon.furn=res.sal;v.comedorEn=dinIn;
-  for(const r of rooms){if(r.cat==="circ"){r.furn=[];continue;}
+  if(salon){
+    const din=[diningPiece(salon,fl,P),coc?diningPiece(coc,fl,P):null];
+    const tryCommon=(withDinIn)=>{
+      const out={};
+      if(coc&&coc.open){const pcs=piecesFor(coc,fl,P);if(withDinIn==="cocina")pcs.splice(1,0,din[1]);const r=solve(roomCtx(coc,fl,P,pillars),pcs);if(!r)return null;out.coc=r;}
+      else if(withDinIn==="cocina")return null;
+      const sp=piecesFor(salon,fl,P);if(withDinIn==="salon")sp.push(din[0]);if(P.accesible)sp.push(giroPiece(salon.nr,P.giroAcc));
+      const r=solve(roomCtx(salon,fl,P,pillars),sp,9000);if(!r)return null;out.sal=r;return out;};
+    let res=tryCommon("salon"),dinIn="salón";
+    if(!res&&coc){res=tryCommon("cocina");dinIn="cocina";}
+    if(!res&&coc&&!coc.open){const pcs=piecesFor(coc,fl,P);pcs.splice(1,0,din[1]);const rk=solve(roomCtx(coc,fl,P,pillars),pcs);
+      if(rk){const rs=tryCommon(null);if(rs){coc.furn=rk;res=rs;dinIn="cocina";}}}
+    if(!res)return"mueble";
+    if(res.coc)coc.furn=res.coc;salon.furn=res.sal;fl.comedorEn=dinIn;
+  }
+  for(const r of rooms){if(r.cat==="circ"||r.cat==="esc"){r.furn=[];}
     const bodies=(r.furn||[]).flatMap(c=>c.bodies.concat(c.draw.filter(d=>d.t==="r").map(d=>d.q))).concat(pillars);const nr=r.nr;const cx=nr.x+nr.w/2,cy=nr.y+nr.h/2;
+    if(r.cat==="esc"){r.labPt=[cx,cy];continue;}
     const lw=Math.min(1.6,nr.w*0.8)/2,lh=0.35;let best=null,bs=-1e9;
     for(let x=nr.x+lw;x<=nr.x+nr.w-lw+TOL;x+=0.1)for(let y=nr.y+lh;y<=nr.y+nr.h-lh+TOL;y+=0.1){
       const box={x:x-lw,y:y-lh,w:2*lw,h:2*lh};let dmin=1.2;
@@ -787,71 +953,122 @@ const GRID=14;
 function raster(rooms,Wi,Di){
   const g=new Array(GRID*GRID);
   for(let i=0;i<GRID;i++)for(let j=0;j<GRID;j++){const x=(i+0.5)*Wi/GRID,y=(j+0.5)*Di/GRID;
-    const r=rooms.find(r=>x>=r.x&&x<r.x+r.w&&y>=r.y&&y<r.y+r.h);g[j*GRID+i]=r?r.cat[0]:"-";}
+    const r=rooms.find(r=>x>=r.x&&x<r.x+r.w&&y>=r.y&&y<r.y+r.h);g[j*GRID+i]=r?r.cat.slice(0,2):"-";}
   return g;
 }
 const dist=(a,b)=>{let d=0;for(let i=0;i<a.length;i++)if(a[i]!==b[i])d++;return d;};
 
 /* ================== Motor ================== */
-function runEngine(P){
-  const e=P.muro,Wi=+(P.ancho-2*e).toFixed(3),Di=+(P.fondo-2*e).toFixed(3);
-  const rej={gen:0,dim:0,acceso:0,luz:0,mueble:0};
-  if(Wi<3||Di<3)return{variants:[],tries:0,valid:0,rej,err:"La envolvente es demasiado pequeña."};
-  const rng=mulberry32(P.semilla>>>0||1);
-  const kitchens=P.cocina==="ambas"?[true,false]:[P.cocina==="abierta"];
-  const corrs=P.pasillo==="ambos"?[false,true]:[P.pasillo==="si"];
-  const groups=[];
-  for(let nd=P.dormMin;nd<=P.dormMax;nd++)for(let nb=P.banoMin;nb<=P.banoMax;nb++){
-    if(nd===0&&nb>1)continue;if(nb>nd+1)continue;groups.push({nd,nb,pool:[],seen:new Set()});}
-  if(!groups.length)return{variants:[],tries:0,valid:0,rej,err:"No hay combinación válida de dormitorios y baños (máximo un baño más que dormitorios)."};
-  const budget=Math.max(3000,Math.round(20000/groups.length));
-  let tries=0,valid=0;
-  for(const g of groups){
-    for(let k=0;k<budget;k++){
-      tries++;
-      const prog={nd:g.nd,nb:g.nb,open:kitchens[Math.floor(rng()*kitchens.length)],corr:corrs[Math.floor(rng()*corrs.length)]};
-      if(prog.corr&&g.nd<2&&corrs.length>1&&rng()<0.6)prog.corr=false;
-      const rooms=generateOne(prog,P,rng,Wi,Di);if(!rooms){rej.gen++;continue;}
-      const ev=evaluate(rooms,prog,P,Wi,Di);if(ev.fail){rej[ev.fail]++;continue;}
-      const key=rooms.map(r=>r.cat+r.x+","+r.y+","+r.w+","+r.h).sort().join("|");
-      if(g.seen.has(key))continue;g.seen.add(key);
-      const v={rooms,prog,...ev};
-      const lf=lighting(v,P,Wi,Di);if(lf){rej.luz++;continue;}
-      const ff=furnish(v,P);if(ff){rej.mueble++;continue;}
-      valid++;v.ras=raster(rooms,Wi,Di);g.pool.push(v);
-    }
-    g.pool.sort((a,b)=>a.score-b.score);
-  }
+function processFloor(fl,P,Wi,Di,rej){
+  const ev=evaluate(fl,P,Wi,Di);if(ev.fail){rej[ev.fail]++;return false;}
+  Object.assign(fl,ev);
+  const lf=lighting(fl,P,Wi,Di);if(lf){rej[lf]++;return false;}
+  const ff=furnish(fl,P);if(ff){rej[ff]++;return false;}
+  fl.ras=raster(fl.rooms,Wi,Di);return true;
+}
+const roomKey=rooms=>rooms.map(r=>r.cat+r.x+","+r.y+","+r.w+","+r.h).sort().join("|");
+function selectVariants(groups,P){
   const live=groups.filter(g=>g.pool.length);
-  if(!live.length)return{variants:[],tries,valid:0,rej,err:"Ninguna distribución cumple con estos parámetros."};
   const N=P.nVar;const quota=new Map(live.map(g=>[g,0]));
-  let left=N,gi=0;while(left>0){const g=live[gi%live.length];if(quota.get(g)<g.pool.length){quota.set(g,quota.get(g)+1);left--;}gi++;
+  let left=N,gi=0;while(left>0&&live.length){const g=live[gi%live.length];if(quota.get(g)<g.pool.length){quota.set(g,quota.get(g)+1);left--;}gi++;
     if(gi>N*live.length*2)break;}
   const chosen=[];
   for(const g of live){
-    const q=quota.get(g);const pick=[];let th=Math.round(GRID*GRID*0.22);
-    while(pick.length<q&&th>=0){
-      for(const c of g.pool){if(pick.length>=q)break;if(pick.includes(c))continue;
-        if(pick.every(p=>dist(p.ras,c.ras)>=th))pick.push(c);}
+    g.pool.sort((a,b)=>a.score-b.score);
+    const q=quota.get(g);const pk=[];const L=g.pool[0].ras.length;let th=Math.round(L*0.22);
+    while(pk.length<q&&th>=0){
+      for(const c of g.pool){if(pk.length>=q)break;if(pk.includes(c))continue;
+        if(pk.every(p=>dist(p.ras,c.ras)>=th))pk.push(c);}
       th=th>0?Math.floor(th*0.6):-1;
     }
-    pick.sort((a,b)=>(a.prog.open===b.prog.open?0:a.prog.open?-1:1)||a.score-b.score);
-    chosen.push(...pick);
+    pk.sort((a,b)=>(a.prog.open===b.prog.open?0:a.prog.open?-1:1)||a.score-b.score);
+    chosen.push(...pk);
   }
   chosen.sort((a,b)=>a.prog.nd-b.prog.nd||a.prog.nb-b.prog.nb);
-  return{variants:chosen.map((c,i)=>finish(c,i+1,P)),tries,valid,rej,Wi,Di};
+  return chosen;
+}
+function runEngine(P){
+  const e=P.muro,Wi=+(P.ancho-2*e).toFixed(3),Di=+(P.fondo-2*e).toFixed(3);
+  const rej={gen:0,dim:0,acceso:0,luz:0,mueble:0};
+  const base={variants:[],tries:0,valid:0,rej,Wi,Di};
+  if(Wi<3||Di<3)return{...base,err:"La envolvente es demasiado pequeña."};
+  const rng=mulberry32(P.semilla>>>0||1);
+  const kitchens=P.cocina==="ambas"?[true,false]:[P.cocina==="abierta"];
+  const groups=[];
+  for(let nd=P.dormMin;nd<=P.dormMax;nd++)for(let nb=P.banoMin;nb<=P.banoMax;nb++){
+    if(nd===0&&nb>1)continue;if(nb>nd+1)continue;groups.push({nd,nb,pool:[]});}
+  if(!groups.length)return{...base,err:"No hay combinación válida de dormitorios y baños (máximo un baño más que dormitorios)."};
+  let tries=0,valid=0;
+  if(P.tipologia!=="adosado"){
+    const corrs=P.pasillo==="ambos"?[false,true]:[P.pasillo==="si"];
+    const budget=Math.max(3000,Math.round(20000/groups.length));
+    for(const g of groups){const seen=new Set();
+      for(let k=0;k<budget;k++){
+        tries++;
+        const prog={nd:g.nd,nb:g.nb,open:pick(kitchens,rng),corr:pick(corrs,rng)};
+        if(prog.corr&&g.nd<2&&corrs.length>1&&rng()<0.6)prog.corr=false;
+        const rooms=generatePiso(prog,P,rng,Wi,Di);if(!rooms){rej.gen++;continue;}
+        const key=roomKey(rooms);if(seen.has(key))continue;seen.add(key);
+        const fl={name:"",rooms,prog,hasEntry:true,needCommonBath:true};
+        if(!processFloor(fl,P,Wi,Di,rej))continue;
+        valid++;g.pool.push({floors:[fl],prog,score:fl.score,ras:fl.ras,suite:fl.suite});
+      }
+    }
+  }else{
+    const cfgs=stairConfigs(P,Wi,Di);
+    if(!cfgs.length)return{...base,err:"La escalera no cabe en la envolvente con el pasillo mínimo junto a ella."};
+    const aseos=P.aseoPB==="ambos"?[true,false]:[P.aseoPB==="si"];
+    const p1={},pb={};
+    // 1) planta primera: dormitorios y baños
+    const b1=Math.max(4000,Math.round(14000/groups.length));
+    for(const g of groups){const seen=new Set();
+      for(let k=0;k<b1;k++){tries++;const cfg=pick(cfgs,rng);
+        const prog={nd:g.nd,nb:g.nb};
+        const rooms=generateAdosadoFloor("P1",cfg,prog,P,rng,Wi,Di);if(!rooms){rej.gen++;continue;}
+        const key=cfg.key+roomKey(rooms);if(seen.has(key))continue;seen.add(key);
+        const fl={name:"P1",rooms,prog,cfg,hasEntry:false,needCommonBath:true};
+        if(!processFloor(fl,P,Wi,Di,rej))continue;
+        (p1[cfg.key+"|"+g.nd+"|"+g.nb]??=[]).push(fl);}}
+    // 2) planta baja, solo con escaleras que ya funcionan arriba
+    const okCfg=cfgs.filter(c=>groups.some(g=>p1[c.key+"|"+g.nd+"|"+g.nb]));
+    const nds=[...new Set(groups.map(g=>g.nd))];
+    if(okCfg.length){const b2=Math.max(4000,Math.round(14000/nds.length));
+      for(const nd of nds){const seen=new Set();const cs=okCfg.filter(c=>groups.some(g=>g.nd===nd&&p1[c.key+"|"+nd+"|"+g.nb]));if(!cs.length)continue;
+        for(let k=0;k<b2;k++){tries++;const cfg=pick(cs,rng);
+          const prog={nd,open:pick(kitchens,rng),aseo:pick(aseos,rng),dormPB:P.dormPB,garaje:P.plazas};
+          const rooms=generateAdosadoFloor("PB",cfg,prog,P,rng,Wi,Di);if(!rooms){rej.gen++;continue;}
+          const key=cfg.key+roomKey(rooms);if(seen.has(key))continue;seen.add(key);
+          const fl={name:"PB",rooms,prog,cfg,hasEntry:true,needCommonBath:false};
+          if(!processFloor(fl,P,Wi,Di,rej))continue;
+          (pb[cfg.key+"|"+nd]??=[]).push(fl);}}}
+    // 3) combinar plantas con la misma escalera
+    for(const g of groups)for(const c of cfgs){
+      const A=(pb[c.key+"|"+g.nd]||[]).sort((a,b)=>a.score-b.score).slice(0,4),B=(p1[c.key+"|"+g.nd+"|"+g.nb]||[]).sort((a,b)=>a.score-b.score).slice(0,4);
+      for(const a of A)for(const b of B){valid++;
+        g.pool.push({floors:[a,b],cfg:c,score:a.score+b.score,ras:a.ras.concat(b.ras),suite:b.suite,
+          prog:{nd:g.nd+(a.prog.dormPB?1:0),ndP1:g.nd,nb:g.nb,open:a.prog.open,aseo:a.prog.aseo,garaje:a.prog.garaje,dormPB:a.prog.dormPB}});}}
+  }
+  if(!groups.some(g=>g.pool.length))return{...base,tries,err:P.tipologia==="adosado"&&P.plazas>0
+    ?"Con el garaje dentro no sale ninguna planta: la plaza ocupa unos "+fmt(P.plazaL+0.3)+" m de fondo en la franja de fachada y no deja sitio a salón, cocina y vestíbulo con sus mínimos. Prueba sin garaje en planta baja (plazas en parcela o en sótano), con más frente o con escalera de ida y vuelta."
+    :"Ninguna distribución cumple con estos parámetros."};
+  const chosen=selectVariants(groups,P);
+  return{...base,variants:chosen.map((c,i)=>finish(c,i+1,P)),tries,valid};
 }
 function finish(c,n,P){
-  const order={salon:0,cocina:1,dorm:2,bano:3,circ:4};
-  c.rooms.sort((a,b)=>order[a.cat]-order[b.cat]||a.id.localeCompare(b.id));
-  const byCat={};for(const k in CAT)byCat[k]=0;c.rooms.forEach(r=>byCat[r.cat]+=r.net);
-  const util=c.rooms.reduce((s,r)=>s+r.net,0);
-  const nd=c.prog.nd;
-  c.n=n;
-  c.title=nd===0?"ESTUDIO":nd+(nd===1?" DORMITORIO":" DORMITORIOS")+(c.suite?" (SUITE)":"");
-  c.sub=[c.prog.nb+(c.prog.nb===1?" BAÑO":" BAÑOS"),c.prog.open?"COCINA ABIERTA":"COCINA CERRADA",c.prog.corr?"CON PASILLO":"SIN PASILLO"].join(" · ");
-  c.byCat=byCat;c.util=util;c.constr=P.ancho*P.fondo;
-  return c;
+  const v={...c,n};
+  const order={salon:0,cocina:1,dorm:2,bano:3,aux:4,garaje:5,circ:6,esc:7};
+  v.floors.forEach(fl=>fl.rooms.sort((a,b)=>order[a.cat]-order[b.cat]||a.id.localeCompare(b.id)));
+  const byCat={};for(const k in CAT)byCat[k]=0;
+  v.floors.forEach(fl=>fl.rooms.forEach(r=>{if(r.cat!=="esc"||fl.name!=="P1")byCat[r.cat]+=r.net;}));
+  v.byCat=byCat;
+  v.utilFloor=v.floors.map(fl=>fl.rooms.reduce((s,r)=>s+(r.cat==="esc"&&fl.name==="P1"?0:r.net),0));
+  v.util=v.utilFloor.reduce((a,b)=>a+b,0);
+  const nd=v.prog.nd;
+  v.title=nd===0?"ESTUDIO":nd+(nd===1?" DORMITORIO":" DORMITORIOS")+(v.suite?" (SUITE)":"");
+  if(v.floors.length===1)v.sub=[v.prog.nb+(v.prog.nb===1?" BAÑO":" BAÑOS"),v.prog.open?"COCINA ABIERTA":"COCINA CERRADA",v.prog.corr?"CON PASILLO":"SIN PASILLO"].join(" · ");
+  else v.sub=[v.prog.nb+(v.prog.nb===1?" BAÑO":" BAÑOS")+(v.prog.aseo?" + ASEO":""),v.prog.open?"COCINA ABIERTA":"COCINA CERRADA",v.cfg.type==="recta"?"ESCALERA RECTA":"ESCALERA IDA Y VUELTA"].concat(v.prog.garaje?["GARAJE "+v.prog.garaje+" PL."]:[]).join(" · ");
+  v.constr=P.ancho*P.fondo*v.floors.length;
+  return v;
 }
 
 /* ================== Dibujo de planta (SVG en metros) ================== */
@@ -860,28 +1077,56 @@ function drawPrims(list,e){
   const st='fill="#ffffff" fill-opacity="0.6" stroke="#3b3b3b" stroke-width="0.022"';const ln='stroke="#3b3b3b" stroke-width="0.02" fill="none"';
   return list.map(p=>{
     if(p.t==="r")return R_({x:p.q.x+e,y:p.q.y+e,w:p.q.w,h:p.q.h},st);
+    if(p.t==="d")return R_({x:p.q.x+e,y:p.q.y+e,w:p.q.w,h:p.q.h},'fill="none" stroke="#3b3b3b" stroke-width="0.02" stroke-dasharray="0.1 0.08"');
     if(p.t==="l")return`<line x1="${p.p[0]+e}" y1="${p.p[1]+e}" x2="${p.q[0]+e}" y2="${p.q[1]+e}" ${ln}/>`;
     if(p.t==="c")return`<circle cx="${p.p[0]+e}" cy="${p.p[1]+e}" r="${p.r}" ${ln}/>`;
     if(p.t==="e")return`<ellipse cx="${p.cx+e}" cy="${p.cy+e}" rx="${p.rx}" ry="${p.ry}" ${st}/>`;
     return"";}).join("");
 }
-function planSVG(v,P,opt){
+function drawStair(r,fl,P,e){
+  const n=r.nr,cfg=fl.cfg;if(!cfg)return"";
+  const o=[];const ln='stroke="#3b3b3b" stroke-width="0.018"';
+  const x=n.x+e,y=n.y+e,w=n.w,h=n.h;
+  const frontTop=frontSide(P)==="N";
+  const up=fl.name==="PB";
+  const arrow=(pts)=>{const d="M"+pts.map(p=>p.join(" ")).join("L");const [a,b]=[pts[pts.length-2],pts[pts.length-1]];
+    const ang=Math.atan2(b[1]-a[1],b[0]-a[0]),s=0.18;
+    return`<path d="${d}" fill="none" stroke="#1e1e1e" stroke-width="0.025"/><path d="M${b[0]-s*Math.cos(ang-0.5)} ${b[1]-s*Math.sin(ang-0.5)}L${b[0]} ${b[1]}L${b[0]-s*Math.cos(ang+0.5)} ${b[1]-s*Math.sin(ang+0.5)}" fill="none" stroke="#1e1e1e" stroke-width="0.025"/>`;};
+  const label=(tx,ty)=>`<text x="${tx}" y="${ty}" font-size="0.17" text-anchor="middle" font-weight="700" fill="#1e1e1e" paint-order="stroke" stroke="${CAT.esc.color}" stroke-width="0.08">${up?"SUBE":"BAJA"}</text>`;
+  if(cfg.type==="recta"){
+    const T=cfg.treads,stp=h/T;for(let i=1;i<T;i++)o.push(`<line x1="${x}" y1="${y+i*stp}" x2="${x+w}" y2="${y+i*stp}" ${ln}/>`);
+    const y0=frontTop?y+0.15:y+h-0.15,y1=frontTop?y+h-0.25:y+0.25;
+    o.push(arrow([[x+w/2,y0],[x+w/2,y1]]));o.push(label(x+w/2,frontTop?y+0.45:y+h-0.33));
+  }else{
+    const fw=(w-0.1)/2,mes=P.anchoEsc,fl_=h-mes,T=cfg.perFlight,stp=fl_/T;
+    const yF=frontTop?y:y+mes;
+    for(let i=1;i<T;i++){const yy=yF+i*stp;o.push(`<line x1="${x}" y1="${yy}" x2="${x+fw}" y2="${yy}" ${ln}/><line x1="${x+fw+0.1}" y1="${yy}" x2="${x+w}" y2="${yy}" ${ln}/>`);}
+    o.push(R_({x:x+fw,y:yF,w:0.1,h:fl_},'fill="#3b3b3b"'));
+    const ym=frontTop?y+h-mes/2:y+mes/2,ys=frontTop?y+0.15:y+h-0.15;
+    o.push(arrow([[x+fw/2,ys],[x+fw/2,ym],[x+fw+0.1+fw/2,ym],[x+fw+0.1+fw/2,ys+(frontTop?0.35:-0.35)]]));
+    o.push(label(x+fw/2,frontTop?y+0.45:y+h-0.33));
+  }
+  return o.join("");
+}
+function planSVG(fl,P,opt){
   const e=P.muro,t=P.tabique,W=P.ancho,D=P.fondo;
   const paper=P.papel;const o=[];
-  for(const r of v.rooms)o.push(R_({x:e+r.x,y:e+r.y,w:r.w,h:r.h},`fill="${CAT[r.cat].color}"`));
-  if(opt.zones)for(const r of v.rooms)for(const c of r.furn||[])for(const q of c.clears){
+  for(const r of fl.rooms)o.push(R_({x:e+r.x,y:e+r.y,w:r.w,h:r.h},`fill="${CAT[r.cat].color}"`));
+  if(opt.zones)for(const r of fl.rooms)for(const c of r.furn||[])for(const q of c.clears){
     const zs='fill="#ffffff" fill-opacity="0.22" stroke="#2b2b2b" stroke-width="0.012" stroke-dasharray="0.06 0.05"';
     o.push(q.giro?`<circle cx="${q.x+e+q.w/2}" cy="${q.y+e+q.h/2}" r="${q.w/2}" ${zs}/>`:R_({x:q.x+e,y:q.y+e,w:q.w,h:q.h},zs));}
-  if(opt.furniture)for(const r of v.rooms)for(const c of r.furn||[])o.push(drawPrims(c.draw,e));
+  if(opt.furniture)for(const r of fl.rooms)for(const c of r.furn||[])o.push(drawPrims(c.draw,e));
+  for(const r of fl.rooms)if(r.cat==="esc")o.push(drawStair(r,fl,P,e));
   const segs=[];
-  for(let i=0;i<v.rooms.length;i++)for(let j=i+1;j<v.rooms.length;j++){const s=shared(v.rooms[i],v.rooms[j]);if(s)segs.push({a:v.rooms[i],b:v.rooms[j],s});}
+  for(let i=0;i<fl.rooms.length;i++)for(let j=i+1;j<fl.rooms.length;j++){const s=shared(fl.rooms[i],fl.rooms[j]);if(s)segs.push({a:fl.rooms[i],b:fl.rooms[j],s});}
   const arcs=[];
   for(const sg of segs){
-    const d=v.doors.find(d=>(d.a===sg.a&&d.b===sg.b)||(d.a===sg.b&&d.b===sg.a));
+    const d=fl.doors.find(d=>(d.a===sg.a&&d.b===sg.b)||(d.a===sg.b&&d.b===sg.a));
     const s=sg.s;let gaps=[];
-    if(d&&d.kind==="open"){
+    if(d&&(d.kind==="open"||d.kind==="open2"||d.kind==="baranda")){
+      if(d.kind==="open2")continue;
       const p=s.vert?`M${e+s.c} ${e+s.a}V${e+s.b}`:`M${e+s.a} ${e+s.c}H${e+s.b}`;
-      o.push(`<path d="${p}" stroke="${WALL}" stroke-width="0.025" stroke-dasharray="0.12 0.1" fill="none"/>`);continue;}
+      o.push(d.kind==="open"?`<path d="${p}" stroke="${WALL}" stroke-width="0.025" stroke-dasharray="0.12 0.1" fill="none"/>`:`<path d="${p}" stroke="${WALL}" stroke-width="0.05" fill="none"/>`);continue;}
     if(d&&d.g0!==undefined){
       const g0=d.g0,dw=d.dw;gaps=[[g0,g0+dw]];
       if(d.kind==="puerta"){
@@ -902,13 +1147,16 @@ function planSVG(v,P,opt){
     let q;if(side==="N")q={x:e+a0,y:0,w:a1-a0,h:e};if(side==="S")q={x:e+a0,y:D-e,w:a1-a0,h:e};
     if(side==="O")q={x:0,y:e+a0,w:e,h:a1-a0};if(side==="E")q={x:W-e,y:e+a0,w:e,h:a1-a0};
     o.push(R_(q,`fill="${paper}"`));
-    if(kind==="win"){const hz=side==="N"||side==="S";
+    const hz=side==="N"||side==="S";
+    if(kind==="win"){
       for(const f of[0.38,0.62]){if(hz){const y=q.y+q.h*f;o.push(`<line x1="${q.x}" y1="${y}" x2="${q.x+q.w}" y2="${y}" stroke="${WALL}" stroke-width="0.02"/>`);}
         else{const x=q.x+q.w*f;o.push(`<line x1="${x}" y1="${q.y}" x2="${x}" y2="${q.y+q.h}" stroke="${WALL}" stroke-width="0.02"/>`);}}
       o.push(R_(q,`fill="none" stroke="${WALL}" stroke-width="0.02"`));}
+    if(kind==="gar"){const p=hz?`M${q.x} ${q.y+q.h/2}H${q.x+q.w}`:`M${q.x+q.w/2} ${q.y}V${q.y+q.h}`;o.push(`<path d="${p}" stroke="${WALL}" stroke-width="0.03" stroke-dasharray="0.1 0.06" fill="none"/>`);}
   };
-  for(const w of v.windows||[])opening(w.side,w.a0,w.a1,"win");
-  if(v.entryPos){const en=v.entryPos;opening(en.side,en.a0,en.a1,"door");const m=(en.a0+en.a1)/2;
+  for(const w of fl.windows||[])opening(w.side,w.a0,w.a1,"win");
+  if(fl.garageDoor)opening(fl.garageDoor.side,fl.garageDoor.a0,fl.garageDoor.a1,"gar");
+  if(fl.entryPos){const en=fl.entryPos;opening(en.side,en.a0,en.a1,"door");const m=(en.a0+en.a1)/2;
     const s=0.35;let tri;
     if(en.side==="N")tri=`${e+m-s},${-0.55} ${e+m+s},${-0.55} ${e+m},${-0.12}`;
     if(en.side==="S")tri=`${e+m-s},${D+0.55} ${e+m+s},${D+0.55} ${e+m},${D+0.12}`;
@@ -917,7 +1165,7 @@ function planSVG(v,P,opt){
     o.push(`<polygon points="${tri}" fill="${WALL}"/>`);}
   for(const p of pillarRects(P))o.push(R_({x:p.px-0.15,y:p.py-0.15,w:0.3,h:0.3},`fill="${WALL}"`));
   if(opt.labels){
-    for(const r of v.rooms){if(r.cat==="circ"&&Math.min(r.w,r.h)<1.3)continue;
+    for(const r of fl.rooms){if((r.cat==="circ"&&Math.min(r.w,r.h)<1.3)||r.cat==="esc")continue;
       const fs=Math.max(0.2,Math.min(0.34,Math.min(r.w,r.h)*0.11));
       const [lx,ly]=opt.furniture&&r.labPt?r.labPt:[r.x+r.w/2,r.y+r.h/2];const cx=lx+e,cy=ly+e;
       const halo=`paint-order="stroke" stroke="${CAT[r.cat].color}" stroke-width="${fs*0.35}" stroke-linejoin="round"`;
@@ -934,54 +1182,82 @@ function planSVG(v,P,opt){
   const pad=opt.dims?1.4:0.7;
   return{body:o.join(""),bb:{x:-pad,y:-pad,w:W+2*pad,h:D+2*pad}};
 }
+/* Todas las plantas de una variante, una junto a otra */
+function variantPlan(v,P,opt){
+  if(v.floors.length===1)return planSVG(v.floors[0],P,opt);
+  const gap=opt.dims?0.6:1.0,head=opt.floorLabels?1.0:0;let x=0,body="",bb=null;
+  v.floors.forEach((fl,i)=>{const pl=planSVG(fl,P,{...opt,dims:opt.dims&&i===0});const b=pl.bb;
+    const pad=opt.dims?1.4:0.7;const bx={x:x+b.x,y:b.y-head,w:b.w,h:b.h+head};
+    body+=`<g transform="translate(${x} 0)">${pl.body}`;
+    if(opt.floorLabels)body+=`<text x="${-pad+(opt.dims&&i===0?0.55:0)}" y="${(opt.dims?-1.4:-0.7)-0.15}" font-size="0.42" font-weight="700" letter-spacing="0.03" fill="#1e1e1e">${FLOORNAME[fl.name]}<tspan font-weight="400" dx="0.25">${fmt(v.utilFloor[i])} m² útiles</tspan></text>`;
+    body+=`</g>`;
+    bb=bb?{x:bb.x,y:Math.min(bb.y,bx.y),w:bx.x+bx.w-bb.x,h:Math.max(bb.y+bb.h,bx.y+bx.h)-Math.min(bb.y,bx.y)}:bx;
+    x+=b.w+gap+(opt.dims&&i===0?-0.7:0);});
+  return{body,bb};
+}
 
 /* ================== Láminas ================== */
 const FONT=`font-family="Archivo, 'Helvetica Neue', Arial, sans-serif"`;
 function fit(bb,X,Y,Wb,Hb){const s=Math.min(Wb/bb.w,Hb/bb.h);const ox=X+(Wb-bb.w*s)/2-bb.x*s,oy=Y+(Hb-bb.h*s)/2-bb.y*s;return{s,ox,oy};}
-function legend(x,y,size,circ){
-  const cats=["cocina","salon","dorm","bano"].concat(circ?["circ"]:[]);let o="",cx=x;
+function legend(x,y,size,extra){
+  const cats=["cocina","salon","dorm","bano"].concat(extra||[]);let o="",cx=x;
   for(const c of cats){o+=`<rect x="${cx}" y="${y-size*0.85}" width="${size}" height="${size}" fill="${CAT[c].color}" stroke="#1e1e1e" stroke-width="1"/>`;
     o+=`<text x="${cx+size*1.5}" y="${y}" font-size="${size}" fill="#1e1e1e" letter-spacing="${size*0.05}">${CAT[c].name}</text>`;cx+=size*1.5+CAT[c].name.length*size*0.7+size*1.8;}
   return o;
 }
-const plOpt=P=>({furniture:P.mueble,zones:P.zonas,labels:P.rotulos,dims:P.cotas});
+const extraCats=vs=>["aux","circ","esc","garaje"].filter(c=>vs.some(v=>v.byCat[c]>0));
+const plOpt=P=>({furniture:P.mueble,zones:P.zonas,labels:P.rotulos,dims:P.cotas,floorLabels:true});
+function tableRows(v){
+  const rows=[];
+  v.floors.forEach((fl,i)=>{
+    if(v.floors.length>1)rows.push({head:FLOORNAME[fl.name],a:v.utilFloor[i]});
+    for(const r of fl.rooms){if(r.cat==="esc"&&fl.name==="P1")continue;rows.push({c:CAT[r.cat].color,name:r.label+(r.suiteOf?" (EN SUITE)":""),a:r.net});}});
+  return rows;
+}
 function slideSVG(v,total,P){
   const wide=P.formato!=="45";const SW=wide?1920:1080,SH=wide?1080:1350;
-  const pl=planSVG(v,P,plOpt(P));
+  const pl=variantPlan(v,P,plOpt(P));
   const num=String(v.n).padStart(2,"0"),tot=String(total).padStart(2,"0");
   const o=[`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SW} ${SH}" width="${SW}" height="${SH}" ${FONT}>`,`<rect width="${SW}" height="${SH}" fill="${P.papel}"/>`];
-  const rows=v.rooms.map(r=>({c:CAT[r.cat].color,name:r.label+(r.suiteOf?" (EN SUITE)":""),a:r.net}));
+  const rows=tableRows(v);
+  const row=(x0,x1,y,r,fs)=>r.head?`<text x="${x0}" y="${y}" font-size="${fs*0.82}" font-weight="700" letter-spacing="1" fill="#1e1e1e">${esc(r.head)}</text><text x="${x1}" y="${y}" font-size="${fs*0.82}" font-weight="700" text-anchor="end" fill="#1e1e1e">${fmt(r.a)} m²</text>`
+    :`<rect x="${x0}" y="${y-fs*0.75}" width="${fs*0.8}" height="${fs*0.8}" fill="${r.c}"/><text x="${x0+fs*1.5}" y="${y}" font-size="${fs}" fill="#1e1e1e">${esc(r.name)}</text><text x="${x1}" y="${y}" font-size="${fs}" text-anchor="end" fill="#1e1e1e">${fmt(r.a)} m²</text>`;
+  const ex=extraCats([v]);
   if(wide){
+    const many=rows.length>11;const fs=many?17:20,lh=many?25:32;
     o.push(`<text x="110" y="150" font-size="26" font-weight="500" letter-spacing="1.5" fill="#1e1e1e">${esc(P.eyebrow)}</text>`);
     o.push(`<text x="104" y="330" font-size="190" font-weight="700" fill="#1e1e1e" letter-spacing="-4">${num}<tspan font-size="64" font-weight="500" letter-spacing="0" dx="14">/ ${tot}</tspan></text>`);
     o.push(`<text x="110" y="420" font-size="30" font-weight="700" fill="#1e1e1e">PROYECTO · ${esc(v.title)}</text>`);
-    o.push(`<text x="110" y="460" font-size="21" fill="#4a4a4a" letter-spacing="0.6">${esc(v.sub)}</text>`);
-    o.push(`<line x1="110" y1="495" x2="570" y2="495" stroke="#1e1e1e" stroke-width="2"/>`);
-    let y=545;
-    for(const r of rows){o.push(`<rect x="110" y="${y-15}" width="16" height="16" fill="${r.c}"/><text x="140" y="${y}" font-size="20" fill="#1e1e1e">${esc(r.name)}</text><text x="570" y="${y}" font-size="20" text-anchor="end" fill="#1e1e1e">${fmt(r.a)} m²</text>`);y+=32;}
-    y+=6;o.push(`<line x1="110" y1="${y-18}" x2="570" y2="${y-18}" stroke="#1e1e1e" stroke-width="1"/>`);
-    y+=12;o.push(`<text x="110" y="${y}" font-size="21" font-weight="700" fill="#1e1e1e">SUPERFICIE ÚTIL</text><text x="570" y="${y}" font-size="21" font-weight="700" text-anchor="end" fill="#1e1e1e">${fmt(v.util)} m²</text>`);
-    y+=32;o.push(`<text x="110" y="${y}" font-size="20" fill="#1e1e1e">SUPERFICIE CONSTRUIDA</text><text x="570" y="${y}" font-size="20" text-anchor="end" fill="#1e1e1e">${fmt(v.constr)} m²</text>`);
-    const f=fit(pl.bb,660,80,1160,880);
+    const subW=v.sub.length>44;
+    o.push(`<text x="110" y="458" font-size="${subW?17:21}" fill="#4a4a4a" letter-spacing="0.6">${esc(v.sub)}</text>`);
+    o.push(`<line x1="110" y1="488" x2="570" y2="488" stroke="#1e1e1e" stroke-width="2"/>`);
+    let y=528;
+    for(const r of rows){if(r.head&&y>528)y+=6;o.push(row(110,570,y,r,fs));y+=lh;}
+    y+=4;o.push(`<line x1="110" y1="${y-lh*0.55}" x2="570" y2="${y-lh*0.55}" stroke="#1e1e1e" stroke-width="1"/>`);
+    y+=8;o.push(`<text x="110" y="${y}" font-size="${fs+1}" font-weight="700" fill="#1e1e1e">SUPERFICIE ÚTIL</text><text x="570" y="${y}" font-size="${fs+1}" font-weight="700" text-anchor="end" fill="#1e1e1e">${fmt(v.util)} m²</text>`);
+    y+=lh;o.push(`<text x="110" y="${y}" font-size="${fs}" fill="#1e1e1e">SUPERFICIE CONSTRUIDA</text><text x="570" y="${y}" font-size="${fs}" text-anchor="end" fill="#1e1e1e">${fmt(v.constr)} m²</text>`);
+    const f=fit(pl.bb,650,70,1170,890);
     o.push(`<g transform="translate(${f.ox} ${f.oy}) scale(${f.s})">${pl.body}</g>`);
-    o.push(`<line x1="660" y1="985" x2="1810" y2="985" stroke="#1e1e1e" stroke-width="2"/>`);
-    o.push(legend(660,1025,16,!!v.byCat.circ));
-    o.push(`<text x="1810" y="1025" font-size="16" text-anchor="end" fill="#1e1e1e" letter-spacing="0.8">${esc([P.proyecto,P.firma].filter(Boolean).join(" · "))}</text>`);
+    o.push(`<line x1="650" y1="985" x2="1810" y2="985" stroke="#1e1e1e" stroke-width="2"/>`);
+    o.push(legend(650,1025,15,ex));
+    o.push(`<text x="1810" y="1025" font-size="15" text-anchor="end" fill="#1e1e1e" letter-spacing="0.8">${esc([P.proyecto,P.firma].filter(Boolean).join(" · "))}</text>`);
   }else{
     o.push(`<text x="70" y="100" font-size="22" font-weight="500" letter-spacing="1.2" fill="#1e1e1e">${esc(P.eyebrow)}</text>`);
-    o.push(`<text x="64" y="240" font-size="150" font-weight="700" fill="#1e1e1e" letter-spacing="-3">${num}<tspan font-size="52" font-weight="500" letter-spacing="0" dx="12">/ ${tot}</tspan></text>`);
-    const f=fit(pl.bb,70,270,940,720);
+    o.push(`<text x="64" y="230" font-size="140" font-weight="700" fill="#1e1e1e" letter-spacing="-3">${num}<tspan font-size="50" font-weight="500" letter-spacing="0" dx="12">/ ${tot}</tspan></text>`);
+    const f=fit(pl.bb,70,255,940,680);
     o.push(`<g transform="translate(${f.ox} ${f.oy}) scale(${f.s})">${pl.body}</g>`);
-    o.push(`<line x1="70" y1="1010" x2="1010" y2="1010" stroke="#1e1e1e" stroke-width="2"/>`);
-    o.push(`<text x="70" y="1050" font-size="26" font-weight="700" fill="#1e1e1e">${num} · PROYECTO · ${esc(v.title)}</text>`);
-    o.push(`<text x="70" y="1084" font-size="18" fill="#4a4a4a" letter-spacing="0.5">${esc(v.sub)}</text>`);
-    const half=Math.ceil(rows.length/2);
-    rows.forEach((r,i)=>{const col=i<half?0:1,row=i<half?i:i-half;const x=70+col*490,y=1130+row*28;
-      o.push(`<rect x="${x}" y="${y-13}" width="14" height="14" fill="${r.c}"/><text x="${x+24}" y="${y}" font-size="17" fill="#1e1e1e">${esc(r.name)}</text><text x="${x+450}" y="${y}" font-size="17" text-anchor="end" fill="#1e1e1e">${fmt(r.a)} m²</text>`);});
-    const yt=1130+half*28+10;
-    o.push(`<text x="70" y="${yt}" font-size="18" font-weight="700" fill="#1e1e1e">ÚTIL ${fmt(v.util)} m² · CONSTRUIDA ${fmt(v.constr)} m²</text>`);
-    o.push(legend(70,1325,13,!!v.byCat.circ));
-    o.push(`<text x="1010" y="1325" font-size="13" text-anchor="end" fill="#1e1e1e">${esc(P.firma||"")}</text>`);
+    o.push(`<line x1="70" y1="955" x2="1010" y2="955" stroke="#1e1e1e" stroke-width="2"/>`);
+    o.push(`<text x="70" y="992" font-size="25" font-weight="700" fill="#1e1e1e">${num} · PROYECTO · ${esc(v.title)}</text>`);
+    o.push(`<text x="70" y="1022" font-size="${v.sub.length>50?14:17}" fill="#4a4a4a" letter-spacing="0.4">${esc(v.sub)}</text>`);
+    let cols;
+    if(v.floors.length>1){const k=rows.findIndex((r,i)=>i>0&&r.head);cols=[rows.slice(0,k),rows.slice(k)];}
+    else{const half=Math.ceil(rows.length/2);cols=[rows.slice(0,half),rows.slice(half)];}
+    const lh=Math.min(26,Math.floor(200/Math.max(cols[0].length,cols[1].length,1)));
+    cols.forEach((c,ci)=>c.forEach((r,i)=>o.push(row(70+ci*490,520+ci*490,1060+i*lh,r,Math.min(16,lh*0.68)))));
+    const yt=1060+Math.max(cols[0].length,cols[1].length)*lh+8;
+    o.push(`<text x="70" y="${yt}" font-size="17" font-weight="700" fill="#1e1e1e">ÚTIL ${fmt(v.util)} m² · CONSTRUIDA ${fmt(v.constr)} m²</text>`);
+    o.push(legend(70,1325,12,ex));
+    o.push(`<text x="1010" y="1325" font-size="12" text-anchor="end" fill="#1e1e1e">${esc(P.firma||"")}</text>`);
   }
   o.push("</svg>");return o.join("");
 }
@@ -993,19 +1269,19 @@ function mosaicSVG(vs,P){
   o.push(`<text x="${X}" y="${wide?110:100}" font-size="${wide?24:22}" font-weight="500" letter-spacing="1.2" fill="#1e1e1e">${esc(P.proyecto)}</text>`);
   o.push(`<text x="${X-3}" y="${wide?190:175}" font-size="${wide?72:62}" font-weight="700" fill="#1e1e1e">${esc(title)}</text>`);
   const Y=wide?240:220,AH=wide?740:1040;
-  const bb=planSVG(vs[0],P,{}).bb;
+  const bb=variantPlan(vs[0],P,{}).bb;
   let best={s:0};
   for(let c=1;c<=vs.length;c++){const r=Math.ceil(vs.length/c);const cw=AW/c,ch=AH/r;const s=Math.min((cw-14)/bb.w,(ch-30)/bb.h);if(s>best.s)best={s,c,cw,ch};}
   vs.forEach((v,i)=>{const col=i%best.c,row=Math.floor(i/best.c);const x=X+col*best.cw,y=Y+row*best.ch;
-    const pl=planSVG(v,P,{});const f=fit(pl.bb,x,y+20,best.cw-14,best.ch-30);
+    const pl=variantPlan(v,P,{});const f=fit(pl.bb,x,y+20,best.cw-14,best.ch-30);
     o.push(`<text x="${x}" y="${y+14}" font-size="${Math.max(11,Math.min(18,best.cw*0.08))}" font-weight="700" fill="#1e1e1e">${String(v.n).padStart(2,"0")}</text>`);
     o.push(`<g transform="translate(${f.ox} ${f.oy}) scale(${f.s})">${pl.body}</g>`);});
   o.push(`<line x1="${X}" y1="${SH-70}" x2="${X+AW}" y2="${SH-70}" stroke="#1e1e1e" stroke-width="2"/>`);
-  o.push(legend(X,SH-35,wide?16:13,vs.some(v=>v.byCat.circ)));
-  o.push(`<text x="${X+AW}" y="${SH-35}" font-size="${wide?16:13}" text-anchor="end" fill="#1e1e1e">${esc(P.firma||"")}</text>`);
+  o.push(legend(X,SH-35,wide?15:12,extraCats(vs)));
+  o.push(`<text x="${X+AW}" y="${SH-35}" font-size="${wide?15:12}" text-anchor="end" fill="#1e1e1e">${esc(P.firma||"")}</text>`);
   o.push("</svg>");return o.join("");
 }
-function thumbSVG(v,P){const pl=planSVG(v,P,{});const b=pl.bb;return`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${b.x} ${b.y} ${b.w} ${b.h}"><rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" fill="${P.papel}"/>${pl.body}</svg>`;}
+function thumbSVG(v,P){const pl=variantPlan(v,P,{});const b=pl.bb;return`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${b.x} ${b.y} ${b.w} ${b.h}"><rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" fill="${P.papel}"/>${pl.body}</svg>`;}
 
 /* ================== Estado e interfaz ================== */
 const S={P:null,res:null,cur:0,view:"slide"};
@@ -1019,8 +1295,10 @@ function generate(){
     const t0=performance.now();S.res=runEngine(P);S.cur=0;
     const r=S.res,ms=Math.round(performance.now()-t0),j=r.rej;
     const why=`descartadas: ${nf(j.dim)} por superficie o proporción · ${nf(j.acceso)} por accesos · ${nf(j.luz)} por luz o ventilación · ${nf(j.mueble)} por mobiliario o pilares`;
-    if(!r.variants.length){$("status").textContent=(r.err||"Sin resultados")+" — "+why;$("status").className="status err";}
-    else $("status").textContent=`${r.variants.length} variantes · ${nf(r.valid)} válidas de ${nf(r.tries)} intentos · ${why} · ${ms} ms`;
+    let warn="";
+    if(P.tipologia==="adosado"){const c=P.ancho*P.fondo*2;if(c>P.edifViv+0.005)warn=` · AVISO: construida ${fmt(c)} m² > edificabilidad ${fmt(P.edifViv)} m²c`;}
+    if(!r.variants.length){$("status").textContent=(r.err||"Sin resultados")+" — "+why+warn;$("status").className="status err";}
+    else{$("status").textContent=`${r.variants.length} variantes · ${nf(r.valid)} válidas de ${nf(r.tries)} intentos · ${why} · ${ms} ms${warn}`;$("status").className=warn?"status err":"status";}
     renderStrip();render();
   },20);
 }
@@ -1031,7 +1309,7 @@ function render(){
   for(const k in TABS)$("tab"+TABS[k]).setAttribute("aria-selected",S.view===k);
   $("nav").style.visibility=(S.view==="slide"||S.view==="check")?"visible":"hidden";
   if(!r||!r.variants.length){st.hidden=false;tw.hidden=true;
-    st.innerHTML=`<div class="empty"><strong>${esc(r?r.err:"")}</strong>Mira en la línea de estado qué regla descarta más plantas. Prueba a reducir dormitorios o baños, bajar superficies mínimas, añadir fachadas con luz, cambiar el acceso o desactivar pilares.</div>`;
+    st.innerHTML=`<div class="empty"><strong>${esc(r?r.err:"")}</strong>Mira en la línea de estado qué regla descarta más plantas. Prueba a reducir dormitorios o baños, bajar superficies mínimas, añadir fachadas con luz, cambiar la escalera o desactivar pilares.</div>`;
     $("counter").textContent="–";return;}
   const vs=r.variants;S.cur=Math.max(0,Math.min(S.cur,vs.length-1));
   $("counter").textContent=`${String(S.cur+1).padStart(2,"0")} / ${vs.length}`;
@@ -1043,24 +1321,31 @@ function render(){
 }
 function renderStrip(){
   const vs=S.res&&S.res.variants||[];
+  $("strip").style.gridTemplateColumns=vs.length&&vs[0].floors.length>1?"repeat(auto-fill,minmax(130px,1fr))":"";
   $("strip").innerHTML=vs.map((v,i)=>`<button class="thumb" data-i="${i}" title="${esc(v.title+" · "+v.sub)}">${thumbSVG(v,S.P)}<span>${String(v.n).padStart(2,"0")} · ${fmt(v.util,1)} m²</span></button>`).join("");
   $("strip").querySelectorAll(".thumb").forEach(b=>b.onclick=()=>{S.cur=+b.dataset.i;if(S.view==="mosaic"||S.view==="table")S.view="slide";render();});
 }
 function tableHTML(vs){
-  const cats=["salon","cocina","dorm","bano","circ"];
-  let h=`<table><thead><tr><th>Nº</th><th>Programa</th>${cats.map(c=>`<th><span class="sw" style="background:${CAT[c].color}"></span>${CAT[c].name}</th>`).join("")}<th>Útil</th><th>Construida</th><th>% circ.</th></tr></thead><tbody>`;
-  vs.forEach((v,i)=>{h+=`<tr data-i="${i}"><td>${String(v.n).padStart(2,"0")}</td><td>${esc(v.title)} · ${esc(v.sub.toLowerCase())}</td>${cats.map(c=>`<td>${v.byCat[c]?fmt(v.byCat[c]):"–"}</td>`).join("")}<td><b>${fmt(v.util)}</b></td><td>${fmt(v.constr)}</td><td>${fmt(v.byCat.circ/v.util*100,1)}</td></tr>`;});
+  const cats=["salon","cocina","dorm","bano","aux","circ","esc","garaje"].filter(c=>vs.some(v=>v.byCat[c]>0));
+  const two=vs[0].floors.length>1;
+  let h=`<table><thead><tr><th>Nº</th><th>Programa</th>${cats.map(c=>`<th><span class="sw" style="background:${CAT[c].color}"></span>${CAT[c].name}</th>`).join("")}${two?"<th>Útil PB</th><th>Útil P1</th>":""}<th>Útil</th><th>Construida</th><th>% circ.</th></tr></thead><tbody>`;
+  vs.forEach((v,i)=>{h+=`<tr data-i="${i}"><td>${String(v.n).padStart(2,"0")}</td><td>${esc(v.title)} · ${esc(v.sub.toLowerCase())}</td>${cats.map(c=>`<td>${v.byCat[c]?fmt(v.byCat[c]):"–"}</td>`).join("")}${two?`<td>${fmt(v.utilFloor[0])}</td><td>${fmt(v.utilFloor[1])}</td>`:""}<td><b>${fmt(v.util)}</b></td><td>${fmt(v.constr)}</td><td>${fmt((v.byCat.circ+v.byCat.esc)/v.util*100,1)}</td></tr>`;});
   return h+"</tbody></table>";
 }
 function checkHTML(v,P){
-  const minA=r=>({salon:P.minSalon,cocina:P.minCocina,dorm:r.principal?P.minDormP:P.minDorm,bano:P.minBano}[r.cat]);
-  let h=`<div class="head"><h3>${String(v.n).padStart(2,"0")} · ${esc(v.title)}</h3><p>${esc(v.sub)} · comedor en ${esc(v.comedorEn||"—")} · iluminación ≥ ${fmt(P.ilumPct,1)} % y ventilación ≥ ${fmt(P.ventPct,1)} % de la superficie útil · huecos de ${fmt(P.altoHueco)} m de alto · profundidad ≤ ${fmt(P.profMax)} m desde fachada · puertas de ${fmt(P.puerta)} m · ${P.accesible?"vivienda accesible (giro Ø "+fmt(P.giroAcc)+", pasillo ≥ 1,10)":"vivienda no accesible"}.</p></div>`;
-  h+=`<table><thead><tr><th>✓</th><th>Estancia</th><th>Sup. útil</th><th>Mínimo</th><th>Lado menor</th><th>Hueco</th><th>Iluminación</th><th>Ventilación</th><th>Prof.</th><th style="text-align:left">Mobiliario y holguras comprobados</th></tr></thead><tbody>`;
-  for(const r of v.rooms){
-    const mn=minA(r);
-    const ilum=r.ilum!=null?fmt(r.ilum,1)+" %":r.lightVia?"por el salón":"—";
-    h+=`<tr><td class="ok">✓</td><td>${esc(r.label)}${r.suiteOf?" (en suite)":""}</td><td>${fmt(r.net)} m²</td><td>${mn?fmt(mn,1)+" m²":"—"}</td><td>${fmt(Math.min(r.nr.w,r.nr.h))} m</td><td>${r.hueco?fmt(r.hueco)+" m²":"—"}</td><td>${ilum}</td><td>${esc(r.vent)}</td><td>${r.prof!=null?fmt(r.prof)+" m":"—"}</td><td class="wrap">${(r.furn||[]).map(c=>esc(c.name)).join(" · ")||"—"}</td></tr>`;
-  }
+  const minA=r=>r.aseo?1.5:({salon:P.minSalon,cocina:P.minCocina,dorm:r.principal?P.minDormP:P.minDorm,bano:P.minBano}[r.cat]);
+  const two=v.floors.length>1;
+  let h=`<div class="head"><h3>${String(v.n).padStart(2,"0")} · ${esc(v.title)}</h3><p>${esc(v.sub)} · comedor en ${esc(v.floors[0].comedorEn||"—")} · iluminación ≥ ${fmt(P.ilumPct,1)} % y ventilación ≥ ${fmt(P.ventPct,1)} % de la superficie útil · huecos de ${fmt(P.altoHueco)} m de alto · profundidad ≤ ${fmt(P.profMax)} m desde fachada · puertas de ${fmt(P.puerta)} m · ${P.accesible?"vivienda accesible (giro Ø "+fmt(P.giroAcc)+", pasillo ≥ 1,10)":"vivienda no accesible"}.`;
+  if(two){const c=v.cfg;h+=` Escalera ${c.type==="recta"?"recta":"de ida y vuelta"}: ${c.n} contrahuellas de ${fmt(P.alturaPlanta/c.n,3)} m y huella de ${fmt(P.huella)} m, tramo de ${fmt(P.anchoEsc)} m, junto a la medianera ${c.side==="O"?"oeste":"este"}, igual en las dos plantas. Construida ${fmt(v.constr)} m² frente a ${fmt(P.edifViv)} m²c de edificabilidad: ${v.constr<=P.edifViv+0.005?"cumple":"NO CUMPLE"}.`;}
+  h+=`</p></div><table><thead><tr><th>✓</th><th>Estancia</th><th>Sup. útil</th><th>Mínimo</th><th>Lado menor</th><th>Hueco</th><th>Iluminación</th><th>Ventilación</th><th>Prof.</th><th style="text-align:left">Mobiliario y holguras comprobados</th></tr></thead><tbody>`;
+  v.floors.forEach((fl,fi)=>{
+    if(two)h+=`<tr><td></td><td colspan="9" style="text-align:left;font-weight:700;letter-spacing:.05em">${FLOORNAME[fl.name]} · ${fmt(v.utilFloor[fi])} m² útiles</td></tr>`;
+    for(const r of fl.rooms){
+      if(r.cat==="esc"&&fl.name==="P1")continue;
+      const mn=minA(r);
+      const ilum=r.ilum!=null?fmt(r.ilum,1)+" %":r.lightVia?"por el salón":"—";
+      h+=`<tr><td class="ok">✓</td><td>${esc(r.label)}${r.suiteOf?" (en suite)":""}</td><td>${fmt(r.net)} m²</td><td>${mn?fmt(mn,1)+" m²":"—"}</td><td>${fmt(Math.min(r.nr.w,r.nr.h))} m</td><td>${r.hueco?fmt(r.hueco)+" m²":"—"}</td><td>${ilum}</td><td>${esc(r.vent||"—")}</td><td>${r.prof!=null?fmt(r.prof)+" m":"—"}</td><td class="wrap">${(r.furn||[]).map(c=>esc(c.name)).join(" · ")||"—"}</td></tr>`;
+    }});
   return h+"</tbody></table>";
 }
 
@@ -1081,24 +1366,32 @@ function svgToPng(svg,scale=1){
 }
 const slug=()=>(S.P.proyecto||"variantes").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"variantes";
 const r2=x=>+x.toFixed(3);
+const rq=q=>({x:r2(q.x),y:r2(q.y),ancho:r2(q.w),fondo:r2(q.h)});
+function floorJSON(fl,P){
+  return{planta:fl.name||"única",
+    acceso:fl.entryPos?{fachada:fl.entryPos.side,desde:r2(fl.entryPos.a0),hasta:r2(fl.entryPos.a1),estancia:fl.entryPos.room.id}:null,
+    puerta_garaje:fl.garageDoor?{fachada:fl.garageDoor.side,desde:r2(fl.garageDoor.a0),hasta:r2(fl.garageDoor.a1)}:null,
+    huecos:fl.windows.map(w=>({estancia:w.room,fachada:w.side,desde:r2(w.a0),hasta:r2(w.a1),alto:P.altoHueco})),
+    puertas:fl.doors.filter(d=>d.g0!==undefined).map(d=>({estancia:d.a.id,desde_estancia:d.b.id,tipo:d.kind,eje:d.seg.vert?"x":"y",coord:r2(d.seg.c),desde:r2(d.g0),hasta:r2(d.g0+d.dw)})),
+    estancias:fl.rooms.map(x=>({id:x.id,uso:x.cat,nombre:x.label,x:x.x,y:x.y,ancho:x.w,fondo:x.h,sup_util:+x.net.toFixed(2),
+      hueco_m2:+(x.hueco||0).toFixed(2),iluminacion_pct:x.ilum!=null?+x.ilum.toFixed(1):null,ventilacion:x.vent,en_suite_de:x.suiteOf||null,
+      mobiliario:(x.furn||[]).map(c=>({pieza:c.name,cuerpos:c.bodies.map(rq),holguras:c.clears.map(rq)}))}))};
+}
 function jsonData(){
   const P=S.P,r=S.res;
-  return JSON.stringify({herramienta:"variantes_planta",version:2,generado:new Date().toISOString(),
+  return JSON.stringify({herramienta:"variantes_planta",version:3,generado:new Date().toISOString(),
     nota:"Coordenadas en metros desde la esquina interior Noroeste (x hacia el Este, y hacia el Sur). Superficies útiles descontando medio tabique por lado interior. Mobiliario comprobado con holguras según parámetros.",
     parametros:P,interior:{ancho:r.Wi,fondo:r.Di},
-    variantes:r.variants.map(v=>({n:v.n,titulo:v.title,programa:{dormitorios:v.prog.nd,banos:v.prog.nb,cocina:v.prog.open?"abierta":"cerrada",pasillo:v.prog.corr,suite:v.suite,comedor_en:v.comedorEn},
-      acceso:{fachada:v.entryPos.side,desde:r2(v.entryPos.a0),hasta:r2(v.entryPos.a1),estancia:v.entryPos.room.id},
-      huecos:v.windows.map(w=>({estancia:w.room,fachada:w.side,desde:r2(w.a0),hasta:r2(w.a1),alto:P.altoHueco})),
-      puertas:v.doors.filter(d=>d.g0!==undefined).map(d=>({estancia:d.a.id,desde_estancia:d.b.id,tipo:d.kind,eje:d.seg.vert?"x":"y",coord:r2(d.seg.c),desde:r2(d.g0),hasta:r2(d.g0+d.dw)})),
-      estancias:v.rooms.map(x=>({id:x.id,uso:x.cat,nombre:x.label,x:x.x,y:x.y,ancho:x.w,fondo:x.h,sup_util:+x.net.toFixed(2),
-        hueco_m2:+x.hueco.toFixed(2),iluminacion_pct:x.ilum!=null?+x.ilum.toFixed(1):null,ventilacion:x.vent,en_suite_de:x.suiteOf||null,
-        mobiliario:(x.furn||[]).map(c=>({pieza:c.name,cuerpos:c.bodies.map(q=>({x:r2(q.x),y:r2(q.y),ancho:r2(q.w),fondo:r2(q.h)})),holguras:c.clears.map(q=>({x:r2(q.x),y:r2(q.y),ancho:r2(q.w),fondo:r2(q.h)}))}))})),
-      superficies:{por_uso:Object.fromEntries(Object.entries(v.byCat).map(([k,a])=>[k,+a.toFixed(2)])),util:+v.util.toFixed(2),construida:+v.constr.toFixed(2)}}))},null,2);
+    variantes:r.variants.map(v=>({n:v.n,titulo:v.title,descripcion:v.sub,programa:v.prog,
+      escalera:v.cfg?{tipo:v.cfg.type,lado:v.cfg.side,contrahuellas:v.cfg.n,huella:P.huella,ancho:P.anchoEsc,x:v.floors[0].rooms.find(r=>r.id==="esc").x,y:v.floors[0].rooms.find(r=>r.id==="esc").y,largo:v.cfg.ls,ancho_total:v.cfg.sw}:null,
+      plantas:v.floors.map(fl=>floorJSON(fl,P)),
+      superficies:{por_uso:Object.fromEntries(Object.entries(v.byCat).map(([k,a])=>[k,+a.toFixed(2)])),util_por_planta:v.utilFloor.map(a=>+a.toFixed(2)),util:+v.util.toFixed(2),construida:+v.constr.toFixed(2)}}))},null,2);
 }
 function csvData(){
-  const cats=["salon","cocina","dorm","bano","circ"];
-  const rows=[["Variante","Programa",...cats.map(c=>CAT[c].name),"Útil total","Construida","% circulación"].join(";")];
-  S.res.variants.forEach(v=>rows.push([v.n,v.title+" · "+v.sub,...cats.map(c=>fmt(v.byCat[c])),fmt(v.util),fmt(v.constr),fmt(v.byCat.circ/v.util*100,1)].join(";")));
+  const cats=["salon","cocina","dorm","bano","aux","circ","esc","garaje"];
+  const two=S.res.variants[0].floors.length>1;
+  const rows=[["Variante","Programa",...cats.map(c=>CAT[c].name),...(two?["Útil PB","Útil P1"]:[]),"Útil total","Construida","% circulación"].join(";")];
+  S.res.variants.forEach(v=>rows.push([v.n,v.title+" · "+v.sub,...cats.map(c=>fmt(v.byCat[c])),...(two?[fmt(v.utilFloor[0]),fmt(v.utilFloor[1])]:[]),fmt(v.util),fmt(v.constr),fmt((v.byCat.circ+v.byCat.esc)/v.util*100,1)].join(";")));
   return"﻿"+rows.join("\n");
 }
 const ready=()=>{if(!S.res||!S.res.variants.length){toast("Primero genera variantes");return false;}return true;};
@@ -1128,7 +1421,10 @@ document.addEventListener("keydown",e=>{if(e.target.matches("input,select,textar
   if(e.key==="ArrowRight"){$("next").click();}if(e.key==="ArrowLeft"){$("prev").click();}
   if(e.key==="m"){S.view=S.view==="mosaic"?"slide":"mosaic";render();}});
 const STYLE_KEYS=new Set(["formato","papel","eyebrow","proyecto","tituloMosaico","firma","mueble","zonas","rotulos","cotas"]);
-$("form").addEventListener("change",e=>{if(STYLE_KEYS.has(e.target.id))restyle();else generate();});
+$("form").addEventListener("change",e=>{
+  if(e.target.id==="tipologia"){const t=e.target.value;writeForm({...readForm(),...PRESETS[t],tipologia:t,
+    proyecto:t==="adosado"?DEF.proyecto:"VIVIENDA TIPO · EJEMPLO",tituloMosaico:t==="adosado"?DEF.tituloMosaico:"UNA PLANTA, {n} CASAS."});generate();return;}
+  if(STYLE_KEYS.has(e.target.id))restyle();else generate();});
 $("form").addEventListener("submit",e=>e.preventDefault());
 
 writeForm({...DEF,...(loadLocal()||{})});

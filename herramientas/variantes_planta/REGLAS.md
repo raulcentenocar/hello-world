@@ -136,6 +136,39 @@ Entre las válidas se priorizan las que tienen:
 
 ---
 
+## 6 bis. Vivienda unifamiliar adosada (planta baja + primera)
+
+Proyecto piloto: **UA-03-01, sector "Los Pocillos", Villanueva de la Cañada** (cédula en `datos/UA 03 01.pdf`). Datos de la cédula que usa la herramienta: 2 plantas, edificabilidad 5.100 m²c / 34 viviendas = **150 m²c por vivienda**, linderos a 0 m (medianeras sin huecos), 2 plazas de aparcamiento por vivienda (en planta baja, semisótano o sótano). **El frente y el fondo de cada vivienda no están en la cédula**: el 6,00 × 12,50 m de la herramienta es un ejemplo (2 × 75 m² = 150 m²c) a confirmar.
+
+### Esquema
+- Huella igual en las dos plantas. Huecos solo en fachada delantera (acceso) y trasera; las medianeras son ciegas, salvo en vivienda de extremo de hilera (marcar la fachada lateral con luz).
+- La **escalera ocupa la misma posición en las dos plantas**, apoyada en una medianera. Se reparte la planta en tres franjas: delantera, franja de escalera y trasera.
+- En la franja de escalera, junto a la escalera, va un distribuidor de ancho mínimo. El resto de esa franja (sin fachada) se aprovecha siempre para baños, aseo, cocina abierta al salón o una pieza auxiliar (lavadero en planta baja, vestidor en planta primera). Así se evitan distribuidores de 15-20 m².
+- Si en la franja delantera o trasera hay dos o más piezas con puerta, puede aparecer un pasillo a lo ancho junto a la franja de escalera, con las piezas en batería.
+- Planta baja: salón, cocina, aseo (opcional), vestíbulo de entrada (≤ 6 m²), dormitorio en planta baja y garaje (opcionales). El salón da preferentemente a la fachada trasera (jardín).
+- Planta primera: dormitorios y baños; al menos un baño accesible desde el distribuidor. El dormitorio principal es siempre el mayor.
+
+### Escalera (uso restringido, CTE DB-SUA 1)
+| Parámetro | Valor por defecto |
+|---|---|
+| Ancho de tramo | 0,90 (mín. 0,80) |
+| Contrahuella máxima | 0,185 |
+| Huella | 0,27 |
+| Altura entre plantas | 3,00 (hipótesis) |
+| Recta | 17 contrahuellas → 16 huellas → 4,32 m de largo × 0,90 |
+| Ida y vuelta | 2 tramos de 8 huellas + meseta de 0,90 → 3,06 m × 1,90 |
+
+La escalera debe abrir a lo largo de su lado libre al distribuidor; en la planta baja se marca "SUBE" y en la primera "BAJA".
+
+### Garaje
+- Plaza de 2,50 × 5,00, apoyada en la fachada de acceso, con puerta de garaje de 2,50-3,00 m que no coincide con pilares. Dos plazas en batería o una junto a otra.
+- **Con 6,00 × 12,50 m el garaje dentro de la vivienda no cabe**: la plaza ocupa unos 5,30 m de fondo en la franja delantera y no deja salón, cocina y vestíbulo con sus mínimos. Alternativas: plazas en la parcela, en sótano o semisótano (la cédula lo permite) o mayor frente.
+
+### Edificabilidad
+- Superficie construida = 2 × ancho × fondo. La herramienta avisa si supera la edificabilidad por vivienda indicada.
+
+---
+
 ## 7. Cómo ampliar las reglas
 
 Para enseñar una regla nueva al estudio:
