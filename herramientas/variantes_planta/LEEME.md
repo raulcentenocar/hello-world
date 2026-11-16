@@ -1,0 +1,44 @@
+# Generador de variantes de planta
+
+Herramienta de presentación: a partir de una envolvente fija (mismos muros, misma estructura) genera N distribuciones distintas, cada una con su lámina numerada (`07 / 24`), su cuadro de superficies útiles y un mosaico final de todas las variantes.
+
+Es **determinista, sin IA**: misma semilla + mismos parámetros = mismas plantas.
+
+## Uso
+
+Abre `index.html` en el navegador (doble clic). No necesita servidor ni instalación.
+
+- **Envolvente**: ancho y fondo exteriores, muro, tabique, fachadas con huecos y fachada de acceso.
+- **Programa**: rango de dormitorios y baños, cocina abierta/cerrada, con/sin pasillo.
+- **Superficies mínimas**: hipótesis editables. Ajústalas a la normativa de habitabilidad aplicable.
+- **Estructura**: retícula de pilares (luces E-O y N-S), que se repite en todas las variantes.
+- **Lámina**: formato 16:9 o 4:5, textos, color de papel, mobiliario, rótulos y cotas.
+
+Teclado: ← → cambia de variante, `M` alterna lámina/mosaico.
+
+## Exportación
+
+| Botón | Salida |
+|---|---|
+| PNG lámina | Lámina actual (o mosaico) a 2× |
+| ZIP completo | Todas las láminas PNG + mosaico + `superficies.csv` + `variantes.json` |
+| JSON | Parámetros + geometría de cada estancia (para enlazar con Hectar u otro programa) |
+| CSV superficies | Cuadro de superficies por uso (separador `;`, coma decimal) |
+| Cargar JSON | Restaura los parámetros de un JSON exportado |
+
+Coordenadas del JSON: metros desde la esquina interior Noroeste, x hacia el Este, y hacia el Sur.
+
+## Cómo genera las plantas
+
+1. Para cada combinación de dormitorios × baños reparte superficies objetivo (con variación aleatoria).
+2. Particiona el rectángulo interior en árboles de corte (guillotina), agrupando por afinidad (salón-cocina, zonas húmedas juntas…). Con pasillo: zona de día + zona de noche con pasillo lateral o central.
+3. Descarta las que no cumplen: superficie y lado mínimo, proporción, luz natural en salón y dormitorios, acceso a cada estancia desde salón o pasillo (el baño puede ir en suite), al menos un baño común y entrada por la fachada indicada.
+4. Elige las N mejores maximizando la diversidad entre ellas.
+
+## Archivos
+
+- `variantes_planta.html`: código fuente (fragmento publicado también como Artifact).
+- `index.html`: el mismo código con la cabecera HTML completa, para abrirlo en local. Se regenera con:
+  `(printf '<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>\n'; cat variantes_planta.html; printf '\n</body></html>\n') > index.html`
+
+Superficies útiles aproximadas (se descuenta medio tabique por cada lado interior). Material de presentación: PENDIENTE DE VALIDAR POR EL ARQUITECTO.
