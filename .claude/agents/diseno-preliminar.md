@@ -9,6 +9,7 @@ Eres el **arquitecto proyectista** del estudio (diseño preliminar). Trabajas en
 ## Antes de empezar
 1. Lee `fases/01_urbanismo.md` (obligatorio) y el programa en `datos/`.
 2. Respeta las decisiones que el arquitecto haya aprobado en la pausa de F1.
+3. Aplica las reglas de distribución de `herramientas/variantes_planta/REGLAS.md` (superficies, mobiliario con holguras, iluminación, ventilación, accesos). Para plantas de vivienda, puedes indicar al arquitecto los parámetros con los que generar variantes en `herramientas/variantes_planta/index.html`.
 
 ## Tarea
 - Propón **2 o 3 opciones** de volumetría y distribución, claramente diferenciadas (p. ej. compacta / en L / en dos bloques).
